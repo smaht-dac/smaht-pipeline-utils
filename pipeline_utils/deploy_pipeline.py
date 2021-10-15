@@ -4,8 +4,8 @@
 #
 #   deploy_pipeline
 #
-#   Michele Berselli
-#   berselli.michele@gmail.com
+#   Michele Berselli - berselli.michele@gmail.com
+#   Phil Grayson - phil.d.grayson@gmail.com
 #
 ################################################
 
