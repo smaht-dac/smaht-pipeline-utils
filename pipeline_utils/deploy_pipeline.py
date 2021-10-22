@@ -50,13 +50,13 @@ def _post_patch_routine(mdata_json, type, ff_key):
 ################################################
 #   _post_patch_software
 ################################################
-def _post_patch_software(ff_key, project_uuid, institution_uuid,
+def _post_patch_software(ff_key, repo, project_uuid, institution_uuid,
                          filepath='portal_objects/software.json'):
     '''
         routine to post | patch software
     '''
     print('Processing software...')
-    with open(filepath) as f:
+    with open(repo + '/' + filepath) as f:
         d = json.load(f)
 
     for dd in d:
@@ -72,13 +72,13 @@ def _post_patch_software(ff_key, project_uuid, institution_uuid,
 ################################################
 #   _post_patch_file_format
 ################################################
-def _post_patch_file_format(ff_key, project_uuid, institution_uuid,
+def _post_patch_file_format(ff_key, repo, project_uuid, institution_uuid,
                             filepath='portal_objects/file_format.json'):
     '''
         routine to post | patch file format
     '''
     print('Processing file format...')
-    with open(filepath) as f:
+    with open(repo + '/' + filepath) as f:
         d = json.load(f)
 
     for dd in d:
@@ -94,13 +94,13 @@ def _post_patch_file_format(ff_key, project_uuid, institution_uuid,
 ################################################
 #   _post_patch_file_reference
 ################################################
-def _post_patch_file_reference(ff_key, project_uuid, institution_uuid,
+def _post_patch_file_reference(ff_key, repo, project_uuid, institution_uuid,
                                filepath='portal_objects/file_reference.json'):
     '''
         routine to post | patch file reference
     '''
     print('Processing file reference...')
-    with open(filepath) as f:
+    with open(repo + '/' + filepath) as f:
         d = json.load(f)
 
     for dd in d:
@@ -116,7 +116,7 @@ def _post_patch_file_reference(ff_key, project_uuid, institution_uuid,
 ################################################
 #   _post_patch_workflow
 ################################################
-def _post_patch_workflow(ff_key, project_uuid, institution_uuid,
+def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
                          version, pipeline, account,
                          region, cwl_bucket, del_prev_version,
                          filepath='portal_objects/workflow'):
@@ -124,10 +124,10 @@ def _post_patch_workflow(ff_key, project_uuid, institution_uuid,
         routine to post | patch workflow
     '''
     print('Processing workflow...')
-    for fn in os.listdir(filepath):
+    for fn in os.listdir(repo + '/' + filepath):
         if fn.endswith('.json'):
             print('  processing file %s' % fn)
-            with open(os.path.join(filepath, fn), 'r') as f:
+            with open(os.path.join(repo + '/' + filepath, fn), 'r') as f:
                 d = json.load(f)
 
             # clean previous_version and aliases if del_prev_version
@@ -160,17 +160,17 @@ def _post_patch_workflow(ff_key, project_uuid, institution_uuid,
 ################################################
 #   _post_patch_metaworkflow
 ################################################
-def _post_patch_metaworkflow(ff_key, project_uuid, institution_uuid,
+def _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
                              version, del_prev_version,
                              filepath='portal_objects/metaworkflows'):
     '''
         routine to post | patch metaworkflow
     '''
     print('Processing metaworkflow...')
-    for fn in os.listdir(filepath):
+    for fn in os.listdir(repo + '/' + filepath):
         if fn.endswith('.json'):
             print('  processing file %s' % fn)
-            with open(os.path.join(filepath, fn), 'r') as f:
+            with open(os.path.join(repo + '/' + filepath, fn), 'r') as f:
                 d = json.load(f)
                 for k in ['title', 'version']:
                     d[k] = d[k].replace('VERSION', version)
@@ -190,7 +190,7 @@ def _post_patch_metaworkflow(ff_key, project_uuid, institution_uuid,
 ################################################
 #   _post_patch_cwl
 ################################################
-def _post_patch_cwl(version, pipeline, account,
+def _post_patch_cwl(version, repo, pipeline, account,
                     region, cwl_bucket, del_prev_version,
                     filepath='cwl'):
     '''
@@ -199,12 +199,12 @@ def _post_patch_cwl(version, pipeline, account,
     print('Processing cwl files...')
     s3 = boto3.resource('s3')
     # mk tmp dir for modified cwls
-    os.mkdir(filepath + '/upload')
+    os.mkdir(repo + '/' + filepath + '/upload')
     account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
-    for fn in os.listdir(filepath):
+    for fn in os.listdir(repo + '/' + filepath):
         if fn.endswith('.cwl'):
             # set original file path and path for s3
-            file_path = filepath + '/' + fn
+            file_path = repo + '/' + filepath + '/' + fn
             s3_path_and_file = pipeline + '/' + version + '/'+ fn
 
             # separate workflows, which can be automatically uploaded to s3 without edits ...
@@ -216,26 +216,26 @@ def _post_patch_cwl(version, pipeline, account,
             else:
                 print('  processing file %s' % fn)
                 with open(file_path, 'r') as f:
-                    with open(filepath + '/upload/' + fn, 'w') as w:
+                    with open(repo + '/' + filepath + '/upload/' + fn, 'w') as w:
                         for line in f:
                             if 'dockerPull' in line:
                                 # modify line for output file by replacing generic variables
                                 line = line.replace('ACCOUNT', account_region).replace('VERSION', version)
                             w.write(line)
                 # once modified, upload to s3
-                upload_path_and_file = filepath + '/upload/' + fn
+                upload_path_and_file = repo + '/' + filepath + '/upload/' + fn
                 s3.meta.client.upload_file(upload_path_and_file, cwl_bucket, s3_path_and_file, ExtraArgs={'ACL':'public-read'})
 
                 # delete file to allow tmp folder to be deleted at the end
                 os.remove(upload_path_and_file)
 
     # clean the directory from github repo
-    os.rmdir(filepath + '/upload')
+    os.rmdir(repo + '/' + filepath + '/upload')
 
 ################################################
 #   _post_patch_ecr
 ################################################
-def _post_patch_ecr(version, account, region,
+def _post_patch_ecr(version, repo, account, region,
                     filepath='dockerfiles'):
     '''
         routine to build the docker image and push it to ECR
@@ -243,10 +243,10 @@ def _post_patch_ecr(version, account, region,
     print('Processing docker image...')
     account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
     # generic bash commands to be modified to correct version and account information
-    for fn in os.listdir(filepath):
+    for fn in os.listdir(repo + '/' + filepath):
         print('  processing docker %s' % fn)
         tag = account_region + '/' + fn + ':' + version
-        path = filepath + '/' + fn
+        path = repo + '/' + filepath + '/' + fn
         image = '''
             aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT
 
@@ -276,7 +276,7 @@ def _post_patch_ecr(version, account, region,
 #       VERSION
 #
 ################################################
-def _post_patch_repo(ff_key, cwl_bucket, account, region,
+def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
                      project_uuid, institution_uuid,
                      post_software, post_file_format, post_file_reference,
                      post_workflow, post_metaworkflow,
@@ -290,43 +290,43 @@ def _post_patch_repo(ff_key, cwl_bucket, account, region,
     '''
 
     # Get pipeline version
-    with open(version) as f:
+    with open(repo + '/' + version) as f:
         version = f.readlines()[0].strip()
     # Get pipeline name
-    with open(pipeline) as f:
+    with open(repo + '/' + pipeline) as f:
         pipeline = f.readlines()[0].strip()
 
     # Software
     if post_software:
-        _post_patch_software(ff_key, project_uuid, institution_uuid)
+        _post_patch_software(ff_key, repo, project_uuid, institution_uuid)
 
     # File format
     if post_file_format:
-        _post_patch_file_format(ff_key, project_uuid, institution_uuid)
+        _post_patch_file_format(ff_key, repo, project_uuid, institution_uuid)
 
     # File reference
     if post_file_reference:
-        _post_patch_file_reference(ff_key, project_uuid, institution_uuid)
+        _post_patch_file_reference(ff_key, repo, project_uuid, institution_uuid)
 
     # Workflow
     if post_workflow:
-        _post_patch_workflow(ff_key, project_uuid, institution_uuid,
+        _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
                              version, pipeline, account,
                              region, cwl_bucket, del_prev_version)
 
     # Metaworkflow
     if post_metaworkflow:
-        _post_patch_metaworkflow(ff_key, project_uuid, institution_uuid,
+        _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
                                  version, del_prev_version)
 
     # Cwl
     if post_cwl:
-        _post_patch_cwl(version, pipeline, account,
+        _post_patch_cwl(version, repo, pipeline, account,
                         region, cwl_bucket, del_prev_version)
 
     # ECR
     if post_ecr:
-        _post_patch_ecr(version, account, region)
+        _post_patch_ecr(version, repo, account, region)
 
 
 ################################################
@@ -337,9 +337,6 @@ def main(args):
         deploy cgap pipeline
         post | patch metadata and dockers in the specified environment from repos
     '''
-
-    print(args)
-    return
 
     # Get env variables
     if os.environ.get('GLOBAL_BUCKET_ENV', ''):  # new cgap account
@@ -374,13 +371,13 @@ def main(args):
             error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution-uuid argument'
             sys.exit(error)
 
-
     # Run patching for repo
-    _post_patch_repo(ff_key, args.cwl_bucket, args.account, args.region,
-                     args.project_uuid, args.institution_uuid,
-                     args.post_software, args.post_file_format, args.post_file_reference,
-                     args.post_workflow, args.post_metaworkflow,
-                     args.post_cwl, args.post_ecr, args.del_prev_version)
+    for repo in args.repos:
+        _post_patch_repo(ff_key, repo, args.cwl_bucket, args.account, args.region,
+                         args.project_uuid, args.institution_uuid,
+                         args.post_software, args.post_file_format, args.post_file_reference,
+                         args.post_workflow, args.post_metaworkflow,
+                         args.post_cwl, args.post_ecr, args.del_prev_version)
 
 
 #################################################################

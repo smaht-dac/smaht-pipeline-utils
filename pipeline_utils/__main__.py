@@ -37,22 +37,21 @@ def main(args=None):
     deploy_pipeline_parser = subparsers.add_parser('deploy_pipeline', description='Utility to automatically deploy a pipeline',
                                                 help='Utility to automatically deploy a pipeline')
 
-    # Required args
-    deploy_pipeline_parser.add_argument('--ff-env', required=True)
-    deploy_pipeline_parser.add_argument('--cwl-bucket', required=False)
-    deploy_pipeline_parser.add_argument('--account', required=False)
-    deploy_pipeline_parser.add_argument('--region', required=False)
-    deploy_pipeline_parser.add_argument('--project-uuid', required=False)
-    deploy_pipeline_parser.add_argument('--institution-uuid', required=False)
+    deploy_pipeline_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
+    deploy_pipeline_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
+    deploy_pipeline_parser.add_argument('--cwl-bucket', required=False, help='cwl-bucket to use for deployment')
+    deploy_pipeline_parser.add_argument('--account', required=False, help='account to use for deployment')
+    deploy_pipeline_parser.add_argument('--region', required=False, help='region to use for deployment')
+    deploy_pipeline_parser.add_argument('--project-uuid', required=False, help='uuid for project to use for deployment')
+    deploy_pipeline_parser.add_argument('--institution-uuid', required=False, help='uuid for institution to use for deployment')
 
-    # Optional args
-    deploy_pipeline_parser.add_argument('--post-software', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-file-format', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-file-reference', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-workflow', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-metaworkflow', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-cwl', action='store_true')
-    deploy_pipeline_parser.add_argument('--post-ecr', action='store_true')
+    deploy_pipeline_parser.add_argument('--post-software', action='store_true', help='post | patch Software objects')
+    deploy_pipeline_parser.add_argument('--post-file-format', action='store_true', help='post | patch FileFormat objects')
+    deploy_pipeline_parser.add_argument('--post-file-reference', action='store_true', help='post | patch FileReference objects')
+    deploy_pipeline_parser.add_argument('--post-workflow', action='store_true', help='post | patch Workflow objects')
+    deploy_pipeline_parser.add_argument('--post-metaworkflow', action='store_true', help='post | patch MetaWorkflow objects')
+    deploy_pipeline_parser.add_argument('--post-cwl', action='store_true', help='post cwl files')
+    deploy_pipeline_parser.add_argument('--post-ecr', action='store_true', help='post docker images to ECR')
     deploy_pipeline_parser.add_argument('--del-prev-version', action='store_true')
 
     # Subparsers map
@@ -73,13 +72,10 @@ def main(args=None):
             sys.exit(1)
         #end if
     #end if
-    args = vars(parser.parse_args())
-
-    print(args)
-    sys.exit()
+    args = parser.parse_args()
 
     # Call the right tool
-    if args['func'] == 'deploy_pipeline':
+    if args.func == 'deploy_pipeline':
         deploy_pipeline.main(args)
 
 #################################################################
