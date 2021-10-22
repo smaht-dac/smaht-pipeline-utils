@@ -50,8 +50,8 @@ def main(args=None):
     deploy_pipeline_parser.add_argument('--post-file-reference', action='store_true', help='post | patch FileReference objects')
     deploy_pipeline_parser.add_argument('--post-workflow', action='store_true', help='post | patch Workflow objects')
     deploy_pipeline_parser.add_argument('--post-metaworkflow', action='store_true', help='post | patch MetaWorkflow objects')
-    deploy_pipeline_parser.add_argument('--post-cwl', action='store_true', help='post cwl files')
-    deploy_pipeline_parser.add_argument('--post-ecr', action='store_true', help='post docker images to ECR')
+    deploy_pipeline_parser.add_argument('--post-cwl', action='store_true', help='upload cwl files')
+    deploy_pipeline_parser.add_argument('--post-ecr', action='store_true', help='create docker images and push to ECR')
     deploy_pipeline_parser.add_argument('--del-prev-version', action='store_true')
 
     # Subparsers map
