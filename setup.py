@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 # Description
-with open('README_utils.md') as fd:
+with open('README.md') as fd:
     long_description = fd.read()
 #end with
 
@@ -20,13 +20,13 @@ tests_requires = [
 
 setup(
     name='cgap-pipeline-utils',
-    version=open('VERSION').readlines()[-1].replace('v', '').strip() + '.0', # VERSION.release
+    version=open('VERSION').readlines()[-1],
     description = 'Collection of utilities for cgap-pipeline',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
-    author = 'Michele Berselli, Soo Lee',
+    author = 'Michele Berselli, Phil Grayson',
     author_email = 'berselli.michele@gmail.com',
-    url='https://github.com/dbmi-bgm/cgap-pipeline',
+    url='https://github.com/dbmi-bgm/cgap-pipeline-utils',
     include_package_data=True,
     packages=['pipeline_utils'],
     classifiers=[
@@ -35,6 +35,11 @@ setup(
             'Programming Language :: Python',
             'Programming Language :: Python :: 3'
             ],
+    entry_points = {
+        'console_scripts': [
+            'pipeline_utils = pipeline_utils.__main__:main',
+        ]
+    },
     install_requires=install_requires,
     setup_requires=install_requires,
     tests_require=tests_requires,

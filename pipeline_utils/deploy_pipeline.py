@@ -330,13 +330,16 @@ def _post_patch_repo(ff_key, cwl_bucket, account, region,
 
 
 ################################################
-#   main
+#   runner
 ################################################
 def main(args):
     '''
         deploy cgap pipeline
         post | patch metadata and dockers in the specified environment from repos
     '''
+
+    print(args)
+    return
 
     # Get env variables
     if os.environ.get('GLOBAL_BUCKET_ENV', ''):  # new cgap account
@@ -380,28 +383,13 @@ def main(args):
                      args.post_cwl, args.post_ecr, args.del_prev_version)
 
 
-if __name__ == '__main__':
+#################################################################
+#
+#    MAIN
+#
+#################################################################
+if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+    main()
 
-    # Required args
-    parser.add_argument('--ff-env', required=True)
-    parser.add_argument('--cwl-bucket', required=False)
-    parser.add_argument('--account', required=False)
-    parser.add_argument('--region', required=False)
-    parser.add_argument('--project-uuid', required=False)
-    parser.add_argument('--institution-uuid', required=False)
-
-    # Optional args
-    parser.add_argument('--post-software', action='store_true')
-    parser.add_argument('--post-file-format', action='store_true')
-    parser.add_argument('--post-file-reference', action='store_true')
-    parser.add_argument('--post-workflow', action='store_true')
-    parser.add_argument('--post-metaworkflow', action='store_true')
-    parser.add_argument('--post-cwl', action='store_true')
-    parser.add_argument('--post-ecr', action='store_true')
-    parser.add_argument('--del-prev-version', action='store_true')
-
-    args = parser.parse_args()
-
-    main(args)
+#end if
