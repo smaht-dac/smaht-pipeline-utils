@@ -287,12 +287,12 @@ def _post_patch_ecr(version, repo, account, region,
         tag = account_region + '/' + fn + ':' + version
         path = repo + '/' + filepath + '/' + fn
         image = '''
-            aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT
+            aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT_REGION
 
             docker build -t TAG PATH
             docker push TAG
         '''
-        cmd = image.replace('REGION', region).replace('TAG', tag).replace('ACCOUNT', account).replace('PATH', path)
+        cmd = image.replace('REGION', region).replace('TAG', tag).replace('ACCOUNT_REGION', account_region).replace('PATH', path)
         subprocess.check_call(cmd, shell=True)
     #end for
 
