@@ -39,11 +39,15 @@ def main(args=None):
 
     deploy_pipeline_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
     deploy_pipeline_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
+    deploy_pipeline_parser.add_argument('--keydicts-json', required=False, help='path to file with key dicts for portal auth in json format',
+                                                           default='~/.cgap-keydicts.json')
     deploy_pipeline_parser.add_argument('--cwl-bucket', required=False, help='cwl-bucket to use for deployment')
     deploy_pipeline_parser.add_argument('--account', required=False, help='account to use for deployment')
     deploy_pipeline_parser.add_argument('--region', required=False, help='region to use for deployment')
-    deploy_pipeline_parser.add_argument('--project-uuid', required=False, help='uuid for project to use for deployment')
-    deploy_pipeline_parser.add_argument('--institution-uuid', required=False, help='uuid for institution to use for deployment')
+    deploy_pipeline_parser.add_argument('--project-uuid', required=False, help='uuid for project to use for deployment',
+                                                          default='12a92962-8265-4fc0-b2f8-cf14f05db58b')
+    deploy_pipeline_parser.add_argument('--institution-uuid', required=False, help='uuid for institution to use for deployment',
+                                                              default='828cd4fe-ebb0-4b36-a94a-d2e3a36cc989')
 
     deploy_pipeline_parser.add_argument('--post-software', action='store_true', help='post | patch Software objects')
     deploy_pipeline_parser.add_argument('--post-file-format', action='store_true', help='post | patch FileFormat objects')
@@ -77,6 +81,7 @@ def main(args=None):
     # Call the right tool
     if args.func == 'deploy_pipeline':
         deploy_pipeline.main(args)
+    #end if
 
 #################################################################
 #

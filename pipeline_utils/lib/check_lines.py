@@ -3,6 +3,8 @@
 ################################################
 #
 #   check_lines
+#     implement a function to check line counts
+#     match between specified pipeline steps output
 #
 #   Michele Berselli
 #   berselli.michele@gmail.com

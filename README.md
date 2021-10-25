@@ -1,2 +1,3 @@
 # cgap-pipeline-utils
-utils for cgap-pipeline
+
+Collection of utilities for cgap-pipeline
