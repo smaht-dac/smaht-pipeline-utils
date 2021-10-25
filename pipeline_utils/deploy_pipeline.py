@@ -132,7 +132,7 @@ def _post_patch_file_reference(ff_key, repo, project_uuid, institution_uuid,
 def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
                          version, pipeline, account,
                          region, cwl_bucket, del_prev_version,
-                         filepath='portal_objects/workflow'):
+                         filepath='portal_objects/workflows'):
     '''
         routine to post | patch workflow
     '''
