@@ -293,7 +293,7 @@ def _post_patch_ecr(version, repo, account, region,
             docker push TAG
         '''
         print(image)
-        cmd = image.replace('REGION', region).replace('TAG', tag).replace('ACCOUNT_REGION', account_region).replace('PATH', path)
+        cmd = image.replace('ACCOUNT_REGION', account_region).replace('REGION', region).replace('TAG', tag).replace('PATH', path)
         print(cmd)
         subprocess.check_call(cmd, shell=True)
     #end for
