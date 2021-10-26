@@ -25,12 +25,15 @@ Usage:
 
     pipeline_utils deploy_pipeline --ff-env FF_ENV --repos REPOS [REPOS ...] [OPTIONAL ARGS]
 
-Optional Arguments:
+Arguments:
 
 --ff-env FF_ENV       environment to use for deployment
 --repos REPOS [REPOS ...]
                       list of repos to deploy, must follow expected
                       structure (see docs)
+
+Optional Arguments:
+
 --keydicts-json KEYDICTS_JSON
                       path to file with key dicts for portal auth in json
                       format
