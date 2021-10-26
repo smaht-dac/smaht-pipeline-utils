@@ -28,7 +28,7 @@ setup(
     author_email = 'berselli.michele@gmail.com',
     url='https://github.com/dbmi-bgm/cgap-pipeline-utils',
     include_package_data=True,
-    packages=['pipeline_utils'],
+    packages=find_packages(),
     classifiers=[
             'License :: OSI Approved :: MIT License',
             'Operating System :: POSIX :: Linux',
