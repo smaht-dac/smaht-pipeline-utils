@@ -22,3 +22,4 @@ Contents
    install
    pipeline_utils
    functions
+   repo
