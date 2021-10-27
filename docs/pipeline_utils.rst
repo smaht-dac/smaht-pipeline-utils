@@ -27,17 +27,17 @@ Usage:
 
 Arguments:
 
---ff-env FF_ENV                         environment to use for deployment
---repos REPOS [REPOS ...]               list of repos to deploy, must follow expected structure (see :ref:`docs <repo>`)
+--ff-env                                environment to use for deployment
+--repos                                 list of repos to deploy, must follow expected structure (see :ref:`docs <repo>`)
 
 Optional Arguments:
 
---keydicts-json KEYDICTS_JSON           path to file with key dicts for portal auth in json format [~/.cgap-keydicts.json]
---cwl-bucket CWL_BUCKET                 cwl-bucket to use for deployment
---account ACCOUNT                       account to use for deployment
---region REGION                         region to use for deployment
---project-uuid PROJECT_UUID             uuid for project to use for deployment
---institution-uuid INSTITUTION_UUID     uuid for institution to use for deployment
+--keydicts-json                         path to file with key dicts for portal auth in json format [~/.cgap-keydicts.json]
+--cwl-bucket                            cwl-bucket to use for deployment
+--account                               account to use for deployment
+--region                                region to use for deployment
+--project-uuid                          uuid for project to use for deployment
+--institution-uuid                      uuid for institution to use for deployment
 --post-software                         post | patch Software objects
 --post-file-format                      post | patch FileFormat objects
 --post-file-reference                   post | patch FileReference objects
