@@ -1,6 +1,6 @@
-===================
-cgap-pipeline-utils
-===================
+=======================
+CGAP Pipeline Utilities
+=======================
 
 Documentation for cgap-pipeline-utils_, a collection of utilities for cgap pipeline.
 
