@@ -10,21 +10,15 @@
 #
 ################################################
 
-################################################
-#   Libraries
-################################################
+
 import sys, os
 import argparse
+
 
 # Commands
 from pipeline_utils import deploy_pipeline
 
-################################################
-#   Functions
-################################################
-################################################
-#   main
-################################################
+
 def main(args=None):
     '''
         command line wrapper around available commands
@@ -74,22 +68,12 @@ def main(args=None):
         else:
             parser.print_help(sys.stderr)
             sys.exit(1)
-        #end if
-    #end if
     args = parser.parse_args()
 
     # Call the right tool
     if args.func == 'deploy_pipeline':
         deploy_pipeline.main(args)
-    #end if
 
-#################################################################
-#
-#    MAIN
-#
-#################################################################
+
 if __name__ == "__main__":
-
     main()
-
-#end if

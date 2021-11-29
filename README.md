@@ -12,8 +12,10 @@ The package is available on [*pypi*](https://pypi.org/project/cgap-pipeline-util
 
     pip install cgap-pipeline-utils
 
-To install from source:
+To install from source (note that we recommend a fresh virtualenv):
 
     git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
     cd cgap-pipeline-utils
-    python setup.py install
+    make configure && make build
+
+See ``make info`` for details on make targets.
