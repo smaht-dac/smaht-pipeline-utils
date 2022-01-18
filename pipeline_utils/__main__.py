@@ -28,8 +28,8 @@ def main(args=None):
     subparsers = parser.add_subparsers(dest='func', metavar="<command>")
 
     # Add deploy_pipeline to subparsers
-    deploy_pipeline_parser = subparsers.add_parser('deploy_pipeline', description='Utility to automatically deploy a pipeline',
-                                                help='Utility to automatically deploy a pipeline')
+    deploy_pipeline_parser = subparsers.add_parser('deploy_pipeline', description='Utility to automatically deploy a pipeline from a target repository',
+                                                help='Utility to automatically deploy a pipeline from a target repository')
 
     deploy_pipeline_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
     deploy_pipeline_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')

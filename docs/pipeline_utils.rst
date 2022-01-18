@@ -17,7 +17,10 @@ Usage:
 deploy_pipeline
 +++++++++++++++
 
-Utility to automatically deploy a pipeline.
+Utility to automatically deploy a pipeline from a target repository.
+It is possible to specify multiple target repositories to deploy multiple pipelines at the same time.
+It is also possible to specify the current repository as a target as ``.``.
+If one of the components to deploy (e.g. MetaWorkflow objects) is missing in the target repository, the program will fail and return an error.
 
 Usage:
 
