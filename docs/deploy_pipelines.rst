@@ -97,29 +97,18 @@ The following environmental variables are needed:
   export TIBANNA_AWS_REGION=
   export GLOBAL_BUCKET_ENV=
   export S3_ENCRYPT_KEY=
-
-  # these 3 from Okta (refresh every 4 hours or so)
   export AWS_ACCESS_KEY_ID=
   export AWS_SECRET_ACCESS_KEY=
-  export AWS_SESSION_TOKEN=
+  # export AWS_SESSION_TOKEN=
 
-* **AWS_ACCOUNT_NUMBER** can usually be found
-  `here <https://hms-dbmi.atlassian.net/wiki/spaces/FOURDNDCIC/pages/851083341/Deployment+Environments>`_.
-* **TIBANNA_AWS_REGION** is always ``us-east-1``.
-* **S3_ENCRYPT_KEY** most developers have already; if you
-  need this, contact the back-end team to send it to you securely.
+
+**Tips**:
+
 * **GLOBAL_BUCKET_ENV** can be found in S3. If you log into the AWS
   console and go to S3, this variable is the name of the bucket that ends
   in "-envs".
-
-The last 3 variables can be obtained by logging into Okta, clicking on
-the account of interest, and clicking "Command line or programmatic
-access". You can click under "Option 1" to copy them.
-
-These variables can be stored in a file using the template above (with
-the export commands) so that they can be sourced when needed. The
-last 3 regularly reset and need to be regenerated often. Run `source`
-on this file before running the ``pipeline_utils`` commands.
+* **AWS_SESSION_TOKEN** is used by some single sign-on platforms for managing
+  credentials but may not be required otherwise.
 
 
 Portal Credentials
@@ -171,8 +160,8 @@ Some possible errors are described below.
   botocore.exceptions.ClientError: An error occurred (400) when calling
   the HeadBucket operation: Bad Request
 
-This may indicate your Okta creds are out of date. Regenerate your
-credentials as described above and source the file holding them again.
+This may indicate your credentials are out of date. Make sure your AWS
+credentials are up to date and source them if necessary.
 
 
 .. code-block:: bash
@@ -226,7 +215,7 @@ This can often be fixed by restarting docker, either with
 
 .. code-block:: bash
 
-  sudo service docker stop        
+  sudo service docker stop
   sudo service docker start
 
 
