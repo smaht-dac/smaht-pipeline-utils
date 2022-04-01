@@ -94,7 +94,7 @@ def _post_patch_file_reference(ff_key, repo, project_uuid, institution_uuid,
 
 
 def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
-                         version, pipeline, account,
+                         version, pipeline,
                          region, cwl_bucket, del_prev_version,
                          filepath='portal_objects/workflows'):
     '''
@@ -117,15 +117,11 @@ def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
             # replace VERSION variable with correct version
             d['aliases'][0] = d['aliases'][0].replace('VERSION', version)
 
-            for k in ['app_version', 'docker_image_name', 'name']:
+            for k in ['app_version', 'name']:
                 d[k] = d[k].replace('VERSION', version)
 
             # replace CWLBUCKET and VERSION variables in cwl_directory_url_v1
             d['cwl_directory_url_v1'] = d['cwl_directory_url_v1'].replace('CWLBUCKET', cwl_bucket).replace('PIPELINE', pipeline).replace('VERSION', version)
-
-            # replace ACCOUNT and VERSION variables for docker_image_name
-            account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
-            d['docker_image_name'] = d['docker_image_name'].replace('ACCOUNT', account_region).replace('VERSION', version)
 
             # replace PROJECT_UUID and INSTITUTION_UUID variables
             d['project'] = d['project'].replace('PROJECT_UUID', project_uuid)
@@ -294,7 +290,7 @@ def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
     # Workflow
     if post_workflow:
         _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
-                             version, pipeline, account,
+                             version, pipeline,
                              region, cwl_bucket, del_prev_version)
 
     # Metaworkflow
