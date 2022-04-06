@@ -21,5 +21,6 @@ Contents
 
    install
    pipeline_utils
+   deploy_pipelines
    functions
    repo
