@@ -16,34 +16,29 @@ import boto3
 
 
 def _post_patch_routine(mdata_json, type, ff_key):
-    '''
+    """
         routine to do the post | patching action
+    """
 
-        note: this can be re-written to replace try/except with query to database to decide if post or patch
-    '''
+    is_patch = True
     try:
-        ff_utils.post_metadata(mdata_json, type, key=ff_key)
+        ff_utils.get_metadata(mdata_json['uuid'], key=ff_key)
     except Exception:
-        ff_utils.patch_metadata(mdata_json, mdata_json['uuid'], key=ff_key)
+        is_patch = False
 
-    # try:
-    #     ff_utils.post_metadata(mdata_json, type, key=ff_key)
-    # except Exception as e:
-    #     if 'Keys conflict' in str(e):
-    #         if ignore_key_conflict:
-    #             pass
-    #         else:
-    #             raise(e)
-    #     else:
-    #         ff_utils.patch_metadata(mdata_json, mdata_json['uuid'], key=ff_key)
-    # #end try
+    if is_patch:
+        ff_utils.patch_metadata(mdata_json, mdata_json['uuid'], key=ff_key)
+    else:
+        ff_utils.post_metadata(mdata_json, type, key=ff_key)
 
 
 def _post_patch_software(ff_key, repo, project_uuid, institution_uuid,
                          filepath='portal_objects/software.json'):
-    '''
+    """
         routine to post | patch software
-    '''
+    """
+    if not os.path.isfile(repo + '/' + filepath): return
+
     print('Processing software...')
     with open(repo + '/' + filepath) as f:
         d = json.load(f)
@@ -59,9 +54,11 @@ def _post_patch_software(ff_key, repo, project_uuid, institution_uuid,
 
 def _post_patch_file_format(ff_key, repo, project_uuid, institution_uuid,
                             filepath='portal_objects/file_format.json'):
-    '''
+    """
         routine to post | patch file format
-    '''
+    """
+    if not os.path.isfile(repo + '/' + filepath): return
+
     print('Processing file format...')
     with open(repo + '/' + filepath) as f:
         d = json.load(f)
@@ -77,9 +74,11 @@ def _post_patch_file_format(ff_key, repo, project_uuid, institution_uuid,
 
 def _post_patch_file_reference(ff_key, repo, project_uuid, institution_uuid,
                                filepath='portal_objects/file_reference.json'):
-    '''
+    """
         routine to post | patch file reference
-    '''
+    """
+    if not os.path.isfile(repo + '/' + filepath): return
+
     print('Processing file reference...')
     with open(repo + '/' + filepath) as f:
         d = json.load(f)
@@ -97,9 +96,11 @@ def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
                          version, pipeline,
                          region, cwl_bucket, del_prev_version,
                          filepath='portal_objects/workflows'):
-    '''
+    """
         routine to post | patch workflow
-    '''
+    """
+    if not os.path.isdir(repo + '/' + filepath): return
+
     print('Processing workflow...')
     for fn in os.listdir(repo + '/' + filepath):
         if fn.endswith('.json'):
@@ -133,9 +134,11 @@ def _post_patch_workflow(ff_key, repo, project_uuid, institution_uuid,
 def _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
                              version, del_prev_version,
                              filepath='portal_objects/metaworkflows'):
-    '''
+    """
         routine to post | patch metaworkflow
-    '''
+    """
+    if not os.path.isdir(repo + '/' + filepath): return
+
     print('Processing metaworkflow...')
     for fn in os.listdir(repo + '/' + filepath):
         if fn.endswith('.json'):
@@ -160,9 +163,11 @@ def _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
 def _post_patch_cwl(version, repo, pipeline, account,
                     region, cwl_bucket,
                     filepath='cwl', kms_key_id=None):
-    '''
+    """
         routine to post | patch cwl
-    '''
+    """
+    if not os.path.isdir(repo + '/' + filepath): return
+
     print('Processing cwl files...')
     s3 = boto3.resource('s3')
     # mk tmp dir for modified cwls
@@ -215,9 +220,11 @@ def _post_patch_cwl(version, repo, pipeline, account,
 
 def _post_patch_ecr(version, repo, account, region,
                     filepath='dockerfiles'):
-    '''
+    """
         routine to build the docker image and push it to ECR
-    '''
+    """
+    if not os.path.isdir(repo + '/' + filepath): return
+
     print('Processing docker image...')
     account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
     # generic bash commands to be modified to correct version and account information
@@ -225,12 +232,12 @@ def _post_patch_ecr(version, repo, account, region,
         print('  processing docker %s' % fn)
         tag = account_region + '/' + fn + ':' + version
         path = repo + '/' + filepath + '/' + fn
-        image = '''
+        image = """
             aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT_REGION
 
             docker build -t TAG PATH --no-cache
             docker push TAG
-        '''  # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
+        """  # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
         cmd = image.replace('ACCOUNT_REGION', account_region).replace('REGION', region).replace('TAG', tag).replace('PATH', path)
         subprocess.check_call(cmd, shell=True)
 
@@ -261,12 +268,12 @@ def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
                      post_workflow, post_metaworkflow,
                      post_cwl, post_ecr, del_prev_version,
                      version='VERSION', pipeline='PIPELINE', kms_key_id=None):
-    '''
+    """
         post | patch metadata and docker from a pipeline repo
             to the specified environment (ff_key)
 
         the repo must follow the structure described in the header
-    '''
+    """
 
     # Get pipeline version
     with open(repo + '/' + version) as f:
@@ -309,10 +316,10 @@ def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
 
 
 def main(args):
-    '''
+    """
         deploy cgap pipeline
         post | patch metadata and dockers in the specified environment from repos
-    '''
+    """
     # Get credentials
     if os.environ.get('GLOBAL_BUCKET_ENV') and os.environ.get('S3_ENCRYPT_KEY'):  # new cgap account
         s3 = s3_utils.s3Utils(env=args.ff_env)

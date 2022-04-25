@@ -1,6 +1,6 @@
-=============================================
-Deploying Pipelines to a New CGAP Environment
-=============================================
+=========================================
+Deploying Pipelines to a CGAP Environment
+=========================================
 
 This document describes how to deploy CGAP pipelines. Using an EC2 is
 recommended; trying to deploy from a local MacOS may work for some
@@ -24,9 +24,8 @@ the EC2 may run out of space.
 Install Docker
 ==============
 
-If Docker isn't already on the EC2, it will need to be installed **(skip
-  this step if Docker is already installed and running)**. The
-following instructions are based on an Amazon Linux AMI, but more
+If Docker isn't already on the EC2, it will need to be installed **(skip this step if Docker is already installed and running)**.
+The following instructions are based on an Amazon Linux AMI, but more
 instructions can be found in the
 `AWS Documentation <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html>`_.
 
@@ -41,7 +40,6 @@ Start the docker service:
 Ensure Docker is installed correctly and has the proper permissions
 by running a test command:
 ``docker run hello-world``
-
 
 Installing packages
 ===================
@@ -62,7 +60,6 @@ cgap-pipeline-utils v1.6.0:
   pip install poetry
   poetry install
   cd ..
-
 
 To check that it is installed correctly, make sure that you can run
 ``pipeline_utils``. If you get a bash "command not found" error, try
@@ -101,7 +98,6 @@ The following environmental variables are needed:
   export AWS_SECRET_ACCESS_KEY=
   # export AWS_SESSION_TOKEN=
 
-
 **Tips**:
 
 * **GLOBAL_BUCKET_ENV** can be found in S3. If you log into the AWS
@@ -109,7 +105,6 @@ The following environmental variables are needed:
   in "-envs".
 * **AWS_SESSION_TOKEN** is used by some single sign-on platforms for managing
   credentials but may not be required otherwise.
-
 
 Portal Credentials
 ------------------
@@ -149,7 +144,6 @@ The basic command to deploy the pipelines is the following:
   start with only ``--repos cgap-pipeline-base`` to make sure the
   installation and your credentials are working correctly
 
-
 Troubleshooting
 +++++++++++++++
 
@@ -162,7 +156,6 @@ Some possible errors are described below.
 
 This may indicate your credentials are out of date. Make sure your AWS
 credentials are up to date and source them if necessary.
-
 
 .. code-block:: bash
 
@@ -217,7 +210,6 @@ This can often be fixed by restarting docker, either with
 
   sudo service docker stop
   sudo service docker start
-
 
 No Space Left on Device errors
 ------------------------------

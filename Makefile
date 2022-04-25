@@ -1,6 +1,7 @@
 .PHONY: build
 
 configure:
+	pip install --upgrade pip
 	pip install poetry
 
 build:
