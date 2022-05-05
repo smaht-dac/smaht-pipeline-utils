@@ -161,7 +161,7 @@ def _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
 
 
 def _post_patch_cwl(version, repo, pipeline, account,
-                    region, cwl_bucket,
+                    region, cwl_bucket, sentieon_server
                     filepath='cwl', kms_key_id=None):
     """
         routine to post | patch cwl
@@ -190,18 +190,20 @@ def _post_patch_cwl(version, repo, pipeline, account,
                     })
                 s3.meta.client.upload_file(file_path, cwl_bucket, s3_path_and_file, ExtraArgs=extra_args)
 
-            # ... from CommandLineTool files which have the dockerPull that needs modification
+            # ... from CommandLineTool files which needs modification
             else:
                 print('  processing file %s' % fn)
                 with open(file_path, 'r') as f:
                     with open(repo + '/' + filepath + '/upload/' + fn, 'w') as w:
+                        # modify lines for output file by replacing generic variables
                         for line in f:
                             if 'dockerPull' in line:
-                                # modify line for output file by replacing generic variables
                                 line = line.replace('ACCOUNT', account_region).replace('VERSION', version)
+                            elif 'LICENSEID' in line:
+                                line = line.replace('LICENSEID', sentieon_server)
                             w.write(line)
 
-                # once modified, upload to s3
+                # upload to s3
                 upload_path_and_file = repo + '/' + filepath + '/upload/' + fn
                 extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
                 if kms_key_id:
@@ -266,7 +268,7 @@ def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
                      project_uuid, institution_uuid,
                      post_software, post_file_format, post_file_reference,
                      post_workflow, post_metaworkflow,
-                     post_cwl, post_ecr, del_prev_version,
+                     post_cwl, post_ecr, del_prev_version, sentieon_server,
                      version='VERSION', pipeline='PIPELINE', kms_key_id=None):
     """
         post | patch metadata and docker from a pipeline repo
@@ -308,7 +310,7 @@ def _post_patch_repo(ff_key, repo, cwl_bucket, account, region,
     # Cwl
     if post_cwl:
         _post_patch_cwl(version, repo, pipeline, account,
-                        region, cwl_bucket, kms_key_id=kms_key_id)
+                        region, cwl_bucket, sentieon_server, kms_key_id=kms_key_id)
 
     # ECR
     if post_ecr:
@@ -374,4 +376,4 @@ def main(args):
                          args.project_uuid, args.institution_uuid,
                          args.post_software, args.post_file_format, args.post_file_reference,
                          args.post_workflow, args.post_metaworkflow,
-                         args.post_cwl, args.post_ecr, args.del_prev_version, kms_key_id=kms_key_id)
+                         args.post_cwl, args.post_ecr, args.del_prev_version, args.sentieon_server, kms_key_id=kms_key_id)

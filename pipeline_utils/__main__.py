@@ -52,6 +52,10 @@ def main(args=None):
     deploy_pipeline_parser.add_argument('--post-ecr', action='store_true', help='create docker images and push to ECR')
     deploy_pipeline_parser.add_argument('--del-prev-version', action='store_true')
 
+    # cgap-specific
+    deploy_pipeline_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
+                                                             default='0.0.0.0:0')
+
     # Subparsers map
     subparser_map = {
                     'deploy_pipeline': deploy_pipeline_parser
