@@ -19,9 +19,9 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.7,<3.10"
 dcicutils = "^3.2.0"
-magma-suite = "^0.2.1"
 boto3 = "^1.20.15"
 awscli = "^1.22.15"
+#magma-suite = "^0.2.1", disabled for now until we release the newer version
 
 
 [tool.poetry.scripts]
