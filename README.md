@@ -16,6 +16,8 @@ To install from source (note that we recommend a fresh virtualenv):
 
     git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
     cd cgap-pipeline-utils
-    make configure && make build
+    make configure
+    make update
+    make build
 
 See ``make info`` for details on make targets.

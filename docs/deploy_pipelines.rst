@@ -56,9 +56,9 @@ cgap-pipeline-utils v1.6.0:
 
   git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
   cd cgap-pipeline-utils
-  pip install --upgrade pip
-  pip install poetry
-  poetry install
+  make configure
+  make update
+  make build
   cd ..
 
 To check that it is installed correctly, make sure that you can run

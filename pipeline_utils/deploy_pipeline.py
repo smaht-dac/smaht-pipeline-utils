@@ -161,7 +161,7 @@ def _post_patch_metaworkflow(ff_key, repo, project_uuid, institution_uuid,
 
 
 def _post_patch_cwl(version, repo, pipeline, account,
-                    region, cwl_bucket, sentieon_server
+                    region, cwl_bucket, sentieon_server,
                     filepath='cwl', kms_key_id=None):
     """
         routine to post | patch cwl

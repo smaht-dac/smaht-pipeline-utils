@@ -17,6 +17,6 @@ the required version. To install the latest version from source:
 
     git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
     cd cgap-pipeline-utils
-    pip install --upgrade pip
-    pip install poetry
-    poetry install
+    make configure
+    make update
+    make build
