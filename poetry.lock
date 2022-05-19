@@ -11,15 +11,15 @@ requests = ">=0.14.0"
 
 [[package]]
 name = "awscli"
-version = "1.22.15"
+version = "1.24.3"
 description = "Universal Command Line Environment for AWS."
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-botocore = "1.23.15"
-colorama = ">=0.2.5,<0.4.4"
+botocore = "1.26.3"
+colorama = ">=0.2.5,<0.4.5"
 docutils = ">=0.10,<0.16"
 PyYAML = ">=3.10,<5.5"
 rsa = ">=3.1.2,<4.8"
@@ -27,11 +27,11 @@ s3transfer = ">=0.5.0,<0.6.0"
 
 [[package]]
 name = "beautifulsoup4"
-version = "4.10.0"
+version = "4.11.1"
 description = "Screen-scraping library"
 category = "main"
 optional = false
-python-versions = ">3.0.0"
+python-versions = ">=3.6.0"
 
 [package.dependencies]
 soupsieve = ">1.2"
@@ -41,24 +41,16 @@ html5lib = ["html5lib"]
 lxml = ["lxml"]
 
 [[package]]
-name = "benchmark-4dn"
-version = "0.5.15"
-description = "Benchmark functions that returns total space, mem, cpu given                 input size and parameters for the CWL workflows"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "boto3"
-version = "1.20.15"
+version = "1.23.3"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-botocore = ">=1.23.15,<1.24.0"
-jmespath = ">=0.7.1,<1.0.0"
+botocore = ">=1.26.3,<1.27.0"
+jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.5.0,<0.6.0"
 
 [package.extras]
@@ -66,31 +58,31 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.23.15"
+version = "1.26.3"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-jmespath = ">=0.7.1,<1.0.0"
+jmespath = ">=0.7.1,<2.0.0"
 python-dateutil = ">=2.1,<3.0.0"
 urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
-crt = ["awscrt (==0.12.5)"]
+crt = ["awscrt (==0.13.8)"]
 
 [[package]]
 name = "certifi"
-version = "2021.10.8"
+version = "2022.5.18"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.5"
 
 [[package]]
 name = "charset-normalizer"
-version = "2.0.8"
+version = "2.0.12"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
 category = "main"
 optional = false
@@ -101,7 +93,7 @@ unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "colorama"
-version = "0.4.3"
+version = "0.4.4"
 description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
@@ -109,11 +101,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "dcicutils"
-version = "3.2.1"
+version = "3.13.0"
 description = "Utility package for interacting with the 4DN Data Portal and other 4DN resources"
 category = "main"
 optional = false
-python-versions = ">=3.6.1,<3.8"
+python-versions = ">=3.6.1,<3.10"
 
 [package.dependencies]
 aws-requests-auth = ">=0.4.2,<1"
@@ -127,6 +119,7 @@ requests = ">=2.21.0,<3.0.0"
 rfc3986 = ">=1.4.0,<2.0.0"
 structlog = ">=19.2.0,<20.0.0"
 toml = ">=0.10.1,<1"
+typing-extensions = ">=3.8"
 urllib3 = ">=1.26.6,<2.0.0"
 webtest = ">=2.0.34,<3.0.0"
 
@@ -184,15 +177,15 @@ smmap = ">=3.0.1,<6"
 
 [[package]]
 name = "gitpython"
-version = "3.1.20"
-description = "Python Git Library"
+version = "3.1.27"
+description = "GitPython is a python library used to interact with Git repositories"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 gitdb = ">=4.0.1,<5"
-typing-extensions = {version = ">=3.7.4.3", markers = "python_version < \"3.10\""}
+typing-extensions = {version = ">=3.7.4.3", markers = "python_version < \"3.8\""}
 
 [[package]]
 name = "idna"
@@ -204,37 +197,11 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "jmespath"
-version = "0.10.0"
+version = "1.0.0"
 description = "JSON Matching Expressions"
 category = "main"
 optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
-
-[[package]]
-name = "magma-suite"
-version = "0.2.8"
-description = "Collection of tools to manage meta-workflows automation"
-category = "main"
-optional = false
-python-versions = ">=3.6, <3.8"
-
-[package.dependencies]
-dcicutils = ">=1.19.0"
-mock = "*"
-tibanna-ff = ">=0.20.0"
-
-[[package]]
-name = "mock"
-version = "4.0.3"
-description = "Rolling backport of unittest.mock for all Pythons"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.extras]
-build = ["twine", "wheel", "blurb"]
-docs = ["sphinx"]
-test = ["pytest (<5.4)", "pytest-cov"]
+python-versions = ">=3.7"
 
 [[package]]
 name = "pyasn1"
@@ -256,21 +223,8 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 six = ">=1.5"
 
 [[package]]
-name = "python-lambda-4dn"
-version = "0.12.3"
-description = "FORKED for 4dn-dcic. Use to package and deploy lambda functions."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-boto3 = ">=1.7.42"
-botocore = ">=1.10.42"
-docutils = ">=0.14"
-
-[[package]]
 name = "pytz"
-version = "2021.3"
+version = "2022.1"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
@@ -294,7 +248,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
 name = "requests"
-version = "2.26.0"
+version = "2.27.1"
 description = "Python HTTP for Humans."
 category = "main"
 optional = false
@@ -334,7 +288,7 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "s3transfer"
-version = "0.5.0"
+version = "0.5.2"
 description = "An Amazon S3 Transfer Manager"
 category = "main"
 optional = false
@@ -364,7 +318,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "soupsieve"
-version = "2.3.1"
+version = "2.3.2.post1"
 description = "A modern CSS selector implementation for Beautiful Soup."
 category = "main"
 optional = false
@@ -388,34 +342,6 @@ docs = ["sphinx", "twisted"]
 tests = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "simplejson", "python-rapidjson"]
 
 [[package]]
-name = "tibanna"
-version = "1.8.1"
-description = "Tibanna runs portable pipelines (in CWL/WDL) on the AWS Cloud."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Benchmark-4dn = ">=0.5.8"
-boto3 = ">=1.9.0"
-botocore = ">=1.12.1"
-python-lambda-4dn = "0.12.3"
-requests = ">=2.22.0"
-urllib3 = ">=1.24"
-
-[[package]]
-name = "tibanna-ff"
-version = "0.23.1"
-description = "Tibanna runs portable pipelines (in CWL/WDL) on the AWS Cloud."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-dcicutils = ">=2.3.1"
-tibanna = ">=1.8.1"
-
-[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -425,32 +351,32 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "typing-extensions"
-version = "4.0.0"
-description = "Backported and Experimental Type Hints for Python 3.6+"
+version = "4.2.0"
+description = "Backported and Experimental Type Hints for Python 3.7+"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [[package]]
 name = "urllib3"
-version = "1.26.7"
+version = "1.26.9"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
 [package.extras]
-brotli = ["brotlipy (>=0.6.0)"]
+brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
 secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "waitress"
-version = "2.0.0"
+version = "2.1.1"
 description = "Waitress WSGI server"
 category = "main"
 optional = false
-python-versions = ">=3.6.0"
+python-versions = ">=3.7.0"
 
 [package.extras]
 docs = ["Sphinx (>=1.8.1)", "docutils", "pylons-sphinx-themes (>=1.0.9)"]
@@ -470,13 +396,14 @@ testing = ["pytest (>=3.1.0)", "coverage", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "websocket-client"
-version = "1.2.1"
+version = "1.3.2"
 description = "WebSocket client for Python with low level API options"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.extras]
+docs = ["Sphinx (>=3.4)", "sphinx-rtd-theme (>=0.5)"]
 optional = ["python-socks", "wsaccel"]
 test = ["websockets"]
 
@@ -500,8 +427,8 @@ tests = ["nose (<1.3.0)", "coverage", "mock", "pastedeploy", "wsgiproxy2", "pyqu
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.6.10,<3.7"
-content-hash = "a5b0c93771fc64c68356a25fad1e82c00cddb015fff619559c311ed972c18255"
+python-versions = ">=3.7,<3.10"
+content-hash = "9deddb5dafd19d31eabc3623e4bf1c2b79ad111b467d05118cde79a224b69c0e"
 
 [metadata.files]
 aws-requests-auth = [
@@ -509,41 +436,36 @@ aws-requests-auth = [
     {file = "aws_requests_auth-0.4.3-py2.py3-none-any.whl", hash = "sha256:646bc37d62140ea1c709d20148f5d43197e6bd2d63909eb36fa4bb2345759977"},
 ]
 awscli = [
-    {file = "awscli-1.22.15-py3-none-any.whl", hash = "sha256:1f92fb252f23547e27ab17cafb13bb0d39a5ac1722004c422d81c8ef5b68c41a"},
-    {file = "awscli-1.22.15.tar.gz", hash = "sha256:b778023369274dc2df40d419adbcd1b3a3316ab5373d6b71d9438cca23c6cb92"},
+    {file = "awscli-1.24.3-py3-none-any.whl", hash = "sha256:ce0c5117232a43cc61b330b27ca69956e9206be41ed81c4b0106916fe784cbdb"},
+    {file = "awscli-1.24.3.tar.gz", hash = "sha256:775bff9e4f55dc9882ccbbcec8d66625e95d058269f0dee16f432953dece38a7"},
 ]
 beautifulsoup4 = [
-    {file = "beautifulsoup4-4.10.0-py3-none-any.whl", hash = "sha256:9a315ce70049920ea4572a4055bc4bd700c940521d36fc858205ad4fcde149bf"},
-    {file = "beautifulsoup4-4.10.0.tar.gz", hash = "sha256:c23ad23c521d818955a4151a67d81580319d4bf548d3d49f4223ae041ff98891"},
-]
-benchmark-4dn = [
-    {file = "Benchmark-4dn-0.5.15.tar.gz", hash = "sha256:941ca3893cacf6ed96e9f10ceeec3477455acabc07c4cdcaf453b51ad9c51ca8"},
-    {file = "Benchmark_4dn-0.5.15-py3-none-any.whl", hash = "sha256:bb40b54691229837cdc320ea92e554f046e96349c9d62beafd82faf73777a610"},
-    {file = "Benchmark_4dn-0.5.15-py3.6.egg", hash = "sha256:3db398268fe2f4524584bbec521fe57e73eba0733de08c06a28806fea178c480"},
+    {file = "beautifulsoup4-4.11.1-py3-none-any.whl", hash = "sha256:58d5c3d29f5a36ffeb94f02f0d786cd53014cf9b3b3951d42e0080d8a9498d30"},
+    {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
 ]
 boto3 = [
-    {file = "boto3-1.20.15-py3-none-any.whl", hash = "sha256:0684825d74ad41675279b9bbb725b8acbf4c5ae299b2e426c93d98e16bc6c473"},
-    {file = "boto3-1.20.15.tar.gz", hash = "sha256:dd763ead8541688d7ed4641414c236b592672e990dbea5e114ca56b8f42a181c"},
+    {file = "boto3-1.23.3-py3-none-any.whl", hash = "sha256:5f27eec9b0a43edbfb3ed5e748837b10219a972f0728fecd78f84ec3629f2092"},
+    {file = "boto3-1.23.3.tar.gz", hash = "sha256:9d5ce5ae3ddd4429cf752efe7c9f39691db6c85b6b5f1cfc8861b8f23b72b67a"},
 ]
 botocore = [
-    {file = "botocore-1.23.15-py3-none-any.whl", hash = "sha256:6ae8ef3d86009c71d8aeef19e37b7042f008ddc60128f469ad495bcd2c5a615e"},
-    {file = "botocore-1.23.15.tar.gz", hash = "sha256:0d66edd9e2bbeb430bc71cbf1420afa1d9a07a5e31c9eb1ff7874968bd2b011a"},
+    {file = "botocore-1.26.3-py3-none-any.whl", hash = "sha256:869308e29c1e8a9baa3e2fc336a1293e098855e34ea77c035dc4194a96316688"},
+    {file = "botocore-1.26.3.tar.gz", hash = "sha256:f83c5cd7b3e1889aabf2fcf7926ddafc41f249a29f76f37cdb9e8680ac9b5af4"},
 ]
 certifi = [
-    {file = "certifi-2021.10.8-py2.py3-none-any.whl", hash = "sha256:d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569"},
-    {file = "certifi-2021.10.8.tar.gz", hash = "sha256:78884e7c1d4b00ce3cea67b44566851c4343c120abd683433ce934a68ea58872"},
+    {file = "certifi-2022.5.18-py3-none-any.whl", hash = "sha256:8d15a5a7fde18536a249c49e07e8e462b8fc13de21b3c80e8a68315dfa227c99"},
+    {file = "certifi-2022.5.18.tar.gz", hash = "sha256:6ae10321df3e464305a46e997da41ea56c1d311fb9ff1dd4e04d6f14653ec63a"},
 ]
 charset-normalizer = [
-    {file = "charset-normalizer-2.0.8.tar.gz", hash = "sha256:735e240d9a8506778cd7a453d97e817e536bb1fc29f4f6961ce297b9c7a917b0"},
-    {file = "charset_normalizer-2.0.8-py3-none-any.whl", hash = "sha256:83fcdeb225499d6344c8f7f34684c2981270beacc32ede2e669e94f7fa544405"},
+    {file = "charset-normalizer-2.0.12.tar.gz", hash = "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597"},
+    {file = "charset_normalizer-2.0.12-py3-none-any.whl", hash = "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"},
 ]
 colorama = [
-    {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
-    {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
+    {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 dcicutils = [
-    {file = "dcicutils-3.2.1-py3-none-any.whl", hash = "sha256:87e19bfa32950888dfebcb9d20ac9cc18968a1b607706faa584845e134a85efd"},
-    {file = "dcicutils-3.2.1.tar.gz", hash = "sha256:af1da5e8dcf36edd3bc6945d6bd76e8a81429ec207f9a0579528cd3a42312309"},
+    {file = "dcicutils-3.13.0-py3-none-any.whl", hash = "sha256:01e403cb6ca67f54bb17625632d01d54a576dcaec85c4ac33dff9931463e756e"},
+    {file = "dcicutils-3.13.0.tar.gz", hash = "sha256:dae2239705b23ebcce05a2a20f2a355b3a5ab0be62f25c5fba9dea02dfffdb5e"},
 ]
 docker = [
     {file = "docker-4.4.4-py2.py3-none-any.whl", hash = "sha256:f3607d5695be025fa405a12aca2e5df702a57db63790c73b927eb6a94aac60af"},
@@ -563,25 +485,16 @@ gitdb = [
     {file = "gitdb-4.0.9.tar.gz", hash = "sha256:bac2fd45c0a1c9cf619e63a90d62bdc63892ef92387424b855792a6cabe789aa"},
 ]
 gitpython = [
-    {file = "GitPython-3.1.20-py3-none-any.whl", hash = "sha256:b1e1c269deab1b08ce65403cf14e10d2ef1f6c89e33ea7c5e5bb0222ea593b8a"},
-    {file = "GitPython-3.1.20.tar.gz", hash = "sha256:df0e072a200703a65387b0cfdf0466e3bab729c0458cf6b7349d0e9877636519"},
+    {file = "GitPython-3.1.27-py3-none-any.whl", hash = "sha256:5b68b000463593e05ff2b261acff0ff0972df8ab1b70d3cdbd41b546c8b8fc3d"},
+    {file = "GitPython-3.1.27.tar.gz", hash = "sha256:1c885ce809e8ba2d88a29befeb385fcea06338d3640712b59ca623c220bb5704"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
     {file = "idna-3.3.tar.gz", hash = "sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d"},
 ]
 jmespath = [
-    {file = "jmespath-0.10.0-py2.py3-none-any.whl", hash = "sha256:cdf6525904cc597730141d61b36f2e4b8ecc257c420fa2f4549bac2c2d0cb72f"},
-    {file = "jmespath-0.10.0.tar.gz", hash = "sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"},
-]
-magma-suite = [
-    {file = "magma-suite-0.2.8.tar.gz", hash = "sha256:3e9c54f365c0fc483c558851ba51bd99f9950678da610824326591c35784abad"},
-    {file = "magma_suite-0.2.8-py3-none-any.whl", hash = "sha256:1104e7f4dd9cfd803986ce2fd37e5fae5279f0ddc8496470521fb0dccce2a603"},
-    {file = "magma_suite-0.2.8-py3.7.egg", hash = "sha256:a649f5d4255633316694dcef209ddfcffa5e95aaaab10c3587a48cc2e10bff02"},
-]
-mock = [
-    {file = "mock-4.0.3-py3-none-any.whl", hash = "sha256:122fcb64ee37cfad5b3f48d7a7d51875d7031aaf3d8be7c42e2bee25044eee62"},
-    {file = "mock-4.0.3.tar.gz", hash = "sha256:7d3fbbde18228f4ff2f1f119a45cdffa458b4c0dee32eb4d2bb2f82554bac7bc"},
+    {file = "jmespath-1.0.0-py3-none-any.whl", hash = "sha256:e8dcd576ed616f14ec02eed0005c85973b5890083313860136657e24784e4c04"},
+    {file = "jmespath-1.0.0.tar.gz", hash = "sha256:a490e280edd1f57d6de88636992d05b71e97d69a26a19f058ecf7d304474bf5e"},
 ]
 pyasn1 = [
     {file = "pyasn1-0.4.8-py2.4.egg", hash = "sha256:fec3e9d8e36808a28efb59b489e4528c10ad0f480e57dcc32b4de5c9d8c9fdf3"},
@@ -602,14 +515,9 @@ python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
-python-lambda-4dn = [
-    {file = "python-lambda-4dn-0.12.3.tar.gz", hash = "sha256:41765ea05224c035e146c89d60ef23d0d2c043ccc79e380cbeae60143547b1dc"},
-    {file = "python_lambda_4dn-0.12.3-py2.py3-none-any.whl", hash = "sha256:a87fd330fcf6702165904dbe884610df5bf029c55cd2cc176d22f788b04a5f21"},
-    {file = "python_lambda_4dn-0.12.3-py3.6.egg", hash = "sha256:1a93754ef6ca05d2aa9bcc63c9dbc9256657ee89e637f4fef5989e144836cb91"},
-]
 pytz = [
-    {file = "pytz-2021.3-py2.py3-none-any.whl", hash = "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c"},
-    {file = "pytz-2021.3.tar.gz", hash = "sha256:acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3fcd88dcef4f1326"},
+    {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
+    {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
 ]
 pywin32 = [
     {file = "pywin32-227-cp27-cp27m-win32.whl", hash = "sha256:371fcc39416d736401f0274dd64c2302728c9e034808e37381b5e1b22be4a6b0"},
@@ -657,8 +565,8 @@ pyyaml = [
     {file = "PyYAML-5.4.1.tar.gz", hash = "sha256:607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e"},
 ]
 requests = [
-    {file = "requests-2.26.0-py2.py3-none-any.whl", hash = "sha256:6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"},
-    {file = "requests-2.26.0.tar.gz", hash = "sha256:b8aa58f8cf793ffd8782d3d8cb19e66ef36f7aba4353eec859e74678b01b07a7"},
+    {file = "requests-2.27.1-py2.py3-none-any.whl", hash = "sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d"},
+    {file = "requests-2.27.1.tar.gz", hash = "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61"},
 ]
 rfc3986 = [
     {file = "rfc3986-1.5.0-py2.py3-none-any.whl", hash = "sha256:a86d6e1f5b1dc238b218b012df0aa79409667bb209e58da56d0b94704e712a97"},
@@ -669,8 +577,8 @@ rsa = [
     {file = "rsa-4.7.2.tar.gz", hash = "sha256:9d689e6ca1b3038bc82bf8d23e944b6b6037bc02301a574935b2dd946e0353b9"},
 ]
 s3transfer = [
-    {file = "s3transfer-0.5.0-py3-none-any.whl", hash = "sha256:9c1dc369814391a6bda20ebbf4b70a0f34630592c9aa520856bf384916af2803"},
-    {file = "s3transfer-0.5.0.tar.gz", hash = "sha256:50ed823e1dc5868ad40c8dc92072f757aa0e653a192845c94a3b676f4a62da4c"},
+    {file = "s3transfer-0.5.2-py3-none-any.whl", hash = "sha256:7a6f4c4d1fdb9a2b640244008e142cbc2cd3ae34b386584ef044dd0f27101971"},
+    {file = "s3transfer-0.5.2.tar.gz", hash = "sha256:95c58c194ce657a5f4fb0b9e60a84968c808888aed628cd98ab8771fe1db98ed"},
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
@@ -681,46 +589,36 @@ smmap = [
     {file = "smmap-5.0.0.tar.gz", hash = "sha256:c840e62059cd3be204b0c9c9f74be2c09d5648eddd4580d9314c3ecde0b30936"},
 ]
 soupsieve = [
-    {file = "soupsieve-2.3.1-py3-none-any.whl", hash = "sha256:1a3cca2617c6b38c0343ed661b1fa5de5637f257d4fe22bd9f1338010a1efefb"},
-    {file = "soupsieve-2.3.1.tar.gz", hash = "sha256:b8d49b1cd4f037c7082a9683dfa1801aa2597fb11c3a1155b7a5b94829b4f1f9"},
+    {file = "soupsieve-2.3.2.post1-py3-none-any.whl", hash = "sha256:3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759"},
+    {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
 ]
 structlog = [
     {file = "structlog-19.2.0-py2.py3-none-any.whl", hash = "sha256:6640e6690fc31d5949bc614c1a630464d3aaa625284aeb7c6e486c3010d73e12"},
     {file = "structlog-19.2.0.tar.gz", hash = "sha256:4287058cf4ce1a59bc5dea290d6386d37f29a37529c9a51cdf7387e51710152b"},
-]
-tibanna = [
-    {file = "tibanna-1.8.1-py3-none-any.whl", hash = "sha256:5b2c7d9c9e311c6c83929e3537b1cc5ff0e06340ddbfdff31a9047ad315c1c22"},
-    {file = "tibanna-1.8.1-py3.6.egg", hash = "sha256:1ad47a9ae1736649424ef7bc0ecffeb2eef9385b331c37eb54752b054cc584f8"},
-    {file = "tibanna-1.8.1.tar.gz", hash = "sha256:b27e1ccdf785dfe5d491398452bda5651252a3628fa7fe8e4ad1bfc3b5a7a2b7"},
-]
-tibanna-ff = [
-    {file = "tibanna_ff-0.23.1-py3-none-any.whl", hash = "sha256:c08095cf35e26bbc25c1e4d2cffb5376c067968385d321b95ed11de34e745590"},
-    {file = "tibanna_ff-0.23.1-py3.6.egg", hash = "sha256:812747a5df61b9104caec539ae1dd4adb5e626c034fe93ba2fab3f395b132480"},
-    {file = "tibanna_ff-0.23.1.tar.gz", hash = "sha256:386bb052584db40e97fea46f2c9da0ff8596e2e2d3e0a5e0f7010ccd8c36f384"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
 typing-extensions = [
-    {file = "typing_extensions-4.0.0-py3-none-any.whl", hash = "sha256:829704698b22e13ec9eaf959122315eabb370b0884400e9818334d8b677023d9"},
-    {file = "typing_extensions-4.0.0.tar.gz", hash = "sha256:2cdf80e4e04866a9b3689a51869016d36db0814d84b8d8a568d22781d45d27ed"},
+    {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
+    {file = "typing_extensions-4.2.0.tar.gz", hash = "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"},
 ]
 urllib3 = [
-    {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},
-    {file = "urllib3-1.26.7.tar.gz", hash = "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece"},
+    {file = "urllib3-1.26.9-py2.py3-none-any.whl", hash = "sha256:44ece4d53fb1706f667c9bd1c648f5469a2ec925fcf3a776667042d645472c14"},
+    {file = "urllib3-1.26.9.tar.gz", hash = "sha256:aabaf16477806a5e1dd19aa41f8c2b7950dd3c746362d7e3223dbe6de6ac448e"},
 ]
 waitress = [
-    {file = "waitress-2.0.0-py3-none-any.whl", hash = "sha256:29af5a53e9fb4e158f525367678b50053808ca6c21ba585754c77d790008c746"},
-    {file = "waitress-2.0.0.tar.gz", hash = "sha256:69e1f242c7f80273490d3403c3976f3ac3b26e289856936d1f620ed48f321897"},
+    {file = "waitress-2.1.1-py3-none-any.whl", hash = "sha256:c549f5b2b4afd44d9d97d7cec79f3ef581e25d832827f415dc175327af674aa8"},
+    {file = "waitress-2.1.1.tar.gz", hash = "sha256:e2e60576cf14a1539da79f7b7ee1e79a71e64f366a0b47db54a15e971f57bb16"},
 ]
 webob = [
     {file = "WebOb-1.8.7-py2.py3-none-any.whl", hash = "sha256:73aae30359291c14fa3b956f8b5ca31960e420c28c1bec002547fb04928cf89b"},
     {file = "WebOb-1.8.7.tar.gz", hash = "sha256:b64ef5141be559cfade448f044fa45c2260351edcb6a8ef6b7e00c7dcef0c323"},
 ]
 websocket-client = [
-    {file = "websocket-client-1.2.1.tar.gz", hash = "sha256:8dfb715d8a992f5712fff8c843adae94e22b22a99b2c5e6b0ec4a1a981cc4e0d"},
-    {file = "websocket_client-1.2.1-py2.py3-none-any.whl", hash = "sha256:0133d2f784858e59959ce82ddac316634229da55b498aac311f1620567a710ec"},
+    {file = "websocket-client-1.3.2.tar.gz", hash = "sha256:50b21db0058f7a953d67cc0445be4b948d7fc196ecbeb8083d68d94628e4abf6"},
+    {file = "websocket_client-1.3.2-py3-none-any.whl", hash = "sha256:722b171be00f2b90e1d4fb2f2b53146a536ca38db1da8ff49c972a4e1365d0ef"},
 ]
 webtest = [
     {file = "WebTest-2.0.35-py2.py3-none-any.whl", hash = "sha256:44ddfe99b5eca4cf07675e7222c81dd624d22f9a26035d2b93dc8862dc1153c6"},
