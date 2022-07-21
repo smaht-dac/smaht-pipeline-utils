@@ -58,8 +58,6 @@
                 }
             }
         }
-
-
     },
     'required': ['name', 'description', 'input', 'workflows'],
 
