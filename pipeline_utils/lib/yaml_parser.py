@@ -108,8 +108,8 @@ class YamlWfl(object):
         wfl_json['name'] = self.name + '_' + VERSION
         wfl_json['title'] = getattr(self, 'title', self.name.replace('_', ' ')) + ', ' + VERSION
         wfl_json['aliases'] = [PROJECT + ':' + wfl_json['name']]
-        wfl_json['institution'] = INSTITUTION
-        wfl_json['project'] = PROJECT
+        wfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
+        wfl_json['project'] = '/projects/' + PROJECT + '/'
         wfl_json['description'] = self.description
         wfl_json['software'] = getattr(self, 'software', [])
         wfl_json['arguments'] = self._arguments_input() + self._arguments_output()
@@ -203,8 +203,8 @@ class YamlMWfl(object):
         metawfl_json['version'] = VERSION # version
         metawfl_json['title'] = getattr(self, 'title', self.name.replace('_', ' ')) + ', ' + VERSION
         metawfl_json['aliases'] = [PROJECT + ':' + self.name + '_' + VERSION]
-        metawfl_json['institution'] = INSTITUTION
-        metawfl_json['project'] = PROJECT
+        metawfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
+        metawfl_json['project'] = '/projects/' + PROJECT + '/'
         metawfl_json['description'] = self.description
         metawfl_json['input'] = self._arguments(self.input)
         metawfl_json['workflows'] = self._workflows(VERSION, PROJECT)
@@ -248,8 +248,8 @@ class YamlSftwr(object):
 
         # common metadata
         sftwr_json['name'] = self.name
-        sftwr_json['institution'] = INSTITUTION
-        sftwr_json['project'] = PROJECT
+        sftwr_json['institution'] = '/institutions/' + INSTITUTION + '/'
+        sftwr_json['project'] = '/projects/' + PROJECT + '/'
 
         if getattr(self, 'version', None):
             sftwr_json['version'] = self.version
@@ -307,8 +307,8 @@ class YamlRef(object):
         ref_json = {}
 
         # common metadata
-        ref_json['institution'] = INSTITUTION
-        ref_json['project'] = PROJECT
+        ref_json['institution'] = '/institutions/' + INSTITUTION + '/'
+        ref_json['project'] = '/projects/' + PROJECT + '/'
         ref_json['description'] = self.description
         ref_json['file_format'] = self.format
         ref_json['aliases'] = [PROJECT + ':' + self.name + '_' + self.version]
@@ -356,8 +356,8 @@ class YamlFrmt(object):
         # common metadata
         frmt_json['file_format'] = self.name
         frmt_json['aliases'] = [self.name]
-        frmt_json['institution'] = INSTITUTION
-        frmt_json['project'] = PROJECT
+        frmt_json['institution'] = '/institutions/' + INSTITUTION + '/'
+        frmt_json['project'] = '/projects/' + PROJECT + '/'
         frmt_json['description'] = self.description
         frmt_json['standard_file_extension'] = self.extension
         frmt_json['valid_item_types'] = getattr(self, 'file_types', ['FileReference', 'FileProcessed'])

@@ -2,10 +2,9 @@
 
 ################################################
 #
-#   deploy_pipeline, from Yaml format
+#   pipeline_deploy, from Yaml format
 #
 #   Michele Berselli - berselli.michele@gmail.com
-#   Phil Grayson - phil.d.grayson@gmail.com
 #
 ################################################
 
@@ -49,7 +48,7 @@ def _post_patch_routine(mdata_json, type, ff_key, verbose=False, debug=False):
         sys.stdout.write('\n\n')
 
 
-def _post_patch_software(ff_key, repo, project_id, institution_id,
+def _post_patch_software(ff_key, repo, project, institution,
                          verbose, debug, filepath='portal_objects/software.yaml'):
     """
         routine to post | patch software
@@ -64,14 +63,14 @@ def _post_patch_software(ff_key, repo, project_id, institution_id,
         yamlsftwr = yaml_parser.YamlSftwr(d)
         # creating json object
         d_ = yamlsftwr.to_json(
-                    INSTITUTION=institution_id,
-                    PROJECT=project_id
+                    INSTITUTION=institution,
+                    PROJECT=project
                     )
         # post patch
         _post_patch_routine(d_, 'Software', ff_key, verbose, debug)
 
 
-def _post_patch_file_format(ff_key, repo, project_id, institution_id,
+def _post_patch_file_format(ff_key, repo, project, institution,
                             verbose, debug, filepath='portal_objects/file_format.yaml'):
     """
         routine to post | patch file format
@@ -86,14 +85,14 @@ def _post_patch_file_format(ff_key, repo, project_id, institution_id,
         yamlfrmt = yaml_parser.YamlFrmt(d)
         # creating json object
         d_ = yamlfrmt.to_json(
-                    INSTITUTION=institution_id,
-                    PROJECT=project_id
+                    INSTITUTION=institution,
+                    PROJECT=project
                     )
         # post patch
         _post_patch_routine(d_, 'FileFormat', ff_key, verbose, debug)
 
 
-def _post_patch_file_reference(ff_key, repo, project_id, institution_id,
+def _post_patch_file_reference(ff_key, repo, project, institution,
                                verbose, debug, filepath='portal_objects/file_reference.yaml'):
     """
         routine to post | patch file reference
@@ -108,14 +107,14 @@ def _post_patch_file_reference(ff_key, repo, project_id, institution_id,
         yamlref = yaml_parser.YamlRef(d)
         # creating json object
         d_ = yamlref.to_json(
-                    INSTITUTION=institution_id,
-                    PROJECT=project_id
+                    INSTITUTION=institution,
+                    PROJECT=project
                     )
         # post patch
         _post_patch_routine(d_, 'FileReference', ff_key, verbose, debug)
 
 
-def _post_patch_workflow(ff_key, repo, project_id, institution_id,
+def _post_patch_workflow(ff_key, repo, project, institution,
                          version, pipeline, region, wfl_bucket,
                          verbose, debug, filepath='portal_objects/workflows'):
     """
@@ -135,15 +134,15 @@ def _post_patch_workflow(ff_key, repo, project_id, institution_id,
                 # creating json object
                 d_ = yamlwfl.to_json(
                             VERSION=version,
-                            INSTITUTION=institution_id,
-                            PROJECT=project_id,
+                            INSTITUTION=institution,
+                            PROJECT=project,
                             WFLBUCKET_URL=wflbucket_url
                             )
                 # post patch
                 _post_patch_routine(d_, 'Workflow', ff_key, verbose, debug)
 
 
-def _post_patch_metaworkflow(ff_key, repo, project_id, institution_id,
+def _post_patch_metaworkflow(ff_key, repo, project, institution,
                              version, verbose, debug,
                              filepath='portal_objects/metaworkflows'):
     """
@@ -162,8 +161,8 @@ def _post_patch_metaworkflow(ff_key, repo, project_id, institution_id,
                 # creating json object
                 d_ = yamlmwfl.to_json(
                             VERSION=version,
-                            INSTITUTION=institution_id,
-                            PROJECT=project_id
+                            INSTITUTION=institution,
+                            PROJECT=project
                             )
                 # post patch
                 _post_patch_routine(d_, 'MetaWorkflow', ff_key, verbose, debug)
@@ -273,7 +272,7 @@ def _post_patch_ecr(version, repo, account, region, filepath='dockerfiles'):
 #
 ################################################
 def _post_patch_repo(ff_key, repo, wfl_bucket, account, region,
-                     project_id, institution_id,
+                     project, institution,
                      post_software, post_file_format, post_file_reference,
                      post_workflow, post_metaworkflow, post_wfl, post_ecr,
                      sentieon_server, verbose, debug,
@@ -294,27 +293,27 @@ def _post_patch_repo(ff_key, repo, wfl_bucket, account, region,
 
     # Software
     if post_software:
-        _post_patch_software(ff_key, repo, project_id,
-                             institution_id, verbose, debug)
+        _post_patch_software(ff_key, repo, project,
+                             institution, verbose, debug)
 
     # File format
     if post_file_format:
-        _post_patch_file_format(ff_key, repo, project_id,
-                                institution_id, verbose, debug)
+        _post_patch_file_format(ff_key, repo, project,
+                                institution, verbose, debug)
 
     # File reference
     if post_file_reference:
-        _post_patch_file_reference(ff_key, repo, project_id,
-                                   institution_id, verbose, debug)
+        _post_patch_file_reference(ff_key, repo, project,
+                                   institution, verbose, debug)
 
     # Workflow
     if post_workflow:
-        _post_patch_workflow(ff_key, repo, project_id, institution_id,
+        _post_patch_workflow(ff_key, repo, project, institution,
                              version, pipeline, region, wfl_bucket, verbose, debug)
 
     # Metaworkflow
     if post_metaworkflow:
-        _post_patch_metaworkflow(ff_key, repo, project_id, institution_id,
+        _post_patch_metaworkflow(ff_key, repo, project, institution,
                                  version, verbose, debug)
 
     # Wfl
@@ -372,12 +371,12 @@ def main(args):
             error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument\n'
             sys.exit(error)
 
-    if not args.project_id:
+    if not args.project:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
             error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project-id argument\n'
             sys.exit(error)
 
-    if not args.institution_id:
+    if not args.institution:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
             error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution-id argument\n'
             sys.exit(error)
@@ -385,7 +384,7 @@ def main(args):
     # Run patching for repo
     for repo in args.repos:
         _post_patch_repo(ff_key, repo, args.wfl_bucket, args.account, args.region,
-                         args.project_id, args.institution_id,
+                         args.project, args.institution,
                          args.post_software, args.post_file_format, args.post_file_reference,
                          args.post_workflow, args.post_metaworkflow,
                          args.post_wfl, args.post_ecr, args.sentieon_server,

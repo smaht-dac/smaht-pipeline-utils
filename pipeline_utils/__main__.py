@@ -58,33 +58,34 @@ def main(args=None):
                                                              default='0.0.0.0:0')
 
     # Add pipeline_deploy to subparsers
-    pipeline_deploy_parser = subparsers.add_parser('pipeline_deploy', description='Utility to automatically deploy a pipeline from a target repository',
-                                                    help='Utility to automatically deploy a pipeline from a target repository')
+    pipeline_deploy_parser = subparsers.add_parser('pipeline_deploy', description='Utility to automatically deploy pipeline components from a target repository',
+                                                    help='Utility to automatically deploy pipeline components from a target repository')
 
-    pipeline_deploy_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
-    pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
-    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='path to file with key dicts for portal auth in json format',
+    pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
+    pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repos to deploy, must follow expected structure (see docs)')
+    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='Path to file with key dicts for portal auth in json format (see docs)',
                                                            default='~/.cgap-keydicts.json')
-    pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='cwl-bucket to use for deployment')
-    pipeline_deploy_parser.add_argument('--account', required=False, help='account to use for deployment')
-    pipeline_deploy_parser.add_argument('--region', required=False, help='region to use for deployment')
-    pipeline_deploy_parser.add_argument('--project-id', required=False, help='uuid for project to use for deployment',
-                                                          default='12a92962-8265-4fc0-b2f8-cf14f05db58b')
-    pipeline_deploy_parser.add_argument('--institution-id', required=False, help='uuid for institution to use for deployment',
-                                                              default='828cd4fe-ebb0-4b36-a94a-d2e3a36cc989')
+    pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for deployment of Workflow Description files')
+    pipeline_deploy_parser.add_argument('--account', required=False, help='Account to use for deployment')
+    pipeline_deploy_parser.add_argument('--region', required=False, help='Region to use for deployment')
+    pipeline_deploy_parser.add_argument('--project', required=False, help='Project to use for deployment',
+                                                          default='cgap-core')
+    pipeline_deploy_parser.add_argument('--institution', required=False, help='Institution to use for deployment',
+                                                              default='hms-dbmi')
 
-    pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='post | patch Software objects')
-    pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='post | patch FileFormat objects')
-    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='post | patch FileReference objects')
-    pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='post | patch Workflow objects')
-    pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='post | patch MetaWorkflow objects')
-    pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='upload cwl files')
-    pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='create docker images and push to ECR')
-    pipeline_deploy_parser.add_argument('--verbose', action='store_true')
-    pipeline_deploy_parser.add_argument('--debug', action='store_true')
+    pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')
+    pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='POST|PATCH FileFormat objects')
+    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='POST|PATCH FileReference objects')
+    pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='POST|PATCH Workflow objects')
+    pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='POST|PATCH MetaWorkflow objects')
+    pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='Upload Workflow Description files (.cwl, .wdl)')
+    pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='Build Docker images and push to ECR')
+
+    pipeline_deploy_parser.add_argument('--verbose', action='store_true', help='Print the json structure for objects')
+    pipeline_deploy_parser.add_argument('--debug', action='store_true', help='Turn off POST|PATCH action')
 
     # cgap-specific
-    pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
+    pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='Address for Sentieon license server',
                                                              default='0.0.0.0:0')
 
     # Subparsers map
