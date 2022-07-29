@@ -17,6 +17,7 @@ import argparse
 
 # Commands
 from pipeline_utils import deploy_pipeline
+from pipeline_utils import pipeline_deploy
 
 
 def main(args=None):
@@ -27,9 +28,9 @@ def main(args=None):
     parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for cgap-pipeline')
     subparsers = parser.add_subparsers(dest='func', metavar="<command>")
 
-    # Add deploy_pipeline to subparsers
-    deploy_pipeline_parser = subparsers.add_parser('deploy_pipeline', description='Utility to automatically deploy a pipeline from a target repository',
-                                                help='Utility to automatically deploy a pipeline from a target repository')
+    # Add deploy_pipeline to subparsers, LEGACY
+    deploy_pipeline_parser = subparsers.add_parser('deploy_pipeline', description='Utility to automatically deploy a pipeline from a target repository, LEGACY',
+                                                help='Utility to automatically deploy a pipeline from a target repository, LEGACY')
 
     deploy_pipeline_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
     deploy_pipeline_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
@@ -56,9 +57,40 @@ def main(args=None):
     deploy_pipeline_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
                                                              default='0.0.0.0:0')
 
+    # Add pipeline_deploy to subparsers
+    pipeline_deploy_parser = subparsers.add_parser('pipeline_deploy', description='Utility to automatically deploy a pipeline from a target repository',
+                                                    help='Utility to automatically deploy a pipeline from a target repository')
+
+    pipeline_deploy_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
+    pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
+    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='path to file with key dicts for portal auth in json format',
+                                                           default='~/.cgap-keydicts.json')
+    pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='cwl-bucket to use for deployment')
+    pipeline_deploy_parser.add_argument('--account', required=False, help='account to use for deployment')
+    pipeline_deploy_parser.add_argument('--region', required=False, help='region to use for deployment')
+    pipeline_deploy_parser.add_argument('--project-id', required=False, help='uuid for project to use for deployment',
+                                                          default='12a92962-8265-4fc0-b2f8-cf14f05db58b')
+    pipeline_deploy_parser.add_argument('--institution-id', required=False, help='uuid for institution to use for deployment',
+                                                              default='828cd4fe-ebb0-4b36-a94a-d2e3a36cc989')
+
+    pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='post | patch Software objects')
+    pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='post | patch FileFormat objects')
+    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='post | patch FileReference objects')
+    pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='post | patch Workflow objects')
+    pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='post | patch MetaWorkflow objects')
+    pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='upload cwl files')
+    pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='create docker images and push to ECR')
+    pipeline_deploy_parser.add_argument('--verbose', action='store_true')
+    pipeline_deploy_parser.add_argument('--debug', action='store_true')
+
+    # cgap-specific
+    pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
+                                                             default='0.0.0.0:0')
+
     # Subparsers map
     subparser_map = {
-                    'deploy_pipeline': deploy_pipeline_parser
+                    'deploy_pipeline': deploy_pipeline_parser, # legacy
+                    'pipeline_deploy': pipeline_deploy_parser
                     }
 
     # Checking arguments
@@ -77,6 +109,8 @@ def main(args=None):
     # Call the right tool
     if args.func == 'deploy_pipeline':
         deploy_pipeline.main(args)
+    elif args.func == 'pipeline_deploy':
+        pipeline_deploy.main(args)
 
 
 if __name__ == "__main__":

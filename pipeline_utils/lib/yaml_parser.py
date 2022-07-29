@@ -2,13 +2,15 @@
 
 import yaml
 
+
 ###############################################################
 #   Functions
 ###############################################################
 def load_yaml(file):
     """
+        return a generator to loaded yaml documents in file
     """
-    with open(file, "r") as stream:
+    with open(file) as stream:
         try:
             for d in yaml.safe_load_all(stream):
                 yield d
@@ -89,13 +91,13 @@ class YamlWfl(object):
 
         return arguments
 
-    def build_workflow(
-                   self,
-                   VERSION='VERSION',
-                   INSTITUTION='INSTITUTION', # alias
-                   PROJECT='PROJECT', # alias
-                   WFLBUCKET_URL='s3://WFLBUCKET/PIPELINE/VERSION',
-                   ):
+    def to_json(
+               self,
+               VERSION='VERSION',
+               INSTITUTION='INSTITUTION', # alias
+               PROJECT='PROJECT', # alias
+               WFLBUCKET_URL='s3://WFLBUCKET/PIPELINE/VERSION',
+               ):
         """
         """
         wfl_json = {}
@@ -186,12 +188,12 @@ class YamlMWfl(object):
 
         return workflows
 
-    def build_metaworkflow(
-                       self,
-                       VERSION='VERSION',
-                       INSTITUTION='INSTITUTION', # alias
-                       PROJECT='PROJECT', # alias
-                       ):
+    def to_json(
+               self,
+               VERSION='VERSION',
+               INSTITUTION='INSTITUTION', # alias
+               PROJECT='PROJECT', # alias
+               ):
         """
         """
         metawfl_json = {}
@@ -208,3 +210,158 @@ class YamlMWfl(object):
         metawfl_json['workflows'] = self._workflows(VERSION, PROJECT)
 
         return metawfl_json
+
+
+###############################################################
+#   YamlSftwr, Yaml Software
+###############################################################
+class YamlSftwr(object):
+
+    def __init__(self, yaml_d):
+        """
+        """
+        for key, val in yaml_d.items():
+            setattr(self, key, val)
+        self._validate()
+
+    def _validate(self):
+        """
+        """
+        try:
+            getattr(self, 'name')
+        except AttributeError as e:
+            raise ValueError('JSON validation error, {0}\n'
+                                .format(e.args[0]))
+
+        if not getattr(self, 'version', None):
+            if not getattr(self, 'commit', None):
+                raise ValueError('JSON validation error, please provide version or commit information\n')
+
+    def to_json(
+               self,
+               INSTITUTION='INSTITUTION', # alias
+               PROJECT='PROJECT', # alias
+               ):
+        """
+        """
+        sftwr_json, version = {}, None
+
+        # common metadata
+        sftwr_json['name'] = self.name
+        sftwr_json['institution'] = INSTITUTION
+        sftwr_json['project'] = PROJECT
+
+        if getattr(self, 'version', None):
+            sftwr_json['version'] = self.version
+            version = self.version
+        else:
+            sftwr_json['commit'] = self.commit
+            version = self.commit
+
+        if getattr(self, 'description', None):
+            sftwr_json['description'] = self.description
+        if getattr(self, 'source_url', None):
+            sftwr_json['source_url'] = self.source_url
+
+        if getattr(self, 'title', None):
+            sftwr_json['title'] = self.title
+        else:
+            sftwr_json['title'] = self.name + ', ' + version
+
+        sftwr_json['aliases'] = [self.name + '_' + version]
+
+        return sftwr_json
+
+
+###############################################################
+#   YamlRef, Yaml FileReference
+###############################################################
+class YamlRef(object):
+
+    def __init__(self, yaml_d):
+        """
+        """
+        for key, val in yaml_d.items():
+            setattr(self, key, val)
+        self._validate()
+
+    def _validate(self):
+        """
+        """
+        try:
+            getattr(self, 'name')
+            getattr(self, 'description')
+            getattr(self, 'format') # file_format
+            getattr(self, 'version')
+        except AttributeError as e:
+            raise ValueError('JSON validation error, {0}\n'
+                                .format(e.args[0]))
+
+    def to_json(
+               self,
+               INSTITUTION='INSTITUTION', # alias
+               PROJECT='PROJECT', # alias
+               ):
+        """
+        """
+        ref_json = {}
+
+        # common metadata
+        ref_json['institution'] = INSTITUTION
+        ref_json['project'] = PROJECT
+        ref_json['description'] = self.description
+        ref_json['file_format'] = self.format
+        ref_json['aliases'] = [PROJECT + ':' + self.name + '_' + self.version]
+        ref_json['extra_files'] = getattr(self, 'secondary_files', [])
+        ref_json['status'] = getattr(self, 'status', None) # this will be used during post/patch,
+                                                           # if None:
+                                                           #    - leave it as is if patch
+                                                           #    - set to uploading if post
+
+        return ref_json
+
+
+###############################################################
+#   YamlFrmt, Yaml Format
+###############################################################
+class YamlFrmt(object):
+
+    def __init__(self, yaml_d):
+        """
+        """
+        for key, val in yaml_d.items():
+            setattr(self, key, val)
+        self._validate()
+
+    def _validate(self):
+        """
+        """
+        try:
+            getattr(self, 'name')
+            getattr(self, 'description')
+            getattr(self, 'extension') # standard_file_extension
+        except AttributeError as e:
+            raise ValueError('JSON validation error, {0}\n'
+                                .format(e.args[0]))
+
+    def to_json(
+               self,
+               INSTITUTION='INSTITUTION', # alias
+               PROJECT='PROJECT', # alias
+               ):
+        """
+        """
+        frmt_json = {}
+
+        # common metadata
+        frmt_json['file_format'] = self.name
+        frmt_json['aliases'] = [self.name]
+        frmt_json['institution'] = INSTITUTION
+        frmt_json['project'] = PROJECT
+        frmt_json['description'] = self.description
+        frmt_json['standard_file_extension'] = self.extension
+        frmt_json['valid_item_types'] = getattr(self, 'file_types', ['FileReference', 'FileProcessed'])
+        frmt_json['extrafile_formats'] = getattr(self, 'secondary_formats', [])
+        frmt_json['status'] = getattr(self, 'status', 'shared')
+
+        return frmt_json
