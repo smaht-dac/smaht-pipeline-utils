@@ -21,3 +21,7 @@
                      #  <status> -> uploading, uploaded
                      #  default is None -> the status will not be updated during patch,
                      #    and set to uploading if post for the first time
+
+    # Required to enable sync with a reference bucket
+    uuid: <uuid4>
+    accession: <accession>

@@ -6,7 +6,6 @@
 #     this is the entry point for command line
 #
 #   Michele Berselli - berselli.michele@gmail.com
-#   Phil Grayson - phil.d.grayson@gmail.com
 #
 ################################################
 
@@ -90,7 +89,7 @@ def main(args=None):
 
     # Subparsers map
     subparser_map = {
-                    'deploy_pipeline': deploy_pipeline_parser, # legacy
+                    'deploy_pipeline': deploy_pipeline_parser, # LEGACY
                     'pipeline_deploy': pipeline_deploy_parser
                     }
 

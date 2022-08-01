@@ -15,7 +15,7 @@ from jsonschema import validate
 from dcicutils import ff_utils, s3_utils
 from pipeline_utils.lib import yaml_parser
 
-# schemas
+# Schemas
 from pipeline_utils.schemas.YamlWfl import YamlWfl_schema
 from pipeline_utils.schemas.YamlMWfl import YamlMWfl_schema
 from pipeline_utils.schemas.YamlSftwr import YamlSftwr_schema
@@ -51,7 +51,7 @@ def _post_patch_routine(mdata_json, type, ff_key, verbose=False, debug=False):
 def _post_patch_software(ff_key, repo, project, institution,
                          verbose, debug, filepath='portal_objects/software.yaml'):
     """
-        routine to post | patch software
+        routine to post | patch Software
     """
     if not os.path.isfile(repo + '/' + filepath): return
 
@@ -73,7 +73,7 @@ def _post_patch_software(ff_key, repo, project, institution,
 def _post_patch_file_format(ff_key, repo, project, institution,
                             verbose, debug, filepath='portal_objects/file_format.yaml'):
     """
-        routine to post | patch file format
+        routine to post | patch FileFormat
     """
     if not os.path.isfile(repo + '/' + filepath): return
 
@@ -95,7 +95,7 @@ def _post_patch_file_format(ff_key, repo, project, institution,
 def _post_patch_file_reference(ff_key, repo, project, institution,
                                verbose, debug, filepath='portal_objects/file_reference.yaml'):
     """
-        routine to post | patch file reference
+        routine to post | patch FileReference
     """
     if not os.path.isfile(repo + '/' + filepath): return
 
@@ -115,12 +115,14 @@ def _post_patch_file_reference(ff_key, repo, project, institution,
 
 
 def _post_patch_workflow(ff_key, repo, project, institution,
-                         version, pipeline, region, wfl_bucket,
+                         version, pipeline, wfl_bucket,
                          verbose, debug, filepath='portal_objects/workflows'):
     """
-        routine to post | patch workflow
+        routine to post | patch Workflow
     """
     if not os.path.isdir(repo + '/' + filepath): return
+
+    wflbucket_url = wfl_bucket + '/' + pipeline + '/' + version
 
     sys.stdout.write('Processing Workflow...\n')
     for fn in os.listdir(repo + '/' + filepath):
@@ -130,7 +132,6 @@ def _post_patch_workflow(ff_key, repo, project, institution,
                 validate(instance=d, schema=YamlWfl_schema)
                 # creating YamlWfl object
                 yamlwfl = yaml_parser.YamlWfl(d)
-                wflbucket_url = wfl_bucket + '/' + pipeline + '/' + version
                 # creating json object
                 d_ = yamlwfl.to_json(
                             VERSION=version,
@@ -146,7 +147,7 @@ def _post_patch_metaworkflow(ff_key, repo, project, institution,
                              version, verbose, debug,
                              filepath='portal_objects/metaworkflows'):
     """
-        routine to post | patch metaworkflow
+        routine to post | patch MetaWorkflow
     """
     if not os.path.isdir(repo + '/' + filepath): return
 
@@ -172,7 +173,7 @@ def _post_patch_wfl(version, repo, pipeline, account,
                     region, wfl_bucket, sentieon_server,
                     filepath='wfl', kms_key_id=None):
     """
-        routine to post | patch wfl
+        routine to post | patch Workflow Description files
     """
     if not os.path.isdir(repo + '/' + filepath): return
 
@@ -185,7 +186,7 @@ def _post_patch_wfl(version, repo, pipeline, account,
         if fn.endswith('.cwl') or fn.endswith('.wdl'):
             # set original file path and path for s3
             file_path = repo + '/' + filepath + '/' + fn
-            s3_path_and_file = pipeline + '/' + version + '/'+ fn
+            s3_path_and_file = pipeline + '/' + version + '/' + fn
 
             # separate workflows, which can be automatically uploaded to s3 without edits ...
             if fn.startswith('workflow'):
@@ -230,7 +231,7 @@ def _post_patch_wfl(version, repo, pipeline, account,
 
 def _post_patch_ecr(version, repo, account, region, filepath='dockerfiles'):
     """
-        routine to build the docker image and push it to ECR
+        routine to build the Docker image and push it to ECR
     """
     if not os.path.isdir(repo + '/' + filepath): return
 
@@ -309,7 +310,7 @@ def _post_patch_repo(ff_key, repo, wfl_bucket, account, region,
     # Workflow
     if post_workflow:
         _post_patch_workflow(ff_key, repo, project, institution,
-                             version, pipeline, region, wfl_bucket, verbose, debug)
+                             version, pipeline, wfl_bucket, verbose, debug)
 
     # Metaworkflow
     if post_metaworkflow:
@@ -373,12 +374,12 @@ def main(args):
 
     if not args.project:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project-id argument\n'
+            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project argument\n'
             sys.exit(error)
 
     if not args.institution:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution-id argument\n'
+            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution argument\n'
             sys.exit(error)
 
     # Run patching for repo

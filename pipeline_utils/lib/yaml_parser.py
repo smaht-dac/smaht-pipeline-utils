@@ -126,6 +126,12 @@ class YamlWfl(object):
             wfl_json['wdl_child_filenames'] = self.runner.get('child', [])
             wfl_json['workflow_language'] = 'wdl'
 
+        # uuid, accession if specified
+        if getattr(self, 'uuid', None):
+            wfl_json['uuid'] = self.uuid
+        if getattr(self, 'accession', None):
+            wfl_json['accession'] = self.accession
+
         return wfl_json
 
 
@@ -209,6 +215,12 @@ class YamlMWfl(object):
         metawfl_json['input'] = self._arguments(self.input)
         metawfl_json['workflows'] = self._workflows(VERSION, PROJECT)
 
+        # uuid, accession if specified
+        if getattr(self, 'uuid', None):
+            metawfl_json['uuid'] = self.uuid
+        if getattr(self, 'accession', None):
+            metawfl_json['accession'] = self.accession
+
         return metawfl_json
 
 
@@ -270,6 +282,12 @@ class YamlSftwr(object):
 
         sftwr_json['aliases'] = [self.name + '_' + version]
 
+        # uuid, accession if specified
+        if getattr(self, 'uuid', None):
+            sftwr_json['uuid'] = self.uuid
+        if getattr(self, 'accession', None):
+            sftwr_json['accession'] = self.accession
+
         return sftwr_json
 
 
@@ -318,6 +336,12 @@ class YamlRef(object):
                                                            #    - leave it as is if patch
                                                            #    - set to uploading if post
 
+        # uuid, accession if specified
+        if getattr(self, 'uuid', None):
+            ref_json['uuid'] = self.uuid
+        if getattr(self, 'accession', None):
+            ref_json['accession'] = self.accession
+
         return ref_json
 
 
@@ -363,5 +387,11 @@ class YamlFrmt(object):
         frmt_json['valid_item_types'] = getattr(self, 'file_types', ['FileReference', 'FileProcessed'])
         frmt_json['extrafile_formats'] = getattr(self, 'secondary_formats', [])
         frmt_json['status'] = getattr(self, 'status', 'shared')
+
+        # uuid, accession if specified
+        if getattr(self, 'uuid', None):
+            frmt_json['uuid'] = self.uuid
+        if getattr(self, 'accession', None):
+            frmt_json['accession'] = self.accession
 
         return frmt_json
