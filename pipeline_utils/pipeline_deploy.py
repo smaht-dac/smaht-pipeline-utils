@@ -28,15 +28,37 @@ def _post_patch_routine(mdata_json, type, ff_key, verbose=False, debug=False):
         routine to do the post | patching action
     """
     if not debug:
-        pass
-        # is_patch = True
+        is_patch = True
         # try:
-        #     ff_utils.get_metadata(mdata_json['uuid'], key=ff_key)
+        #     ff_utils.get_metadata(mdata_json['aliases'][0], key=ff_key)
         # except Exception:
         #     is_patch = False
-        #
+
+        # Exception for uploading of File Reference objects
+        #   status -> uploading, uploaded
+        #   default is None -> the status will not be updated during patch,
+        #     and set to uploading if post for the first time
+        if type == 'FileReference':
+            # main status
+            if mdata_json['status'] == None:
+                if is_patch:
+                    del mdata_json['status']
+                else: # is first time post
+                    mdata_json['status'] = 'uploading'
+
+            # extra_files status
+            extra_files_ = []
+            for ext in mdata_json['extra_files']:
+                ext_ = {
+                    'file_format': ext,
+                    'status': mdata_json.get('status', 'uploaded')
+                }
+                extra_files_.append(ext_)
+            mdata_json['extra_files'] = extra_files_
+        ###########################################################
+
         # if is_patch:
-        #     ff_utils.patch_metadata(mdata_json, mdata_json['uuid'], key=ff_key)
+        #     ff_utils.patch_metadata(mdata_json, mdata_json['aliases'][0], key=ff_key)
         # else:
         #     ff_utils.post_metadata(mdata_json, type, key=ff_key)
 

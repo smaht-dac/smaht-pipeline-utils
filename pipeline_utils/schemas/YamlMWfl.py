@@ -78,7 +78,8 @@ YamlMWfl_schema = {
                 'files': {
                     'type': 'array',
                     'items': {
-                        'type': 'string' # will need to change that to validate the right file format !!!!!
+                        'type': 'string',
+                        'pattern': '.+\@.+' # check for <name>@<version>
                     }
                 },
                 'source': {

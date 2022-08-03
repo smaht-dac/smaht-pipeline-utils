@@ -21,7 +21,7 @@
     title: <string> # Title of the workflow
 
     software: # Software used by the workflow
-      - <software>_<version|commit> # name for the software with version (either version or commit)
+      - <software>@<version|commit> # name for the software with version (either version or commit)
                                     #   Need to match a version for the software defined on the portal
                                     #   See software schema here
                                     #

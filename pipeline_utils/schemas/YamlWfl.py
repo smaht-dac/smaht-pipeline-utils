@@ -49,7 +49,8 @@ YamlWfl_schema = {
             'description': 'List of software used in the Workflow',
             'type': 'array',
             'items': {
-                'type': 'string'
+                'type': 'string',
+                'pattern': '.+\@.+' # check for <name>@<version>
             }
         },
 

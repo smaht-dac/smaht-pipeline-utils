@@ -28,8 +28,9 @@
         # Check https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
         #   for more details
         dimensionality: <integer>
-        files:
-          - <uuid> #[{"file": "1936f246-22e1-45dc-bb5c-9cfd55537fe7"}]
+        files: # This tag allows to specify reference files that are constant for the pipeline
+          - <name>@<version> # name and version of the reference file
+                             #   Need to match a reference file defined on the portal
 
       a_parameter:
         argument_type: parameter.<type>

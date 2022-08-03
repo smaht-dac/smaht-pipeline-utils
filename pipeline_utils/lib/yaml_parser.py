@@ -111,7 +111,7 @@ class YamlWfl(object):
         wfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
         wfl_json['project'] = '/projects/' + PROJECT + '/'
         wfl_json['description'] = self.description
-        wfl_json['software'] = getattr(self, 'software', [])
+        wfl_json['software'] = [s.replace('@', '_') for s in getattr(self, 'software', [])]
         wfl_json['arguments'] = self._arguments_input() + self._arguments_output()
 
         # workflow language
@@ -159,7 +159,7 @@ class YamlMWfl(object):
             raise ValueError('JSON validation error, {0}\n'
                                 .format(e.args[0]))
 
-    def _arguments(self, input):
+    def _arguments(self, input, PROJECT):
         """
         """
         arguments = []
@@ -173,7 +173,24 @@ class YamlMWfl(object):
                 argument_.setdefault('value_type', format)
             for k, v in values.items():
                 if k != 'argument_type':
-                    argument_.setdefault(k, v)
+                    # handle files specifications
+                    #   need to go from file name to dictionary of alias and dimension
+                    #    files:
+                    #        - foo@v1
+                    #        - bar@v3
+                    #   need to convert to:
+                    #    files: [
+                    #        {'file': 'PROJECT:foo_v1', 'dimension': '0'},
+                    #        {'file': 'PROJECT:bar_v3', 'dimension': '1'}
+                    #       ]
+                    if k == 'files':
+                        v_ = []
+                        for i, name_ in enumerate(v):
+                            v_.append({'file': PROJECT + ':' + name_.replace('@', '_'),
+                                       'dimension': str(i)})
+                        argument_.setdefault(k, v_)
+                    else:
+                        argument_.setdefault(k, v)
             arguments.append(argument_)
 
         return arguments
@@ -186,7 +203,7 @@ class YamlMWfl(object):
             workflow_ = {
                 'name': name,
                 'workflow': PROJECT + ':' + name + '_' + VERSION,
-                'input': self._arguments(values['input']),
+                'input': self._arguments(values['input'], PROJECT),
                 'custom_pf_fields': values['output'],
                 'config': values['config']
             }
@@ -212,7 +229,7 @@ class YamlMWfl(object):
         metawfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
         metawfl_json['project'] = '/projects/' + PROJECT + '/'
         metawfl_json['description'] = self.description
-        metawfl_json['input'] = self._arguments(self.input)
+        metawfl_json['input'] = self._arguments(self.input, PROJECT)
         metawfl_json['workflows'] = self._workflows(VERSION, PROJECT)
 
         # uuid, accession if specified
