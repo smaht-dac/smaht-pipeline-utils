@@ -1,9 +1,9 @@
-YamlMWfl_schema = {
+yaml_metaworkflow_schema = {
     ## Schema #########################
     '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YamlMWfl',
-    'title': 'YamlMWfl',
-    'description': 'Schema to validate a Yaml description of a MetaWorkflow',
+    '$id': '/schemas/YAMLMetaWorkflow',
+    'title': 'YAMLMetaWorkflow',
+    'description': 'Schema to validate a YAML description of a MetaWorkflow',
     'type': 'object',
     'properties': {
 

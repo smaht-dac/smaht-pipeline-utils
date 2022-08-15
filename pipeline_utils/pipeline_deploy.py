@@ -2,7 +2,7 @@
 
 ################################################
 #
-#   pipeline_deploy, from Yaml format
+#   pipeline_deploy, from YAML format
 #
 #   Michele Berselli - berselli.michele@gmail.com
 #
@@ -10,27 +10,32 @@
 
 import os, sys, subprocess
 import json
+import glob
 import boto3
-from jsonschema import validate
+import structlog
 from dcicutils import ff_utils, s3_utils
 from pipeline_utils.lib import yaml_parser
 
-# Schemas
-from pipeline_utils.schemas.YamlWfl import YamlWfl_schema
-from pipeline_utils.schemas.YamlMWfl import YamlMWfl_schema
-from pipeline_utils.schemas.YamlSftwr import YamlSftwr_schema
-from pipeline_utils.schemas.YamlRef import YamlRef_schema
-from pipeline_utils.schemas.YamlFrmt import YamlFrmt_schema
+
+###############################################################
+#   Logger
+###############################################################
+logger = structlog.getLogger(__name__)
 
 
-def _post_patch_routine(mdata_json, type, ff_key, verbose=False, debug=False):
+###############################################################
+#   Functions
+###############################################################
+###############################################################
+#   _post_patch_routine
+###############################################################
+def _post_patch_routine(data_json, type, ff_key, verbose=False, debug=False):
     """
-        routine to do the post | patching action
     """
     if not debug:
         is_patch = True
         # try:
-        #     ff_utils.get_metadata(mdata_json['aliases'][0], key=ff_key)
+        #     ff_utils.get_metadata(data_json['aliases'][0], key=ff_key)
         # except Exception:
         #     is_patch = False
 
@@ -40,239 +45,298 @@ def _post_patch_routine(mdata_json, type, ff_key, verbose=False, debug=False):
         #     and set to uploading if post for the first time
         if type == 'FileReference':
             # main status
-            if mdata_json['status'] == None:
+            if data_json['status'] == None:
                 if is_patch:
-                    del mdata_json['status']
+                    del data_json['status']
                 else: # is first time post
-                    mdata_json['status'] = 'uploading'
+                    data_json['status'] = 'uploading'
 
             # extra_files status
             extra_files_ = []
-            for ext in mdata_json['extra_files']:
+            for ext in data_json['extra_files']:
                 ext_ = {
                     'file_format': ext,
-                    'status': mdata_json.get('status', 'uploaded')
+                    'status': data_json.get('status', 'uploaded')
                 }
                 extra_files_.append(ext_)
-            mdata_json['extra_files'] = extra_files_
+            data_json['extra_files'] = extra_files_
         ###########################################################
 
         # if is_patch:
-        #     ff_utils.patch_metadata(mdata_json, mdata_json['aliases'][0], key=ff_key)
+        #     ff_utils.patch_metadata(data_json, data_json['aliases'][0], key=ff_key)
         # else:
-        #     ff_utils.post_metadata(mdata_json, type, key=ff_key)
+        #     ff_utils.post_metadata(data_json, type, key=ff_key)
 
-    sys.stdout.write('--> posted %s\n' % mdata_json['aliases'][0])
+        logger.info('> Posted %s' % data_json['aliases'][0])
 
     if verbose:
-        sys.stdout.write('\n')
-        sys.stdout.write(json.dumps(mdata_json, sort_keys=True, indent=2))
-        sys.stdout.write('\n\n')
+        logger.info(json.dumps(data_json, sort_keys=True, indent=2))
 
+###############################################################
+#   _yaml_to_json
+###############################################################
+def _yaml_to_json(data_yaml, YAMLClass, validate, **kwargs):
+    """
+    """
+    if validate:
+        logger.info('> Validating %s' % data_yaml.get('name'))
+        try:
+            YAMLClass(data_yaml).to_json(**kwargs)
+        except yaml_parser.SchemaError:
+            pass
+    else:
+        logger.info('> Processing %s' % data_yaml.get('name'))
+        return YAMLClass(data_yaml).to_json(**kwargs)
 
+    return
+
+###############################################################
+#   _post_patch_software
+###############################################################
 def _post_patch_software(ff_key, repo, project, institution,
-                         verbose, debug, filepath='portal_objects/software.yaml'):
+                         verbose, debug, validate,
+                         filepath='portal_objects/software.yaml'):
     """
-        routine to post | patch Software
     """
-    if not os.path.isfile(repo + '/' + filepath): return
+    logger.info('@ Software...')
 
-    sys.stdout.write('Processing Software...\n')
-    for d in yaml_parser.load_yaml(repo + '/' + filepath):
-        # validating object vs schema
-        validate(instance=d, schema=YamlSftwr_schema)
-        # creating YamlSftwr object
-        yamlsftwr = yaml_parser.YamlSftwr(d)
-        # creating json object
-        d_ = yamlsftwr.to_json(
-                    INSTITUTION=institution,
-                    PROJECT=project
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+
+    # Check
+    if not os.path.isfile(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create JSON objects
+    for d in yaml_parser.load_yaml(filepath_):
+        # creating JSON object
+        d_ = _yaml_to_json(
+                    d, yaml_parser.YAMLSoftware, validate,
+                    INSTITUTION=institution, PROJECT=project
                     )
-        # post patch
-        _post_patch_routine(d_, 'Software', ff_key, verbose, debug)
+        # post/patch object
+        if d_:
+            _post_patch_routine(d_, 'Software', ff_key, verbose, debug)
 
-
+###############################################################
+#   _post_patch_file_format
+###############################################################
 def _post_patch_file_format(ff_key, repo, project, institution,
-                            verbose, debug, filepath='portal_objects/file_format.yaml'):
+                            verbose, debug, validate,
+                            filepath='portal_objects/file_format.yaml'):
     """
-        routine to post | patch FileFormat
     """
-    if not os.path.isfile(repo + '/' + filepath): return
+    logger.info('@ FileFormat...')
 
-    sys.stdout.write('Processing FileFormat...\n')
-    for d in yaml_parser.load_yaml(repo + '/' + filepath):
-        # # validating object vs schema
-        validate(instance=d, schema=YamlFrmt_schema)
-        # creating YamlFrmt object
-        yamlfrmt = yaml_parser.YamlFrmt(d)
-        # creating json object
-        d_ = yamlfrmt.to_json(
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+
+    # Check
+    if not os.path.isfile(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create JSON objects
+    for d in yaml_parser.load_yaml(filepath_):
+        # creating JSON object
+        d_ = _yaml_to_json(
+                    d, yaml_parser.YAMLFileFormat, validate,
                     INSTITUTION=institution,
                     PROJECT=project
                     )
-        # post patch
-        _post_patch_routine(d_, 'FileFormat', ff_key, verbose, debug)
+        # post/patch object
+        if d_:
+            _post_patch_routine(d_, 'FileFormat', ff_key, verbose, debug)
 
-
+###############################################################
+#   _post_patch_file_reference
+###############################################################
 def _post_patch_file_reference(ff_key, repo, project, institution,
-                               verbose, debug, filepath='portal_objects/file_reference.yaml'):
+                               verbose, debug, validate,
+                               filepath='portal_objects/file_reference.yaml'):
     """
-        routine to post | patch FileReference
     """
-    if not os.path.isfile(repo + '/' + filepath): return
+    logger.info('@ FileReference...')
 
-    sys.stdout.write('Processing FileReference...\n')
-    for d in yaml_parser.load_yaml(repo + '/' + filepath):
-        # # validating object vs schema
-        validate(instance=d, schema=YamlRef_schema)
-        # creating YamlRef object
-        yamlref = yaml_parser.YamlRef(d)
-        # creating json object
-        d_ = yamlref.to_json(
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+
+    # Check
+    if not os.path.isfile(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create JSON objects
+    for d in yaml_parser.load_yaml(filepath_):
+        # creating JSON object
+        d_ = _yaml_to_json(
+                    d, yaml_parser.YAMLFileReference, validate,
                     INSTITUTION=institution,
                     PROJECT=project
                     )
-        # post patch
-        _post_patch_routine(d_, 'FileReference', ff_key, verbose, debug)
+        # post/patch object
+        if d_:
+            _post_patch_routine(d_, 'FileReference', ff_key, verbose, debug)
 
-
+###############################################################
+#   _post_patch_workflow
+###############################################################
 def _post_patch_workflow(ff_key, repo, project, institution,
                          version, pipeline, wfl_bucket,
-                         verbose, debug, filepath='portal_objects/workflows'):
+                         verbose, debug, validate,
+                         filepath='portal_objects/workflows'):
     """
-        routine to post | patch Workflow
     """
-    if not os.path.isdir(repo + '/' + filepath): return
+    logger.info('@ Workflow...')
 
-    wflbucket_url = wfl_bucket + '/' + pipeline + '/' + version
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
 
-    sys.stdout.write('Processing Workflow...\n')
-    for fn in os.listdir(repo + '/' + filepath):
-        if fn.endswith('.yaml'):
-            for d in yaml_parser.load_yaml(os.path.join(repo + '/' + filepath, fn)):
-                # validating object vs schema
-                validate(instance=d, schema=YamlWfl_schema)
-                # creating YamlWfl object
-                yamlwfl = yaml_parser.YamlWfl(d)
-                # creating json object
-                d_ = yamlwfl.to_json(
-                            VERSION=version,
-                            INSTITUTION=institution,
-                            PROJECT=project,
-                            WFLBUCKET_URL=wflbucket_url
-                            )
-                # post patch
+    # Check
+    if not os.path.isdir(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create JSON objects
+    for fn in glob.glob(f'{filepath_}/*.yaml'):
+        for d in yaml_parser.load_yaml(fn):
+            # creating JSON object
+            d_ = _yaml_to_json(
+                        d, yaml_parser.YAMLWorkflow, validate,
+                        VERSION=version,
+                        INSTITUTION=institution,
+                        PROJECT=project,
+                        WFLBUCKET_URL=f'{wfl_bucket}/{pipeline}/{version}'
+                        )
+            # post/patch object
+            if d_:
                 _post_patch_routine(d_, 'Workflow', ff_key, verbose, debug)
 
-
+###############################################################
+#   _post_patch_metaworkflow
+###############################################################
 def _post_patch_metaworkflow(ff_key, repo, project, institution,
-                             version, verbose, debug,
+                             version, verbose, debug, validate,
                              filepath='portal_objects/metaworkflows'):
     """
-        routine to post | patch MetaWorkflow
     """
-    if not os.path.isdir(repo + '/' + filepath): return
+    logger.info('@ MetaWorkflow...')
 
-    sys.stdout.write('Processing MetaWorkflow...\n')
-    for fn in os.listdir(repo + '/' + filepath):
-        if fn.endswith('.yaml'):
-            for d in yaml_parser.load_yaml(os.path.join(repo + '/' + filepath, fn)):
-                # validating object vs schema
-                validate(instance=d, schema=YamlMWfl_schema)
-                # creating YamlMWfl object
-                yamlmwfl = yaml_parser.YamlMWfl(d)
-                # creating json object
-                d_ = yamlmwfl.to_json(
-                            VERSION=version,
-                            INSTITUTION=institution,
-                            PROJECT=project
-                            )
-                # post patch
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+
+    # Check
+    if not os.path.isdir(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create JSON objects
+    for fn in glob.glob(f'{filepath_}/*.yaml'):
+        for d in yaml_parser.load_yaml(fn):
+            # creating JSON object
+            d_ = _yaml_to_json(
+                        d, yaml_parser.YAMLMetaWorkflow, validate,
+                        VERSION=version,
+                        INSTITUTION=institution,
+                        PROJECT=project
+                        )
+            # post/patch object
+            if d_:
                 _post_patch_routine(d_, 'MetaWorkflow', ff_key, verbose, debug)
 
-
+###############################################################
+#   _post_patch_wfl
+###############################################################
 def _post_patch_wfl(version, repo, pipeline, account,
                     region, wfl_bucket, sentieon_server,
-                    filepath='wfl', kms_key_id=None):
+                    debug=False, filepath='wfl', kms_key_id=None):
     """
-        routine to post | patch Workflow Description files
     """
-    if not os.path.isdir(repo + '/' + filepath): return
+    logger.info('@ Workflow Description...')
 
-    sys.stdout.write('Processing Workflow Description...\n')
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+    upload_ = f'{filepath_}/upload'
+    account_ = f'{account}.dkr.ecr.{region}.amazonaws.com'
+    update_ = {
+        'ServerSideEncryption': 'aws:kms',
+        'SSEKMSKeyId': kms_key_id
+        }
+
+    # Check
+    if not os.path.isdir(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
+
+    # Create s3 object
     s3 = boto3.resource('s3')
-    # mk tmp dir for modified wfls
-    os.mkdir(repo + '/' + filepath + '/upload')
-    account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
-    for fn in os.listdir(repo + '/' + filepath):
-        if fn.endswith('.cwl') or fn.endswith('.wdl'):
-            # set original file path and path for s3
-            file_path = repo + '/' + filepath + '/' + fn
-            s3_path_and_file = pipeline + '/' + version + '/' + fn
 
-            # separate workflows, which can be automatically uploaded to s3 without edits ...
-            if fn.startswith('workflow'):
-                sys.stdout.write('  processing file %s\n' % fn)
-                extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
-                if kms_key_id:
-                    extra_args.update({
-                        'ServerSideEncryption': 'aws:kms',
-                        'SSEKMSKeyId': kms_key_id
-                    })
-                s3.meta.client.upload_file(file_path, wfl_bucket, s3_path_and_file, ExtraArgs=extra_args)
+    # Make tmp dir for upload
+    os.mkdir(upload_)
 
-            # ... from CommandLineTool files which needs modification
-            else:
-                sys.stdout.write('  processing file %s\n' % fn)
-                with open(file_path, 'r') as f:
-                    with open(repo + '/' + filepath + '/upload/' + fn, 'w') as w:
-                        # modify lines for output file by replacing generic variables
-                        for line in f:
-                            if 'dockerPull' in line:
-                                line = line.replace('ACCOUNT', account_region).replace('VERSION', version)
-                            elif 'LICENSEID' in line:
-                                line = line.replace('LICENSEID', sentieon_server)
-                            w.write(line)
+    # Read description files and create modified files for upload
+    #   placeholder variables will be replaced
+    #   with specific values for the target environment
+    files_ = glob.glob(f'{filepath_}/*.cwl')
+    files_.extend(glob.glob(f'{filepath_}/*.wdl'))
+    for fn in files_:
+        logger.info('> Processing %s' % fn)
+        # set file specific variables
+        file_ = f'{filepath_}/{fn}'
+        upload_file_ = f'{upload_}/{fn}'
+        s3_file_ = f'{pipeline}/{version}/{fn}'
+        if not debug:
+            # create modified description file for upload
+            with open(file_, 'r') as read_:
+                with open(upload_file_, 'w') as write_:
+                    # replace generic variables
+                    for line in read_:
+                        line = line.replace('ACCOUNT', account_)
+                        line = line.replace('VERSION', version)
+                        line = line.replace('LICENSEID', sentieon_server)
+                        write_.write(line)
+            # upload to s3
+            extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
+            if kms_key_id:
+                extra_args.update(update_)
+            s3.meta.client.upload_file(upload_file_, wfl_bucket, s3_file_, ExtraArgs=extra_args)
+            # delete file to allow tmp folder to be deleted at the end
+            os.remove(upload_file_)
 
-                # upload to s3
-                upload_path_and_file = repo + '/' + filepath + '/upload/' + fn
-                extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
-                if kms_key_id:
-                    extra_args.update({
-                        'ServerSideEncryption': 'aws:kms',
-                        'SSEKMSKeyId': kms_key_id
-                    })
-                s3.meta.client.upload_file(upload_path_and_file, wfl_bucket, s3_path_and_file, ExtraArgs=extra_args)
+    # Clean tmp directory
+    os.rmdir(upload_)
 
-                # delete file to allow tmp folder to be deleted at the end
-                os.remove(upload_path_and_file)
-
-    # clean the directory from github repo
-    os.rmdir(repo + '/' + filepath + '/upload')
-
-
-def _post_patch_ecr(version, repo, account, region, filepath='dockerfiles'):
+###############################################################
+#   _post_patch_ecr
+###############################################################
+def _post_patch_ecr(version, repo, account, region, debug=False, filepath='dockerfiles'):
     """
-        routine to build the Docker image and push it to ECR
     """
-    if not os.path.isdir(repo + '/' + filepath): return
+    logger.info('@ Docker Image...')
 
-    sys.stdout.write('Processing Docker Image...\n')
-    account_region = account + '.dkr.ecr.' + region + '.amazonaws.com'
-    # generic bash commands to be modified to correct version and account information
-    for fn in os.listdir(repo + '/' + filepath):
-        sys.stdout.write('  processing docker %s\n' % fn)
-        tag = account_region + '/' + fn + ':' + version
-        path = repo + '/' + filepath + '/' + fn
-        image = """
-            aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT_REGION
+    # Set general variables
+    filepath_ = f'{repo}/{filepath}'
+    account_ = f'{account}.dkr.ecr.{region}.amazonaws.com'
 
-            docker build -t TAG PATH --no-cache
-            docker push TAG
-        """  # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
-        cmd = image.replace('ACCOUNT_REGION', account_region).replace('REGION', region).replace('TAG', tag).replace('PATH', path)
-        subprocess.check_call(cmd, shell=True)
+    # Check
+    if not os.path.isdir(filepath_):
+        logger.error(f'WARNING: {filepath} not found in {repo}')
+        return
 
+    # Generic bash commands to be modified to correct version and account information
+    for fn in glob.glob(f'{filepath_}/*'):
+        logger.info('> Processing %s' % fn)
+        if not debug:
+            # set specific variables
+            tag_ = f'{account_}/{fn}:{version}'
+            path_ = f'{filepath_}/{fn}'
+            image = f"""
+                        aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {account_}
+                        docker build -t {tag_} {path_} --no-cache
+                        docker push {tag_}
+                    """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
+            subprocess.check_call(cmd, shell=True)
 
 ################################################
 #   _post_patch_repo
@@ -282,14 +346,16 @@ def _post_patch_ecr(version, repo, account, region, filepath='dockerfiles'):
 #   pipeline
 #       wfl
 #       dockerfiles
-#            image_name
+#            <image>
 #                Dockerfile
 #       portal_objects
 #           workflows
+#               <wfl>.yaml
 #           metaworkflows
-#           file_format.json
-#           file_reference.json
-#           software.json
+#               <mwfl>.yaml
+#           file_format.yaml
+#           file_reference.yaml
+#           software.yaml
 #       PIPELINE
 #       VERSION
 #
@@ -298,7 +364,7 @@ def _post_patch_repo(ff_key, repo, wfl_bucket, account, region,
                      project, institution,
                      post_software, post_file_format, post_file_reference,
                      post_workflow, post_metaworkflow, post_wfl, post_ecr,
-                     sentieon_server, verbose, debug,
+                     sentieon_server, verbose, debug, validate,
                      version='VERSION', pipeline='PIPELINE', kms_key_id=None):
     """
         post | patch metadata and docker from a pipeline repo
@@ -317,38 +383,42 @@ def _post_patch_repo(ff_key, repo, wfl_bucket, account, region,
     # Software
     if post_software:
         _post_patch_software(ff_key, repo, project,
-                             institution, verbose, debug)
+                             institution, verbose, debug, validate)
 
-    # File format
+    # FileFormat
     if post_file_format:
         _post_patch_file_format(ff_key, repo, project,
-                                institution, verbose, debug)
+                                institution, verbose, debug, validate)
 
-    # File reference
+    # FileReference
     if post_file_reference:
         _post_patch_file_reference(ff_key, repo, project,
-                                   institution, verbose, debug)
+                                   institution, verbose, debug, validate)
 
     # Workflow
     if post_workflow:
         _post_patch_workflow(ff_key, repo, project, institution,
-                             version, pipeline, wfl_bucket, verbose, debug)
+                             version, pipeline, wfl_bucket, verbose, debug, validate)
 
     # Metaworkflow
     if post_metaworkflow:
         _post_patch_metaworkflow(ff_key, repo, project, institution,
-                                 version, verbose, debug)
+                                 version, verbose, debug, validate)
 
     # Wfl
     if post_wfl:
         _post_patch_wfl(version, repo, pipeline, account,
-                        region, wfl_bucket, sentieon_server, kms_key_id=kms_key_id)
+                        region, wfl_bucket, sentieon_server,
+                        debug=debug, kms_key_id=kms_key_id)
 
     # ECR
     if post_ecr:
-        _post_patch_ecr(version, repo, account, region)
+        _post_patch_ecr(version, repo, account, region, debug=debug)
 
 
+################################################
+#  MAIN
+################################################
 def main(args):
     """
         deploy cgap pipeline
@@ -411,4 +481,4 @@ def main(args):
                          args.post_software, args.post_file_format, args.post_file_reference,
                          args.post_workflow, args.post_metaworkflow,
                          args.post_wfl, args.post_ecr, args.sentieon_server,
-                         args.verbose, args.debug, kms_key_id=kms_key_id)
+                         args.verbose, args.debug, args.validate, kms_key_id=kms_key_id)

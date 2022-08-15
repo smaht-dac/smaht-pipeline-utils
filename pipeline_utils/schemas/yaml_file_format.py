@@ -1,9 +1,9 @@
-YamlFrmt_schema = {
+yaml_file_format_schema = {
     ## Schema #########################
     '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YamlFrmt',
-    'title': 'YamlFrmt',
-    'description': 'Schema to validate a Yaml description of a FileFormat',
+    '$id': '/schemas/YAMLFileFormat',
+    'title': 'YAMLFileFormat',
+    'description': 'Schema to validate a YAML description of a FileFormat',
     'type': 'object',
     'properties': {
         'name': {

@@ -1,9 +1,9 @@
-YamlSftwr_schema = {
+yaml_software_schema = {
     ## Schema #########################
     '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YamlSftwr',
-    'title': 'YamlSftwr',
-    'description': 'Schema to validate a Yaml description of a Software',
+    '$id': '/schemas/YAMLSoftware',
+    'title': 'YAMLSoftware',
+    'description': 'Schema to validate a YAML description of a Software',
     'type': 'object',
     'properties': {
         'name': {

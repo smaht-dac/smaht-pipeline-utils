@@ -1,14 +1,42 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
+###########################################################
+#
+#   yaml_parser
+#      classes to parse portal objects in YAML format
+#
+#   Michele Berselli - berselli.michele@gmail.com
+#
+###########################################################
+
+import os, sys
 import yaml
+import itertools
+from jsonschema import Draft202012Validator
+import structlog
+
+
+###############################################################
+#   Schemas
+###############################################################
+from pipeline_utils.schemas.yaml_workflow import yaml_workflow_schema
+from pipeline_utils.schemas.yaml_metaworkflow import yaml_metaworkflow_schema
+from pipeline_utils.schemas.yaml_software import yaml_software_schema
+from pipeline_utils.schemas.yaml_file_reference import yaml_file_reference_schema
+from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
+
+
+###############################################################
+#   Logger
+###############################################################
+logger = structlog.getLogger(__name__)
 
 
 ###############################################################
 #   Functions
 ###############################################################
 def load_yaml(file):
-    """
-        return a generator to loaded yaml documents in file
+    """Return a generator to YAML documents in file
     """
     with open(file) as stream:
         try:
@@ -17,45 +45,109 @@ def load_yaml(file):
         except yaml.YAMLError as exc:
             sys.exit(exc)
 
+def peek(iterable):
+    """
+    """
+    try:
+        first = next(iterable)
+    except StopIteration:
+        return None
+
+    return itertools.chain([first], iterable)
+
 
 ###############################################################
-#   YamlWfl, Yaml Workflow
+#   SchemaError
 ###############################################################
-class YamlWfl(object):
+class SchemaError(Exception):
+    """Custom exception for error tracking
+    """
 
-    def __init__(self, yaml_d):
+    def __init__(self):
+        message = 'YAML object failed schema validation'
+        super().__init__(message)
+
+
+###############################################################
+#   YAMLTemplate
+###############################################################
+class YAMLTemplate(object):
+    """
+    """
+
+    # Schema constants
+    NAME_SCHEMA = 'name'
+    TITLE_SCHEMA = 'title'
+    DESCRIPTION_SCHEMA = 'description'
+    ALIASES_SCHEMA = 'aliases'
+    PROJECT_SCHEMA = 'project'
+    INSTITUTION_SCHEMA = 'institution'
+    VERSION_SCHEMA = 'version'
+    ACCESSION_SCHEMA = 'accession'
+    UUID_SCHEMA = 'uuid'
+    ARGUMENT_TYPE_SCHEMA = 'argument_type'
+    ARGUMENT_FORMAT_SCHEMA = 'argument_format'
+    ARGUMENT_NAME_SCHEMA = 'argument_name'
+    VALUE_TYPE_SCHEMA = 'value_type'
+    WORKFLOW_ARGUMENT_NAME_SCHEMA = 'workflow_argument_name'
+    INPUT_SCHEMA = 'input'
+    STATUS_SCHEMA = 'status'
+    SECONDARY_FILES_SCHEMA = 'secondary_files'
+    SECONDARY_FORMATS_SCHEMA = 'secondary_formats'
+    FILE_FORMAT_SCHEMA = 'file_format'
+    SECONDARY_FILE_FORMATS_SCHEMA = 'secondary_file_formats'
+
+    def __init__(self, data, schema):
         """
         """
-        for key, val in yaml_d.items():
-            setattr(self, key, val)
-        self._validate()
+        self.data = data
+        self.schema = schema
 
     def _validate(self):
         """
         """
-        try:
-            getattr(self, 'name')
-            getattr(self, 'description')
-            getattr(self, 'runner')
-            getattr(self, 'input')
-            getattr(self, 'output')
-        except AttributeError as e:
-            raise ValueError('JSON validation error, {0}\n'
-                                .format(e.args[0]))
+        draft202012validator = Draft202012Validator(self.schema)
+        errors = draft202012validator.iter_errors(self.data)
+        errors_ = peek(errors)
+        if errors_:
+            for error in errors_:
+                logger.error('{0} Schema Error: {1} in {2}'.format(
+                                            error.validator.upper(),
+                                            error.message,
+                                            ' -> '.join(map(str, error.path))
+                                            )
+                            )
+            raise SchemaError
+
+
+###############################################################
+#   YAMLWorkflow, YAML Workflow
+###############################################################
+class YAMLWorkflow(YAMLTemplate):
+
+    def __init__(self, data):
+        """
+        """
+        super().__init__(data, yaml_workflow_schema)
+        # Validate data with schema
+        self._validate()
+        # Load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
 
     def _arguments_input(self):
         """
         """
         arguments = []
         for name, values in self.input.items():
-            type, format = values['argument_type'].split('.')
+            type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
             if type == 'file':
                 argument_type = 'Input file'
             elif type == 'parameter':
                 argument_type = 'parameter'
             argument_ = {
-                'argument_type': argument_type,
-                'workflow_argument_name': name
+                self.ARGUMENT_TYPE_SCHEMA: argument_type,
+                self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
                 }
             arguments.append(argument_)
 
@@ -66,20 +158,20 @@ class YamlWfl(object):
         """
         arguments = []
         for name, values in self.output.items():
-            type, format = values['argument_type'].split('.')
+            type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
             if type == 'file':
                 argument_type = 'Output processed file'
                 argument_ = {
-                    'argument_format': format,
-                    'argument_type': argument_type,
-                    'workflow_argument_name': name,
-                    'secondary_file_formats': values.get('secondary_files', [])
+                    self.ARGUMENT_FORMAT_SCHEMA: format,
+                    self.ARGUMENT_TYPE_SCHEMA: argument_type,
+                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
+                    self.SECONDARY_FILE_FORMATS_SCHEMA: values.get(self.SECONDARY_FILES_SCHEMA, [])
                 }
             elif type == 'qc':
                 argument_type = 'Output QC file'
                 argument_ = {
-                    'argument_type': argument_type,
-                    'workflow_argument_name': name,
+                    self.ARGUMENT_TYPE_SCHEMA: argument_type,
+                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
                     'argument_to_be_attached_to': values['argument_to_be_attached_to'],
                     'qc_type': format,
                     'qc_zipped': values.get('zipped', False),
@@ -105,12 +197,12 @@ class YamlWfl(object):
         # common metadata
         wfl_json['app_name'] = self.name # name
         wfl_json['app_version'] = VERSION # version
-        wfl_json['name'] = self.name + '_' + VERSION
-        wfl_json['title'] = getattr(self, 'title', self.name.replace('_', ' ')) + ', ' + VERSION
-        wfl_json['aliases'] = [PROJECT + ':' + wfl_json['name']]
-        wfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
-        wfl_json['project'] = '/projects/' + PROJECT + '/'
-        wfl_json['description'] = self.description
+        wfl_json[self.NAME_SCHEMA] = self.name + '_' + VERSION
+        wfl_json[self.TITLE_SCHEMA] = getattr(self, self.TITLE_SCHEMA, self.name.replace('_', ' ')) + ', ' + VERSION
+        wfl_json[self.ALIASES_SCHEMA] = [PROJECT + ':' + wfl_json[self.NAME_SCHEMA]]
+        wfl_json[self.INSTITUTION_SCHEMA] = '/institutions/' + INSTITUTION + '/'
+        wfl_json[self.PROJECT_SCHEMA] = '/projects/' + PROJECT + '/'
+        wfl_json[self.DESCRIPTION_SCHEMA] = self.description
         wfl_json['software'] = [s.replace('@', '_') for s in getattr(self, 'software', [])]
         wfl_json['arguments'] = self._arguments_input() + self._arguments_output()
 
@@ -127,52 +219,43 @@ class YamlWfl(object):
             wfl_json['workflow_language'] = 'wdl'
 
         # uuid, accession if specified
-        if getattr(self, 'uuid', None):
-            wfl_json['uuid'] = self.uuid
-        if getattr(self, 'accession', None):
-            wfl_json['accession'] = self.accession
+        if getattr(self, self.UUID_SCHEMA, None):
+            wfl_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            wfl_json[self.ACCESSION_SCHEMA] = self.accession
 
         return wfl_json
 
 
 ###############################################################
-#   YamlMWfl, Yaml MetaWorkflow
+#   YAMLMetaWorkflow, YAML MetaWorkflow
 ###############################################################
-class YamlMWfl(object):
+class YAMLMetaWorkflow(YAMLTemplate):
 
-    def __init__(self, yaml_d):
+    def __init__(self, data):
         """
         """
-        for key, val in yaml_d.items():
-            setattr(self, key, val)
+        super().__init__(data, yaml_metaworkflow_schema)
+        # Validate data with schema
         self._validate()
-
-    def _validate(self):
-        """
-        """
-        try:
-            getattr(self, 'name')
-            getattr(self, 'description')
-            getattr(self, 'input')
-            getattr(self, 'workflows')
-        except AttributeError as e:
-            raise ValueError('JSON validation error, {0}\n'
-                                .format(e.args[0]))
+        # Load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
 
     def _arguments(self, input, PROJECT):
         """
         """
         arguments = []
         for name, values in input.items():
-            type, format = values['argument_type'].split('.')
+            type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
             argument_ = {
-                'argument_name': name,
-                'argument_type': type
+                self.ARGUMENT_NAME_SCHEMA: name,
+                self.ARGUMENT_TYPE_SCHEMA: type
             }
             if type == 'parameter':
-                argument_.setdefault('value_type', format)
+                argument_.setdefault(self.VALUE_TYPE_SCHEMA, format)
             for k, v in values.items():
-                if k != 'argument_type':
+                if k != self.ARGUMENT_TYPE_SCHEMA:
                     # handle files specifications
                     #   need to go from file name to dictionary of alias and dimension
                     #    files:
@@ -201,9 +284,9 @@ class YamlMWfl(object):
         workflows = []
         for name, values in self.workflows.items():
             workflow_ = {
-                'name': name,
+                self.NAME_SCHEMA: name,
                 'workflow': PROJECT + ':' + name + '_' + VERSION,
-                'input': self._arguments(values['input'], PROJECT),
+                self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], PROJECT),
                 'custom_pf_fields': values['output'],
                 'config': values['config']
             }
@@ -222,49 +305,39 @@ class YamlMWfl(object):
         metawfl_json = {}
 
         # common metadata
-        metawfl_json['name'] = self.name
-        metawfl_json['version'] = VERSION # version
-        metawfl_json['title'] = getattr(self, 'title', self.name.replace('_', ' ')) + ', ' + VERSION
-        metawfl_json['aliases'] = [PROJECT + ':' + self.name + '_' + VERSION]
-        metawfl_json['institution'] = '/institutions/' + INSTITUTION + '/'
-        metawfl_json['project'] = '/projects/' + PROJECT + '/'
-        metawfl_json['description'] = self.description
-        metawfl_json['input'] = self._arguments(self.input, PROJECT)
+        metawfl_json[self.NAME_SCHEMA] = self.name
+        metawfl_json[self.VERSION_SCHEMA] = VERSION # version
+        metawfl_json[self.TITLE_SCHEMA] = getattr(self, self.TITLE_SCHEMA, self.name.replace('_', ' ')) + ', ' + VERSION
+        metawfl_json[self.ALIASES_SCHEMA] = [PROJECT + ':' + self.name + '_' + VERSION]
+        metawfl_json[self.INSTITUTION_SCHEMA] = '/institutions/' + INSTITUTION + '/'
+        metawfl_json[self.PROJECT_SCHEMA] = '/projects/' + PROJECT + '/'
+        metawfl_json[self.DESCRIPTION_SCHEMA] = self.description
+        metawfl_json[self.INPUT_SCHEMA] = self._arguments(self.input, PROJECT)
         metawfl_json['workflows'] = self._workflows(VERSION, PROJECT)
 
         # uuid, accession if specified
-        if getattr(self, 'uuid', None):
-            metawfl_json['uuid'] = self.uuid
-        if getattr(self, 'accession', None):
-            metawfl_json['accession'] = self.accession
+        if getattr(self, self.UUID_SCHEMA, None):
+            metawfl_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            metawfl_json[self.ACCESSION_SCHEMA] = self.accession
 
         return metawfl_json
 
 
 ###############################################################
-#   YamlSftwr, Yaml Software
+#   YAMLSoftware, YAML Software
 ###############################################################
-class YamlSftwr(object):
+class YAMLSoftware(YAMLTemplate):
 
-    def __init__(self, yaml_d):
+    def __init__(self, data):
         """
         """
-        for key, val in yaml_d.items():
-            setattr(self, key, val)
+        super().__init__(data, yaml_software_schema)
+        # Validate data with schema
         self._validate()
-
-    def _validate(self):
-        """
-        """
-        try:
-            getattr(self, 'name')
-        except AttributeError as e:
-            raise ValueError('JSON validation error, {0}\n'
-                                .format(e.args[0]))
-
-        if not getattr(self, 'version', None):
-            if not getattr(self, 'commit', None):
-                raise ValueError('JSON validation error, please provide version or commit information\n')
+        # Load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
 
     def to_json(
                self,
@@ -276,61 +349,52 @@ class YamlSftwr(object):
         sftwr_json, version = {}, None
 
         # common metadata
-        sftwr_json['name'] = self.name
-        sftwr_json['institution'] = '/institutions/' + INSTITUTION + '/'
-        sftwr_json['project'] = '/projects/' + PROJECT + '/'
+        sftwr_json[self.NAME_SCHEMA] = self.name
+        sftwr_json[self.INSTITUTION_SCHEMA] = '/institutions/' + INSTITUTION + '/'
+        sftwr_json[self.PROJECT_SCHEMA] = '/projects/' + PROJECT + '/'
 
-        if getattr(self, 'version', None):
-            sftwr_json['version'] = self.version
+        if getattr(self, self.VERSION_SCHEMA, None):
+            sftwr_json[self.VERSION_SCHEMA] = self.version
             version = self.version
         else:
             sftwr_json['commit'] = self.commit
             version = self.commit
 
-        if getattr(self, 'description', None):
-            sftwr_json['description'] = self.description
+        if getattr(self, self.DESCRIPTION_SCHEMA, None):
+            sftwr_json[self.DESCRIPTION_SCHEMA] = self.description
         if getattr(self, 'source_url', None):
             sftwr_json['source_url'] = self.source_url
 
-        if getattr(self, 'title', None):
-            sftwr_json['title'] = self.title
+        if getattr(self, self.TITLE_SCHEMA, None):
+            sftwr_json[self.TITLE_SCHEMA] = self.title
         else:
-            sftwr_json['title'] = self.name + ', ' + version
+            sftwr_json[self.TITLE_SCHEMA] = self.name + ', ' + version
 
-        sftwr_json['aliases'] = [self.name + '_' + version]
+        sftwr_json[self.ALIASES_SCHEMA] = [self.name + '_' + version]
 
         # uuid, accession if specified
-        if getattr(self, 'uuid', None):
-            sftwr_json['uuid'] = self.uuid
-        if getattr(self, 'accession', None):
-            sftwr_json['accession'] = self.accession
+        if getattr(self, self.UUID_SCHEMA, None):
+            sftwr_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            sftwr_json[self.ACCESSION_SCHEMA] = self.accession
 
         return sftwr_json
 
 
 ###############################################################
-#   YamlRef, Yaml FileReference
+#   YAMLFileReference, YAML FileReference
 ###############################################################
-class YamlRef(object):
+class YAMLFileReference(YAMLTemplate):
 
-    def __init__(self, yaml_d):
+    def __init__(self, data):
         """
         """
-        for key, val in yaml_d.items():
-            setattr(self, key, val)
+        super().__init__(data, yaml_file_reference_schema)
+        # Validate data with schema
         self._validate()
-
-    def _validate(self):
-        """
-        """
-        try:
-            getattr(self, 'name')
-            getattr(self, 'description')
-            getattr(self, 'format') # file_format
-            getattr(self, 'version')
-        except AttributeError as e:
-            raise ValueError('JSON validation error, {0}\n'
-                                .format(e.args[0]))
+        # Load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
 
     def to_json(
                self,
@@ -342,48 +406,40 @@ class YamlRef(object):
         ref_json = {}
 
         # common metadata
-        ref_json['institution'] = '/institutions/' + INSTITUTION + '/'
-        ref_json['project'] = '/projects/' + PROJECT + '/'
-        ref_json['description'] = self.description
-        ref_json['file_format'] = self.format
-        ref_json['aliases'] = [PROJECT + ':' + self.name + '_' + self.version]
-        ref_json['extra_files'] = getattr(self, 'secondary_files', [])
-        ref_json['status'] = getattr(self, 'status', None) # this will be used during post/patch,
+        ref_json[self.INSTITUTION_SCHEMA] = '/institutions/' + INSTITUTION + '/'
+        ref_json[self.PROJECT_SCHEMA] = '/projects/' + PROJECT + '/'
+        ref_json[self.DESCRIPTION_SCHEMA] = self.description
+        ref_json[self.FILE_FORMAT_SCHEMA] = self.format
+        ref_json[self.ALIASES_SCHEMA] = [PROJECT + ':' + self.name + '_' + self.version]
+        ref_json['extra_files'] = getattr(self, self.SECONDARY_FILES_SCHEMA, [])
+        ref_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, None) # this will be used during post/patch,
                                                            # if None:
                                                            #    - leave it as is if patch
                                                            #    - set to uploading if post
 
         # uuid, accession if specified
-        if getattr(self, 'uuid', None):
-            ref_json['uuid'] = self.uuid
-        if getattr(self, 'accession', None):
-            ref_json['accession'] = self.accession
+        if getattr(self, self.UUID_SCHEMA, None):
+            ref_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            ref_json[self.ACCESSION_SCHEMA] = self.accession
 
         return ref_json
 
 
 ###############################################################
-#   YamlFrmt, Yaml Format
+#   YAMLFileFormat, YAML FileFormat
 ###############################################################
-class YamlFrmt(object):
+class YAMLFileFormat(YAMLTemplate):
 
-    def __init__(self, yaml_d):
+    def __init__(self, data):
         """
         """
-        for key, val in yaml_d.items():
-            setattr(self, key, val)
+        super().__init__(data, yaml_file_format_schema)
+        # Validate data with schema
         self._validate()
-
-    def _validate(self):
-        """
-        """
-        try:
-            getattr(self, 'name')
-            getattr(self, 'description')
-            getattr(self, 'extension') # standard_file_extension
-        except AttributeError as e:
-            raise ValueError('JSON validation error, {0}\n'
-                                .format(e.args[0]))
+        # Load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
 
     def to_json(
                self,
@@ -395,20 +451,20 @@ class YamlFrmt(object):
         frmt_json = {}
 
         # common metadata
-        frmt_json['file_format'] = self.name
-        frmt_json['aliases'] = [self.name]
-        frmt_json['institution'] = '/institutions/' + INSTITUTION + '/'
-        frmt_json['project'] = '/projects/' + PROJECT + '/'
-        frmt_json['description'] = self.description
+        frmt_json[self.FILE_FORMAT_SCHEMA] = self.name
+        frmt_json[self.ALIASES_SCHEMA] = [self.name]
+        frmt_json[self.INSTITUTION_SCHEMA] = '/institutions/' + INSTITUTION + '/'
+        frmt_json[self.PROJECT_SCHEMA] = '/projects/' + PROJECT + '/'
+        frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json['standard_file_extension'] = self.extension
         frmt_json['valid_item_types'] = getattr(self, 'file_types', ['FileReference', 'FileProcessed'])
-        frmt_json['extrafile_formats'] = getattr(self, 'secondary_formats', [])
-        frmt_json['status'] = getattr(self, 'status', 'shared')
+        frmt_json['extrafile_formats'] = getattr(self, self.SECONDARY_FORMATS_SCHEMA, [])
+        frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'shared')
 
         # uuid, accession if specified
-        if getattr(self, 'uuid', None):
-            frmt_json['uuid'] = self.uuid
-        if getattr(self, 'accession', None):
-            frmt_json['accession'] = self.accession
+        if getattr(self, self.UUID_SCHEMA, None):
+            frmt_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            frmt_json[self.ACCESSION_SCHEMA] = self.accession
 
         return frmt_json

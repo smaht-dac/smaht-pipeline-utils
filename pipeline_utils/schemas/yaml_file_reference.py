@@ -1,9 +1,9 @@
-YamlRef_schema = {
+yaml_file_reference_schema = {
     ## Schema #########################
     '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YamlRef',
-    'title': 'YamlRef',
-    'description': 'Schema to validate a Yaml description of a FileReference',
+    '$id': '/schemas/YAMLFileReference',
+    'title': 'YAMLFileReference',
+    'description': 'Schema to validate a YAML description of a FileReference',
     'type': 'object',
     'properties': {
         'name': {
