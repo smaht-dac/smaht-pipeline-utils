@@ -233,7 +233,7 @@ class PostPatchRepo(object):
                 }
                 if type == 'Workflow':
                     kwargs_.setdefault(
-                        'WFLBUCKET_URL', f'{self.wfl_bucket}/{self.pipeline}/{self.version}'
+                        'WFLBUCKET_URL', f's3://{self.wfl_bucket}/{self.pipeline}/{self.version}'
                     )
                 # creating JSON object
                 d_ = self._yaml_to_json(

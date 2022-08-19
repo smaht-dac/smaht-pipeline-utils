@@ -1,0 +1,17 @@
+
+# gatk (FULL)
+name: gatk
+version: 4.1.2
+title: gatk 4.1.2
+source_url: 'http:/broad'
+description: gatk software package
+
+---
+
+# picard (MINIMAL)
+#   + uuid
+#   + accession
+name: picard
+commit: 324ePT
+uuid: efdac7ec-7da3-4f23-9056-7a04abbc5e8b
+accession: GAPMKF1LL29K
