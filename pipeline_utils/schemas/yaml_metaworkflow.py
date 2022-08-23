@@ -54,7 +54,7 @@ yaml_metaworkflow_schema = {
                             }
                         }
                     },
-                    'required': ['input', 'output']
+                    'required': ['input', 'output', 'config']
                 }
             }
         }
@@ -137,7 +137,7 @@ yaml_metaworkflow_schema = {
                     'type': 'string'
                 }
             },
-            'required': []
+            'required': ['file_type']
         }
     }
 }
