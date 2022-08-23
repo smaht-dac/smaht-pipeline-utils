@@ -1,5 +1,6 @@
 
 # bam format (FULL)
+#   error: name as number
 name: 1
 extension: bam
 description: format to represent aligned reads

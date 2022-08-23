@@ -2,6 +2,7 @@
 # HaplotypeCaller cwl (MINIMAL)
 #   + uuid
 #   + accession
+#   error: argument_type missing format
 name: gatk-HaplotypeCaller
 description: Run HaplotypeCaller from gatk package
 
@@ -11,7 +12,7 @@ runner:
 
 input:
   input_bam:
-    argument_type: file
+    argument_type: file # error
 
 output:
   output_vcf:

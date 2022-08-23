@@ -2,6 +2,7 @@
 # hg38 fasta (FULL)
 #   + uuid
 #   + accession
+#   error: missing format
 name: reference_genome
 description: hg38 full reference genome plus decoy for CGAP, fasta format
 version: hg38

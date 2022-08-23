@@ -1,5 +1,6 @@
 
 # gatk-HC-GT-pipeline (FULL)
+#   error: missing output for gatk-GT
 name: gatk-HC-GT-pipeline
 description: Pipeline to run gatk-HC and gatk-GT to call and genotype variants
 title: gatk-HC and gatk-GT pipeline
