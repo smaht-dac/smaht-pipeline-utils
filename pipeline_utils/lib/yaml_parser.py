@@ -113,11 +113,12 @@ class YAMLTemplate(object):
         errors_ = peek(errors)
         if errors_:
             for error in errors_:
-                logger.error('{0} Schema Error: {1} in {2}'.format(
-                                            error.validator.upper(),
-                                            error.message,
-                                            ' -> '.join(map(str, error.path))
-                                            )
+                logger.error('Schema Error [{0}]: {1} in path={2}, schema={3}'.format(
+                                error.validator,
+                                error.message,
+                                error.relative_path,
+                                error.schema
+                                )
                             )
             raise SchemaError
 

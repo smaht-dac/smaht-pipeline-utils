@@ -1,7 +1,6 @@
 
 # gatk (FULL)
 name: gatk
-version: 4.1.2
 title: gatk 4.1.2
 source_url: 'http:/broad'
 description: gatk software package

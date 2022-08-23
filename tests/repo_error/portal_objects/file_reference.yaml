@@ -4,7 +4,6 @@
 #   + accession
 name: reference_genome
 description: hg38 full reference genome plus decoy for CGAP, fasta format
-format: fa
 version: hg38
 secondary_files:
   - fa_fai

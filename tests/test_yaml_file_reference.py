@@ -42,3 +42,17 @@ def test_file_reference():
                             )
         # check
         assert d_ == res[i]
+
+def test_file_reference_error():
+    """
+    """
+
+    for i, d in enumerate(yaml_parser.load_yaml('tests/repo_error/portal_objects/file_reference.yaml')):
+        try:
+            # creating JSON object
+            d_ = yaml_parser.YAMLFileReference(d).to_json(
+                                INSTITUTION='hms-dbmi',
+                                PROJECT='cgap-core'
+                                )
+        except yaml_parser.SchemaError as e:
+            assert e.args[0] == 'YAML object failed schema validation'

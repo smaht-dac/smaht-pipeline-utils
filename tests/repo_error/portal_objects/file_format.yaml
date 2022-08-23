@@ -1,6 +1,6 @@
 
 # bam format (FULL)
-name: bam
+name: 1
 extension: bam
 description: format to represent aligned reads
 secondary_formats:

@@ -11,7 +11,7 @@ runner:
 
 input:
   input_bam:
-    argument_type: file.bam
+    argument_type: file
 
 output:
   output_vcf:
