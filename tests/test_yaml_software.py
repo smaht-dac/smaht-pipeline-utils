@@ -42,3 +42,17 @@ def test_software():
                             )
         # check
         assert d_ == res[i]
+
+def test_software_error():
+    """
+    """
+
+    for i, d in enumerate(yaml_parser.load_yaml('tests/repo_error/portal_objects/software.yaml')):
+        try:
+            # creating JSON object
+            d_ = yaml_parser.YAMLSoftware(d).to_json(
+                                INSTITUTION='hms-dbmi',
+                                PROJECT='cgap-core'
+                                )
+        except yaml_parser.SchemaError as e:
+            assert e.args[0] == 'YAML object failed schema validation'
