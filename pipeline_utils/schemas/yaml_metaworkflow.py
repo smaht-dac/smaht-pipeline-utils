@@ -1,143 +1,145 @@
+from pipeline_utils.schemas import schema
+
 yaml_metaworkflow_schema = {
     ## Schema #########################
-    '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YAMLMetaWorkflow',
-    'title': 'YAMLMetaWorkflow',
-    'description': 'Schema to validate a YAML description of a MetaWorkflow',
-    'type': 'object',
-    'properties': {
+    schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+    schema.ID: '/schemas/YAMLMetaWorkflow',
+    schema.TITLE: 'YAMLMetaWorkflow',
+    schema.DESCRIPTION: 'Schema to validate a YAML description of a MetaWorkflow',
+    schema.TYPE: schema.OBJECT,
+    schema.PROPERTIES: {
 
         ## MetaWorkflow information ###
         'name': {
-            'description': 'Name of the MetaWorkflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Name of the MetaWorkflow',
+            schema.TYPE: schema.STRING
         },
         'title': {
-            'description': 'Title of the MetaWorkflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Title of the MetaWorkflow',
+            schema.TYPE: schema.STRING
         },
         'description': {
-            'description': 'Description of the MetaWorkflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the MetaWorkflow',
+            schema.TYPE: schema.STRING
         },
 
         ## General input information ##
         'input': {
-            'description': 'Pipeline input, reference files, and general arguments',
-            'type': 'object',
-            'patternProperties': {
-                '.+': {'$ref': '/schemas/argument'}
+            schema.DESCRIPTION: 'Pipeline input, reference files, and general arguments',
+            schema.TYPE: schema.OBJECT,
+            schema.PATTERNPROPERTIES: {
+                '.+': {schema.REF: '/schemas/argument'}
             }
         },
 
         # Workflows information ######
         'workflows': {
-            'description': 'Workflows information and their dependencies',
-            'type': 'object',
-            'patternProperties': {
+            schema.DESCRIPTION: 'Workflows information and their dependencies',
+            schema.TYPE: schema.OBJECT,
+            schema.PATTERNPROPERTIES: {
                 '.+': {
-                    'description': 'Workflow information',
-                    'type': 'object',
-                    'properties': {
+                    schema.DESCRIPTION: 'Workflow information',
+                    schema.TYPE: schema.OBJECT,
+                    schema.PROPERTIES: {
                         'input': {
-                            'description': 'Workflow input and dependencies information',
-                            'type': 'object',
-                            'patternProperties': {
-                                '.+': {'$ref': '/schemas/argument'}
+                            schema.DESCRIPTION: 'Workflow input and dependencies information',
+                            schema.TYPE: schema.OBJECT,
+                            schema.PATTERNPROPERTIES: {
+                                '.+': {schema.REF: '/schemas/argument'}
                             }
                         },
                         'output': {
-                            'description': 'Workflow output information',
-                            'type': 'object',
-                            'patternProperties': {
-                                '.+': {'$ref': '/schemas/argument-output'}
+                            schema.DESCRIPTION: 'Workflow output information',
+                            schema.TYPE: schema.OBJECT,
+                            schema.PATTERNPROPERTIES: {
+                                '.+': {schema.REF: '/schemas/argument-output'}
                             }
                         }
                     },
-                    'required': ['input', 'output', 'config']
+                    schema.REQUIRED: ['input', 'output', 'config']
                 }
             }
         }
     },
-    'required': ['name', 'description', 'input', 'workflows'],
+    schema.REQUIRED: ['name', 'description', 'input', 'workflows'],
 
     ## Sub-schemas ####################
-    '$defs': {
+    schema.DEFS: {
         'argument': {
-            '$schema': 'https://json-schema.org/draft/2020-12/schema',
-            '$id': '/schemas/argument',
-            'type': 'object',
-            'properties': {
+            schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+            schema.ID: '/schemas/argument',
+            schema.TYPE: schema.OBJECT,
+            schema.PROPERTIES: {
                 'argument_type': {
-                    'type': 'string',
-                    'pattern': '^file\..+|^parameter\..+'
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '^file\..+|^parameter\..+'
                 },
                 'dimensionality': {
-                    'type': 'number'
+                    schema.TYPE: schema.NUMBER
                 },
                 'files': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'string',
-                        'pattern': '.+\@.+' # check for <name>@<version>
+                    schema.TYPE: schema.ARRAY,
+                    schema.ITEMS: {
+                        schema.TYPE: schema.STRING,
+                        schema.PATTERN: '.+\@.+' # check for <name>@<version>
                     }
                 },
                 'source': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 },
                 'source_argument_name': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 },
                 'scatter': {
-                    'type': 'number'
+                    schema.TYPE: schema.NUMBER
                 },
                 'gather': {
-                    'type': 'number'
+                    schema.TYPE: schema.NUMBER
                 },
                 'input_dimension': {
-                    'type': 'number'
+                    schema.TYPE: schema.NUMBER
                 },
                 'extra_dimension': {
-                    'type': 'number'
+                    schema.TYPE: schema.NUMBER
                 },
                 'mount': {
-                    'type': 'boolean'
+                    schema.TYPE: schema.BOOLEAN
                 },
                 'rename': {
-                    'type': 'string',
-                    'pattern': '^formula\:.+'
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '^formula\:.+'
                 },
                 'unzip': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 }
             },
-            'required': ['argument_type']
+            schema.REQUIRED: ['argument_type']
         },
         'argument-output': {
-            '$schema': 'https://json-schema.org/draft/2020-12/schema',
-            '$id': '/schemas/argument-output',
-            'type': 'object',
-            'properties': {
+            schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+            schema.ID: '/schemas/argument-output',
+            schema.TYPE: schema.OBJECT,
+            schema.PROPERTIES: {
                 'description': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 },
                 'linkto_location': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'string'
+                    schema.TYPE: schema.ARRAY,
+                    schema.ITEMS: {
+                        schema.TYPE: schema.STRING
                     }
                 },
                 'file_type': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 },
                 'higlass_file': {
-                    'type': 'boolean'
+                    schema.TYPE: schema.BOOLEAN
                 },
                 'variant_type': {
-                    'type': 'string'
+                    schema.TYPE: schema.STRING
                 }
             },
-            'required': ['file_type']
+            schema.REQUIRED: ['file_type']
         }
     }
 }

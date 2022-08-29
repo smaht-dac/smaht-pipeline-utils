@@ -1,41 +1,43 @@
+from pipeline_utils.schemas import schema
+
 yaml_software_schema = {
     ## Schema #########################
-    '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YAMLSoftware',
-    'title': 'YAMLSoftware',
-    'description': 'Schema to validate a YAML description of a Software',
-    'type': 'object',
-    'properties': {
+    schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+    schema.ID: '/schemas/YAMLSoftware',
+    schema.TITLE: 'YAMLSoftware',
+    schema.DESCRIPTION: 'Schema to validate a YAML description of a Software',
+    schema.TYPE: schema.OBJECT,
+    schema.PROPERTIES: {
         'name': {
-            'description': 'Name of the Software',
-            'type': 'string'
+            schema.DESCRIPTION: 'Name of the Software',
+            schema.TYPE: schema.STRING
         },
         'title': {
-            'description': 'Title of the Software',
-            'type': 'string'
+            schema.DESCRIPTION: 'Title of the Software',
+            schema.TYPE: schema.STRING
         },
         'source_url': {
-            'description': 'Source url of the Software',
-            'type': 'string',
-            'format': 'uri',
-            'pattern': '^https?\:.+'
+            schema.DESCRIPTION: 'Source url of the Software',
+            schema.TYPE: schema.STRING,
+            schema.FORMAT: 'uri',
+            schema.PATTERN: '^https?\:.+'
         },
         'description': {
-            'description': 'Description of the Software',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the Software',
+            schema.TYPE: schema.STRING
         },
         'version': {
-            'description': 'Version of the Software',
-            'type': 'string'
+            schema.DESCRIPTION: 'Version of the Software',
+            schema.TYPE: schema.STRING
         },
         'commit': {
-            'description': 'Commit of the Software',
-            'type': 'string'
+            schema.DESCRIPTION: 'Commit of the Software',
+            schema.TYPE: schema.STRING
         }
     },
-    'required': ['name'],
-    'oneOf': [
-        {'required': ['version']},
-        {'required': ['commit']}
+    schema.REQUIRED: ['name'],
+    schema.ONEOF: [
+        {schema.REQUIRED: ['version']},
+        {schema.REQUIRED: ['commit']}
     ]
 }

@@ -1,39 +1,41 @@
+from pipeline_utils.schemas import schema
+
 yaml_file_reference_schema = {
     ## Schema #########################
-    '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YAMLFileReference',
-    'title': 'YAMLFileReference',
-    'description': 'Schema to validate a YAML description of a FileReference',
-    'type': 'object',
-    'properties': {
+    schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+    schema.ID: '/schemas/YAMLFileReference',
+    schema.TITLE: 'YAMLFileReference',
+    schema.DESCRIPTION: 'Schema to validate a YAML description of a FileReference',
+    schema.TYPE: schema.OBJECT,
+    schema.PROPERTIES: {
         'name': {
-            'description': 'Name of the FileReference',
-            'type': 'string'
+            schema.DESCRIPTION: 'Name of the FileReference',
+            schema.TYPE: schema.STRING
         },
         'description': {
-            'description': 'Description of the FileReference',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the FileReference',
+            schema.TYPE: schema.STRING
         },
         'format': {
-            'description': 'Description of the FileReference',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the FileReference',
+            schema.TYPE: schema.STRING
         },
         'version': {
-            'description': 'Version of the FileReference',
-            'type': 'string'
+            schema.DESCRIPTION: 'Version of the FileReference',
+            schema.TYPE: schema.STRING
         },
         'status': {
-            'description': 'Status of the upload of the FileReference',
-            'type': 'string',
-            'pattern': 'uploading|uploaded'
+            schema.DESCRIPTION: 'Status of the upload of the FileReference',
+            schema.TYPE: schema.STRING,
+            schema.PATTERN: 'uploading|uploaded'
         },
         'secondary_files': {
-            'description': 'Secondary files for the FileReference',
-            'type': 'array',
-            'items': {
-                'type': 'string'
+            schema.DESCRIPTION: 'Secondary files for the FileReference',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
             }
         }
     },
-    'required': ['name', 'description', 'format', 'version']
+    schema.REQUIRED: ['name', 'description', 'format', 'version']
 }

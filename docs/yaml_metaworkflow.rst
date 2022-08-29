@@ -27,7 +27,8 @@
         #   can be expanded to anything accepted by the schema
         # Check https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
         #   for more details
-        dimensionality: <integer>
+        dimensionality: <integer> # Required for file input arguments
+                                  #   that do not have a default file
         files: # This tag allows to specify reference files that are constant for the pipeline
           - <name>@<version> # name and version of the reference file
                              #   Need to match a reference file defined on the portal

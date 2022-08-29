@@ -138,7 +138,7 @@ class PostPatchRepo(object):
             #     and set to uploading if post for the first time
             if type == 'FileReference':
                 # main status
-                if data_json['status'] == None:
+                if data_json['status'] is None:
                     if is_patch:
                         del data_json['status']
                     else: # is first time post
@@ -173,7 +173,7 @@ class PostPatchRepo(object):
             logger.info('> Validating %s' % data_yaml.get('name'))
             try:
                 YAMLClass(data_yaml).to_json(**kwargs)
-            except yaml_parser.SchemaError:
+            except yaml_parser.ValidationError:
                 pass
         else:
             logger.info('> Processing %s' % data_yaml.get('name'))
@@ -201,8 +201,8 @@ class PostPatchRepo(object):
             # creating JSON object
             d_ = self._yaml_to_json(
                         d, self.object_[type],
-                        INSTITUTION=self.institution,
-                        PROJECT=self.project
+                        institution=self.institution,
+                        project=self.project
                         )
             # post/patch object
             if d_: self._post_patch_json(d_, type)
@@ -227,13 +227,13 @@ class PostPatchRepo(object):
             for d in yaml_parser.load_yaml(fn):
                 # creating _yaml_to_json **kwargs
                 kwargs_ = {
-                    'VERSION': self.version,
-                    'INSTITUTION': self.institution,
-                    'PROJECT': self.project
+                    'version': self.version,
+                    'institution': self.institution,
+                    'project': self.project
                 }
                 if type == 'Workflow':
                     kwargs_.setdefault(
-                        'WFLBUCKET_URL', f's3://{self.wfl_bucket}/{self.pipeline}/{self.version}'
+                        'wflbucket_url', f's3://{self.wfl_bucket}/{self.pipeline}/{self.version}'
                     )
                 # creating JSON object
                 d_ = self._yaml_to_json(
@@ -328,7 +328,7 @@ class PostPatchRepo(object):
                             docker build -t {tag_} {path_} --no-cache
                             docker push {tag_}
                         """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
-                subprocess.check_call(cmd, shell=True)
+                subprocess.check_call(image, shell=True)
 
 
     def run_post_patch(self):

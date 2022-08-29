@@ -95,10 +95,10 @@ def test_workflow():
     for i, fn in enumerate(glob.glob('tests/repo_correct/portal_objects/workflows/*.yaml')):
         for d in yaml_parser.load_yaml(fn):
             d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                                INSTITUTION='hms-dbmi',
-                                PROJECT='cgap-core',
-                                VERSION='v1.0.0',
-                                WFLBUCKET_URL='s3://BUCKETCWL/test_pipeline/v1.0.0'
+                                institution='hms-dbmi',
+                                project='cgap-core',
+                                version='v1.0.0',
+                                wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
                             )
             # check
             assert d_ == res[i]
@@ -111,9 +111,9 @@ def test_workflow_error():
         for d in yaml_parser.load_yaml(fn):
             try:
                 d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                                    INSTITUTION='hms-dbmi',
-                                    PROJECT='cgap-core',
-                                    VERSION='v1.0.0'
+                                    institution='hms-dbmi',
+                                    project='cgap-core',
+                                    version='v1.0.0'
                                 )
-            except yaml_parser.SchemaError as e:
+            except yaml_parser.ValidationError as e:
                 assert e.args[0] == 'YAML object failed schema validation'

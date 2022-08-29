@@ -1,41 +1,43 @@
+from pipeline_utils.schemas import schema
+
 yaml_file_format_schema = {
     ## Schema #########################
-    '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YAMLFileFormat',
-    'title': 'YAMLFileFormat',
-    'description': 'Schema to validate a YAML description of a FileFormat',
-    'type': 'object',
-    'properties': {
+    schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+    schema.ID: '/schemas/YAMLFileFormat',
+    schema.TITLE: 'YAMLFileFormat',
+    schema.DESCRIPTION: 'Schema to validate a YAML description of a FileFormat',
+    schema.TYPE: schema.OBJECT,
+    schema.PROPERTIES: {
         'name': {
-            'description': 'Name of the FileFormat',
-            'type': 'string'
+            schema.DESCRIPTION: 'Name of the FileFormat',
+            schema.TYPE: schema.STRING
         },
         'description': {
-            'description': 'Description of the FileFormat',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the FileFormat',
+            schema.TYPE: schema.STRING
         },
         'extension': {
-            'description': 'Extension of the FileFormat',
-            'type': 'string'
+            schema.DESCRIPTION: 'Extension of the FileFormat',
+            schema.TYPE: schema.STRING
         },
         'file_types': {
-            'description': 'File types that can use the FileFormat',
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'pattern': 'FileReference|FileProcessed'
+            schema.DESCRIPTION: 'File types that can use the FileFormat',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING,
+                schema.PATTERN: 'FileReference|FileProcessed|FileSubmitted'
             }
         },
         'status': {
-            'type': 'string'
+            schema.TYPE: schema.STRING
         },
         'secondary_formats': {
-            'description': 'Secondary formats available for the FileFormat',
-            'type': 'array',
-            'items': {
-                'type': 'string'
+            schema.DESCRIPTION: 'Secondary formats available for the FileFormat',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
             }
         }
     },
-    'required': ['name', 'description', 'extension']
+    schema.REQUIRED: ['name', 'description', 'extension']
 }

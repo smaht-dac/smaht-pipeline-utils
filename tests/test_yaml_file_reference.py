@@ -37,8 +37,8 @@ def test_file_reference():
     for i, d in enumerate(yaml_parser.load_yaml('tests/repo_correct/portal_objects/file_reference.yaml')):
         # creating JSON object
         d_ = yaml_parser.YAMLFileReference(d).to_json(
-                            INSTITUTION='hms-dbmi',
-                            PROJECT='cgap-core'
+                            institution='hms-dbmi',
+                            project='cgap-core'
                             )
         # check
         assert d_ == res[i]
@@ -51,8 +51,8 @@ def test_file_reference_error():
         try:
             # creating JSON object
             d_ = yaml_parser.YAMLFileReference(d).to_json(
-                                INSTITUTION='hms-dbmi',
-                                PROJECT='cgap-core'
+                                institution='hms-dbmi',
+                                project='cgap-core'
                                 )
-        except yaml_parser.SchemaError as e:
+        except yaml_parser.ValidationError as e:
             assert e.args[0] == 'YAML object failed schema validation'

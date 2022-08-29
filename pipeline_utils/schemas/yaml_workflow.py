@@ -1,127 +1,129 @@
+from pipeline_utils.schemas import schema
+
 yaml_workflow_schema = {
     ## Schema #########################
-    '$schema': 'https://json-schema.org/draft/2020-12/schema',
-    '$id': '/schemas/YAMLWorkflow',
-    'title': 'YAMLWorkflow',
-    'description': 'Schema to validate a YAML description of a Workflow',
-    'type': 'object',
-    'properties': {
+    schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+    schema.ID: '/schemas/YAMLWorkflow',
+    schema.TITLE: 'YAMLWorkflow',
+    schema.DESCRIPTION: 'Schema to validate a YAML description of a Workflow',
+    schema.TYPE: schema.OBJECT,
+    schema.PROPERTIES: {
 
         ## Workflow information #######
         'name': {
-            'description': 'Name of the Workflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Name of the Workflow',
+            schema.TYPE: schema.STRING
         },
         'title': {
-            'description': 'Title of the Workflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Title of the Workflow',
+            schema.TYPE: schema.STRING
         },
         'description': {
-            'description': 'Description of the Workflow',
-            'type': 'string'
+            schema.DESCRIPTION: 'Description of the Workflow',
+            schema.TYPE: schema.STRING
         },
         'runner': {
-            'description': 'Workflow description in standard language',
-            'type': 'object',
-            'properties': {
+            schema.DESCRIPTION: 'Workflow description in standard language',
+            schema.TYPE: schema.OBJECT,
+            schema.PROPERTIES: {
                 'language': {
-                    'description': 'Language used in Workflow description',
-                    'type': 'string',
-                    'pattern': '[wW][dD][lL]|[cC][wW][lL]'
+                    schema.DESCRIPTION: 'Language used in Workflow description',
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '[wW][dD][lL]|[cC][wW][lL]'
                 },
                 'main': {
-                    'description': 'Main description file',
-                    'type': 'string',
-                    'pattern': '.+\.cwl|.+\.wdl'
+                    schema.DESCRIPTION: 'Main description file',
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '.+\.cwl|.+\.wdl'
                 },
                 'child': {
-                    'description': 'Supplementary description files used by main',
-                    'type': 'array',
-                    'items': {
-                        'type': 'string',
-                        'pattern': '.+\.cwl|.+\.wdl'
+                    schema.DESCRIPTION: 'Supplementary description files used by main',
+                    schema.TYPE: schema.ARRAY,
+                    schema.ITEMS: {
+                        schema.TYPE: schema.STRING,
+                        schema.PATTERN: '.+\.cwl|.+\.wdl'
                     }
                 }
             },
-            'required': ['language', 'main']
+            schema.REQUIRED: ['language', 'main']
         },
         'software': {
-            'description': 'List of software used in the Workflow',
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'pattern': '.+\@.+' # check for <name>@<version>
+            schema.DESCRIPTION: 'List of software used in the Workflow',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING,
+                schema.PATTERN: '.+\@.+' # check for <name>@<version>
             }
         },
 
         ## Input information ##########
         'input': {
-            'description': 'Input files and parameters',
-            'type': 'object',
-            'patternProperties': {
-                '.+': {'$ref': '/schemas/argument'}
+            schema.DESCRIPTION: 'Input files and parameters',
+            schema.TYPE: schema.OBJECT,
+            schema.PATTERNPROPERTIES: {
+                '.+': {schema.REF: '/schemas/argument'}
             }
         },
 
         ## Output information #########
         'output': {
-            'description': 'Output files and quality controls',
-            'type': 'object',
-            'patternProperties': {
-                '.+': {'$ref': '/schemas/argument'}
+            schema.DESCRIPTION: 'Output files and quality controls',
+            schema.TYPE: schema.OBJECT,
+            schema.PATTERNPROPERTIES: {
+                '.+': {schema.REF: '/schemas/argument'}
             }
         }
     },
-    'required': ['name', 'description', 'runner', 'input', 'output'],
+    schema.REQUIRED: ['name', 'description', 'runner', 'input', 'output'],
 
     ## Sub-schemas ####################
-    '$defs': {
+    schema.DEFS: {
         'argument': {
-            '$schema': 'https://json-schema.org/draft/2020-12/schema',
-            '$id': '/schemas/argument',
-            'type': 'object',
-            'properties': {
+            schema.SCHEMA: 'https://json-schema.org/draft/2020-12/schema',
+            schema.ID: '/schemas/argument',
+            schema.TYPE: schema.OBJECT,
+            schema.PROPERTIES: {
                 'argument_type': {
-                    'type': 'string',
-                    'pattern': '^file\..+|^parameter\..+|^qc\..+'
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '^file\..+|^parameter\..+|^qc\..+'
                 },
                 'secondary_files': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'string'
+                    schema.TYPE: schema.ARRAY,
+                    schema.ITEMS: {
+                        schema.TYPE: schema.STRING
                     }
                 }
             },
-            'required': ['argument_type'],
+            schema.REQUIRED: ['argument_type'],
 
             ## qc specific ############
-            'if': {
-                'type': 'object',
-                'properties': {
+            schema.IF: {
+                schema.TYPE: schema.OBJECT,
+                schema.PROPERTIES: {
                     'argument_type': {
-                        'pattern': '^qc\..+'
+                        schema.PATTERN: '^qc\..+'
                     }
                 },
             },
-            'then': {
-                'properties': {
+            schema.THEN: {
+                schema.PROPERTIES: {
                     'argument_to_be_attached_to': {
-                        'type': 'string'
+                        schema.TYPE: schema.STRING
                     },
                     'zipped': {
-                        'type': 'boolean'
+                        schema.TYPE: schema.BOOLEAN
                     },
                     'html': {
-                        'type': 'boolean'
+                        schema.TYPE: schema.BOOLEAN
                     },
                     'json': {
-                        'type': 'boolean'
+                        schema.TYPE: schema.BOOLEAN
                     },
                     'table': {
-                        'type': 'boolean'
+                        schema.TYPE: schema.BOOLEAN
                     }
                 },
-                'required': ['argument_to_be_attached_to']
+                schema.REQUIRED: ['argument_to_be_attached_to']
             },
         }
     }
