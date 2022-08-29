@@ -4,6 +4,7 @@
 import sys, os
 import pytest
 from jsonschema import Draft202012Validator
+
 ###############################################################
 #   Schemas
 ###############################################################
@@ -13,7 +14,9 @@ from pipeline_utils.schemas.yaml_software import yaml_software_schema
 from pipeline_utils.schemas.yaml_file_reference import yaml_file_reference_schema
 from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
 
-
+###############################################################
+#   Tests
+###############################################################
 def test_check_schema_fail():
     """
     """
