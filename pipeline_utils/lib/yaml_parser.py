@@ -125,6 +125,15 @@ class YAMLTemplate(object):
                             )
             raise ValidationError
 
+    def _clean_newline(self, line):
+        """
+        """
+        if ' |' in line:
+            line = line.replace(' |', '')
+        elif '|' in line:
+            line = line.replace('|', '')
+        return line
+
 
 ###############################################################
 #   YAMLWorkflow, YAML Workflow
@@ -159,10 +168,8 @@ class YAMLWorkflow(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
-            if ' |' in val:
-                val = val.replace(' |', '')
-            elif '|' in val:
-                val = val.replace('|', '')
+            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+                val = self._clean_newline(val)
             setattr(self, key, val)
 
     def _arguments_input(self):
@@ -279,10 +286,8 @@ class YAMLMetaWorkflow(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
-            if ' |' in val:
-                val = val.replace(' |', '')
-            elif '|' in val:
-                val = val.replace('|', '')
+            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+                val = self._clean_newline(val)
             setattr(self, key, val)
 
     def _arguments(self, input, project):
@@ -384,10 +389,8 @@ class YAMLSoftware(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
-            if ' |' in val:
-                val = val.replace(' |', '')
-            elif '|' in val:
-                val = val.replace('|', '')
+            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+                val = self._clean_newline(val)
             setattr(self, key, val)
 
     def to_json(
@@ -448,10 +451,8 @@ class YAMLFileReference(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
-            if ' |' in val:
-                val = val.replace(' |', '')
-            elif '|' in val:
-                val = val.replace('|', '')
+            if key in [self.DESCRIPTION_SCHEMA]:
+                val = self._clean_newline(val)
             setattr(self, key, val)
 
     def to_json(
@@ -503,10 +504,8 @@ class YAMLFileFormat(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
-            if ' |' in val:
-                val = val.replace(' |', '')
-            elif '|' in val:
-                val = val.replace('|', '')
+            if key in [self.DESCRIPTION_SCHEMA]:
+                val = self._clean_newline(val)
             setattr(self, key, val)
 
     def to_json(
