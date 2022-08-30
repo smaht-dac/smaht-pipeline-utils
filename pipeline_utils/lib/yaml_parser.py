@@ -116,7 +116,7 @@ class YAMLTemplate(object):
         errors_ = peek(errors)
         if errors_:
             for error in errors_:
-                logger.error('ValidationError [{0}]: {1} in path={2}, schema={3}'.format(
+                logger.error('- ValidationError [{0}]: {1} in path={2}, schema={3}'.format(
                                 error.validator,
                                 error.message,
                                 error.relative_path,
@@ -159,6 +159,10 @@ class YAMLWorkflow(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
+            if ' |' in val:
+                val = val.replace(' |', '')
+            elif '|' in val:
+                val = val.replace('|', '')
             setattr(self, key, val)
 
     def _arguments_input(self):
@@ -275,6 +279,10 @@ class YAMLMetaWorkflow(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
+            if ' |' in val:
+                val = val.replace(' |', '')
+            elif '|' in val:
+                val = val.replace('|', '')
             setattr(self, key, val)
 
     def _arguments(self, input, project):
@@ -376,6 +384,10 @@ class YAMLSoftware(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
+            if ' |' in val:
+                val = val.replace(' |', '')
+            elif '|' in val:
+                val = val.replace('|', '')
             setattr(self, key, val)
 
     def to_json(
@@ -436,6 +448,10 @@ class YAMLFileReference(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
+            if ' |' in val:
+                val = val.replace(' |', '')
+            elif '|' in val:
+                val = val.replace('|', '')
             setattr(self, key, val)
 
     def to_json(
@@ -487,6 +503,10 @@ class YAMLFileFormat(YAMLTemplate):
         self._validate()
         # Load attributes
         for key, val in data.items():
+            if ' |' in val:
+                val = val.replace(' |', '')
+            elif '|' in val:
+                val = val.replace('|', '')
             setattr(self, key, val)
 
     def to_json(
