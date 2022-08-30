@@ -25,7 +25,7 @@ yaml_file_format_schema = {
             schema.TYPE: schema.ARRAY,
             schema.ITEMS: {
                 schema.TYPE: schema.STRING,
-                schema.PATTERN: 'FileReference|FileProcessed|FileSubmitted'
+                schema.PATTERN: 'FileReference|FileProcessed|FileSubmitted|FileFastq'
             }
         },
         'status': {
