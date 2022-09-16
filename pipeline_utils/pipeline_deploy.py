@@ -100,37 +100,25 @@ class PostPatchRepo(object):
             self.pipeline = f.readlines()[0].strip()
 
         # Load credentials
-        # self._get_credentials()
+        self._get_credentials()
 
 
     def _get_credentials(self):
         """Get auth credentials.
         """
         # Get portal credentials
-        if os.environ.get('GLOBAL_BUCKET_ENV') and os.environ.get('S3_ENCRYPT_KEY'):
-            # new account
+        if os.environ.get('GLOBAL_ENV_BUCKET') and os.environ.get('S3_ENCRYPT_KEY'):
             s3 = s3_utils.s3Utils(env=self.ff_env)
             self.ff_key = s3.get_access_keys('access_key_admin')
-        elif os.environ.get('S3_ENCRYPT_KEY'):
-            # main account, also need the key to get auth this way
-            self.ff_key = ff_utils.get_authentication_with_server(ff_env=self.ff_env)
-        else:
-            # read key for portal auth from self.keydicts_json [~/.cgap-keydicts.json]
-            try:
-                with open(os.path.expanduser(self.keydicts_json)) as keyfile:
-                    keys = json.load(keyfile)
-            except Exception:
-                error = 'ERROR, could not locate file with key dicts for portal auth --keydicts-json\n'
-                sys.exit(error)
+        elif os.path.exists(self.keydicts_json):
+            with open(os.path.expanduser(self.keydicts_json)) as keyfile:
+                keys = json.load(keyfile)
             self.ff_key = keys.get(self.ff_env)
+        else:
+            raise Exception('Required deployment vars GLOBAL_ENV_BUCKET and/or S3_ENCRYPT_KEY not set, and no entry for specified enivornment exists in keydicts file.')
 
         # Get encryption key
         self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID', None)
-
-        # Check args
-        if not self.ff_key:
-            error = 'ERROR, missing key for {0} environment in key dicts for auth\n'.format(self.ff_env)
-            sys.exit(error)
 
 
     def _post_patch_json(self, data_json, type):
@@ -138,10 +126,10 @@ class PostPatchRepo(object):
         """
         if not self.debug:
             is_patch = True
-            # try:
-            #     ff_utils.get_metadata(data_json['aliases'][0], key=self.ff_key)
-            # except Exception:
-            #     is_patch = False
+            try:
+                ff_utils.get_metadata(data_json['aliases'][0], key=self.ff_key)
+            except Exception:
+                is_patch = False
 
             # Exception for uploading of FileReference objects
             #   status -> uploading, uploaded
@@ -166,10 +154,10 @@ class PostPatchRepo(object):
                 data_json['extra_files'] = extra_files_
             ###########################################################
 
-            # if is_patch:
-            #     ff_utils.patch_metadata(data_json, data_json['aliases'][0], key=self.ff_key)
-            # else:
-            #     ff_utils.post_metadata(data_json, type, key=self.ff_key)
+            if is_patch:
+                ff_utils.patch_metadata(data_json, data_json['aliases'][0], key=self.ff_key)
+            else:
+                ff_utils.post_metadata(data_json, type, key=self.ff_key)
 
             logger.info('> Posted %s' % data_json['aliases'][0])
 
