@@ -13,7 +13,7 @@ def test_file_format():
     """
     res = [
             {
-                "aliases": ["bam"],
+                "aliases": ["cgap-core:bam"],
                 "description": "format to represent aligned reads",
                 "extrafile_formats": ["bai"],
                 "file_format": "bam",
@@ -25,7 +25,7 @@ def test_file_format():
             },
             {
                 "accession": 'GAPFIXRDPDK1',
-                "aliases": ["bam_bai"],
+                "aliases": ["cgap-core:bam_bai"],
                 "description": "index for bam format",
                 "extrafile_formats": [],
                 "file_format": "bam_bai",

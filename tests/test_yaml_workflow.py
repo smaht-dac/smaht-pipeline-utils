@@ -50,8 +50,8 @@ def test_workflow():
                 "name": "gatk-HaplotypeCaller_v1.0.0",
                 "project": "/projects/cgap-core/",
                 "software": [
-                    "gatk_4.2.1",
-                    "vcf-tools_5A63Aa1"
+                    "cgap-core:gatk_4.2.1",
+                    "cgap-core:vcf-tools_5A63Aa1"
                 ],
                 "title": "HaplotypeCaller plus integity-check, v1.0.0",
                 "wdl_child_filenames": [

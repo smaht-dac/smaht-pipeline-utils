@@ -288,7 +288,7 @@ class YAMLWorkflow(YAMLTemplate):
         wfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
         wfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
         wfl_json[self.DESCRIPTION_SCHEMA] = self.description
-        wfl_json[self.SOFTWARE_SCHEMA] = [s.replace('@', '_') for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
+        wfl_json[self.SOFTWARE_SCHEMA] = [f'{project}:{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
         wfl_json[self.ARGUMENTS_SCHEMA] = self._arguments_input() + self._arguments_output()
 
         # workflow language (TODO)
@@ -478,7 +478,7 @@ class YAMLSoftware(YAMLTemplate):
             sftwr_json[self.SOURCE_URL_SCHEMA] = self.source_url
 
         sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        sftwr_json[self.ALIASES_SCHEMA] = [f'{self.name}_{version}']
+        sftwr_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{version}']
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -585,7 +585,7 @@ class YAMLFileFormat(YAMLTemplate):
 
         # common metadata
         frmt_json[self.FILE_FORMAT_SCHEMA] = self.name
-        frmt_json[self.ALIASES_SCHEMA] = [self.name]
+        frmt_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}']
         frmt_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
         frmt_json[self.PROJECT_SCHEMA] = self._link_project(project)
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
