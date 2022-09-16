@@ -85,7 +85,7 @@ yaml_workflow_schema = {
             schema.PROPERTIES: {
                 'argument_type': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^file\..+|^parameter\..+|^qc\..+'
+                    schema.PATTERN: '^file\..+|^parameter\..+|^qc\..+|^report\..+'
                 },
                 'secondary_files': {
                     schema.TYPE: schema.ARRAY,
@@ -121,6 +121,15 @@ yaml_workflow_schema = {
                     },
                     'table': {
                         schema.TYPE: schema.BOOLEAN
+                    },
+                    'html_in_zipped': {
+                        schema.TYPE: schema.STRING
+                    },
+                    'tables_in_zipped': {
+                        schema.TYPE: schema.ARRAY,
+                        schema.ITEMS: {
+                            schema.TYPE: schema.STRING
+                        }
                     }
                 },
                 schema.REQUIRED: ['argument_to_be_attached_to']

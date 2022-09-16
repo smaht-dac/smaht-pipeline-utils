@@ -51,10 +51,21 @@ logger = structlog.getLogger(__name__)
 #   PostPatchRepo, class definition
 ###############################################################
 class PostPatchRepo(object):
+    """Class to handle deployment of pipeline components.
+    """
 
 
     def __init__(self, args, repo, version='VERSION', pipeline='PIPELINE'):
-        """
+        """Constructor method.
+
+            :param args: Command line arguments
+            :type args: object returned by ArgumentParser.parse_args() method
+            :param repo: Name of the repository
+            :type repo: str
+            :param version: Name of the file storing pipeline version information
+            :type version: str
+            :param pipeline: Name of the file storing pipeline name information
+            :type pipeline: str
         """
         # Init credentials
         self.ff_key = None
@@ -93,7 +104,7 @@ class PostPatchRepo(object):
 
 
     def _get_credentials(self):
-        """Get auth credentials to target portal and environment.
+        """Get auth credentials.
         """
         # Get portal credentials
         if os.environ.get('GLOBAL_BUCKET_ENV') and os.environ.get('S3_ENCRYPT_KEY'):
@@ -123,7 +134,7 @@ class PostPatchRepo(object):
 
 
     def _post_patch_json(self, data_json, type):
-        """Routine to POST|PATCH metadata from JSON object to portal.
+        """Helper to POST|PATCH JSON object.
         """
         if not self.debug:
             is_patch = True
@@ -167,14 +178,22 @@ class PostPatchRepo(object):
 
 
     def _yaml_to_json(self, data_yaml, YAMLClass, **kwargs):
-        """Routine to validate YAML object and convert to JSON.
+        """Helper to validate YAML object and convert to JSON.
         """
         if self.validate:
             logger.info('> Validating %s' % data_yaml.get('name'))
             try:
                 YAMLClass(data_yaml).to_json(**kwargs)
-            except yaml_parser.ValidationError:
-                pass
+            except yaml_parser.ValidationError as e:
+                # log errors
+                for error in e.errors:
+                    logger.error('- ValidationError [{0}]: {1} in path={2}, schema={3}'.format(
+                                    error.validator,
+                                    error.message,
+                                    error.relative_path,
+                                    error.schema
+                                    )
+                                )
         else:
             logger.info('> Processing %s' % data_yaml.get('name'))
             return YAMLClass(data_yaml).to_json(**kwargs)
@@ -288,7 +307,8 @@ class PostPatchRepo(object):
                         for line in read_:
                             line = line.replace('ACCOUNT', account_)
                             line = line.replace('VERSION', self.version)
-                            line = line.replace('LICENSEID', self.sentieon_server)
+                            if self.sentieon_server:
+                                line = line.replace('LICENSEID', self.sentieon_server)
                             write_.write(line)
                 # upload to s3
                 extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
@@ -332,7 +352,7 @@ class PostPatchRepo(object):
 
 
     def run_post_patch(self):
-        """Main function to deploy and POST|PATCH specified objects.
+        """Main function to deploy specified components.
         """
         # Software
         if self.post_software:
@@ -367,37 +387,38 @@ class PostPatchRepo(object):
 #  MAIN, runner
 ################################################
 def main(args):
-    """Deploy pipelines from specified repositories.
+    """Deploy pipeline components from specified repositories to target environment.
 
-    For each repository to deploy use a PostPatchRepo object to:
-        - POST|PATCH portal objects
-        - PUSH workflow descriptions to target environment
-        - BUILD Docker images and PUSH to target environment
+    For each repository a PostPatchRepo object is created to:
+        - Create and POST|PATCH to database objects in JSON format for
+          Workflow, MetaWorkflow, FileReference, FileFormat, and Software components
+        - PUSH workflow descriptions to target S3 bucket
+        - BUILD Docker images and PUSH to target ECR folder
     """
 
     if not args.wfl_bucket:
         if args.post_workflow or args.post_wfl:
-            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow requires --wfl-bucket argument\n'
+            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow requires --wfl-bucket argument.\n'
             sys.exit(error)
 
     if not args.account:
         if args.post_workflow or args.post_wfl or args.post_ecr:
-            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --account argument\n'
+            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --account argument.\n'
             sys.exit(error)
 
     if not args.region:
         if args.post_workflow or args.post_wfl or args.post_ecr:
-            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument\n'
+            error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument.\n'
             sys.exit(error)
 
     if not args.project:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project argument\n'
+            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project argument.\n'
             sys.exit(error)
 
     if not args.institution:
         if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution argument\n'
+            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution argument.\n'
             sys.exit(error)
 
     # Run

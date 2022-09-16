@@ -33,6 +33,10 @@ yaml_software_schema = {
         'commit': {
             schema.DESCRIPTION: 'Commit of the Software',
             schema.TYPE: schema.STRING
+        },
+        'license': {
+            schema.DESCRIPTION: 'License of the Software',
+            schema.TYPE: schema.STRING
         }
     },
     schema.REQUIRED: ['name'],

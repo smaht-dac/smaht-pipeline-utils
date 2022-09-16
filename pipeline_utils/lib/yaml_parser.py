@@ -27,16 +27,10 @@ from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
 
 
 ###############################################################
-#   Logger
-###############################################################
-logger = structlog.getLogger(__name__)
-
-
-###############################################################
 #   Functions
 ###############################################################
 def load_yaml(file):
-    """Return a generator to YAML documents in file
+    """Return a generator to YAML documents in file.
     """
     with open(file) as stream:
         try:
@@ -46,7 +40,8 @@ def load_yaml(file):
             sys.exit(exc)
 
 def peek(iterable):
-    """
+    """Function to check if an iterable is empty.
+    If not empty return the complete iterator, else return None.
     """
     try:
         first = next(iterable)
@@ -60,22 +55,40 @@ def peek(iterable):
 #   ValidationError
 ###############################################################
 class ValidationError(Exception):
-    """Custom exception for error tracking
+    """Custom Exception for error tracking in schema validation.
     """
 
-    def __init__(self):
-        message = 'YAML object failed schema validation'
-        super().__init__(message)
+    def __init__(self, errors):
+        """Constructor method.
 
+            :param errors: Errors from jsonschema.Validator.iter_errors()
+            :type errors: Iterable[jsonschema.exceptions.ValidationError]
+        """
+        errors, errors_ = itertools.tee(errors)
+        super().__init__(self._message(errors))
+        self.errors = errors_
+
+    def _message(self, errors):
+        """Helper to create error message.
+        """
+        message = 'YAML object failed schema validation.\n'
+        for error in errors:
+            message += 'ValidationError [{0}]: {1} in path={2}, schema={3}\n'.format(
+                            error.validator,
+                            error.message,
+                            error.relative_path,
+                            error.schema
+                            )
+        return message
 
 ###############################################################
 #   YAMLTemplate
 ###############################################################
 class YAMLTemplate(object):
-    """
+    """Template class to work with YAML documents representing pipeline components.
     """
 
-    # Schema constants
+    # schema constants
     NAME_SCHEMA = 'name'
     TITLE_SCHEMA = 'title'
     DESCRIPTION_SCHEMA = 'description'
@@ -101,32 +114,25 @@ class YAMLTemplate(object):
     FILE_SCHEMA = 'file'
     FILES_SCHEMA = 'files'
     PARAMETER_SCHEMA = 'parameter'
+    LICENSE_SCHEMA = 'license'
 
     def __init__(self, data, schema):
-        """
+        """Constructor method.
         """
         self.data = data
         self.schema = schema
 
     def _validate(self):
-        """
+        """Helper to validate the document against schema.
         """
         draft202012validator = Draft202012Validator(self.schema)
         errors = draft202012validator.iter_errors(self.data)
         errors_ = peek(errors)
         if errors_:
-            for error in errors_:
-                logger.error('- ValidationError [{0}]: {1} in path={2}, schema={3}'.format(
-                                error.validator,
-                                error.message,
-                                error.relative_path,
-                                error.schema
-                                )
-                            )
-            raise ValidationError
+            raise ValidationError(errors_)
 
     def _clean_newline(self, line):
-        """
+        """Helper to clean multiline docstrings from YAML block style indicator "|".
         """
         if ' |' in line:
             line = line.replace(' |', '')
@@ -134,17 +140,43 @@ class YAMLTemplate(object):
             line = line.replace('|', '')
         return line
 
+    def _link_title(self, name, version):
+        """Helper to create a "title" field.
+        """
+        title = getattr(self, self.TITLE_SCHEMA, None)
+        if title:
+            if version in title:
+                return title
+            else:
+                return f'{title}, {version}'
+        else:
+            return f'{name.replace("_", " ")}, {version}'
+
+    def _link_institution(self, institution):
+        """Helper to create an "institution" field.
+        """
+        return f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
+
+    def _link_project(self, project):
+        """Helper to create a "project" field.
+        """
+        return f'/{self.PROJECTS_SCHEMA}/{project}/'
+
 
 ###############################################################
 #   YAMLWorkflow, YAML Workflow
 ###############################################################
 class YAMLWorkflow(YAMLTemplate):
+    """Class to work with YAML documents representing Workflow objects.
+    """
 
-    # Schema constants
+    # schema constants
     INPUT_FILE_SCHEMA = 'Input file'
     OUTPUT_PROCESSED_FILE_SCHEMA = 'Output processed file'
     OUTPUT_QC_FILE_SCHEMA = 'Output QC file'
+    OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
     QC_SCHEMA = 'qc'
+    REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
     ZIPPED_SCHEMA = 'zipped'
     HTML_SCHEMA = 'html'
@@ -159,21 +191,25 @@ class YAMLWorkflow(YAMLTemplate):
     QC_HTML_SCHEMA = 'qc_html'
     QC_JSON_SCHEMA = 'qc_json'
     QC_TABLE_SCHEMA = 'qc_table'
+    QC_ZIPPED_HTML_SCHEMA = 'qc_zipped_html'
+    QC_ZIPPED_TABLES_SCHEMA = 'qc_zipped_tables'
+    HTML_IN_ZIPPED_SCHEMA = 'html_in_zipped'
+    TABLES_IN_ZIPPED_SCHEMA = 'tables_in_zipped'
 
     def __init__(self, data):
-        """
+        """Constructor method.
         """
         super().__init__(data, yaml_workflow_schema)
-        # Validate data with schema
+        # validate data with schema
         self._validate()
-        # Load attributes
+        # load attributes
         for key, val in data.items():
             if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
                 val = self._clean_newline(val)
             setattr(self, key, val)
 
     def _arguments_input(self):
-        """
+        """Helper to parse input arguments and map to expected JSON structure.
         """
         arguments = []
         for name, values in self.input.items():
@@ -191,7 +227,7 @@ class YAMLWorkflow(YAMLTemplate):
         return arguments
 
     def _arguments_output(self):
-        """
+        """Helper to parse output arguments and map to expected JSON structure.
         """
         arguments = []
         for name, values in self.output.items():
@@ -216,18 +252,30 @@ class YAMLWorkflow(YAMLTemplate):
                     self.QC_JSON_SCHEMA: values.get(self.JSON_SCHEMA, False),
                     self.QC_TABLE_SCHEMA: values.get(self.TABLE_SCHEMA, False)
                 }
+                # quality controls, TODO
+                #   these fields are bad, need to rework how QCs work
+                if values.get(self.HTML_IN_ZIPPED_SCHEMA):
+                    argument_[self.QC_ZIPPED_HTML_SCHEMA] = values[self.HTML_IN_ZIPPED_SCHEMA]
+                if values.get(self.TABLES_IN_ZIPPED_SCHEMA):
+                    argument_[self.QC_ZIPPED_TABLES_SCHEMA] = values[self.TABLES_IN_ZIPPED_SCHEMA]
+            elif type == self.REPORT_SCHEMA and format == self.FILE_SCHEMA:
+                argument_type = self.OUTPUT_REPORT_FILE_SCHEMA
+                argument_ = {
+                    self.ARGUMENT_TYPE_SCHEMA: argument_type,
+                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
+                }
             arguments.append(argument_)
 
         return arguments
 
     def to_json(
                self,
-               version='VERSION',
-               institution='INSTITUTION', # alias
-               project='PROJECT', # alias
-               wflbucket_url='s3://WFLBUCKET/PIPELINE/VERSION',
+               version,
+               institution, # alias
+               project, # alias
+               wflbucket_url
                ):
-        """
+        """Function to build the corresponding object in JSON format.
         """
         wfl_json = {}
 
@@ -235,10 +283,10 @@ class YAMLWorkflow(YAMLTemplate):
         wfl_json[self.APP_NAME_SCHEMA] = self.name # name
         wfl_json[self.APP_VERSION_SCHEMA] = version # version
         wfl_json[self.NAME_SCHEMA] = f'{self.name}_{version}'
-        wfl_json[self.TITLE_SCHEMA] = f'{getattr(self, self.TITLE_SCHEMA, self.name.replace("_", " "))}, {version}'
+        wfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
         wfl_json[self.ALIASES_SCHEMA] = [f'{project}:{wfl_json[self.NAME_SCHEMA]}']
-        wfl_json[self.INSTITUTION_SCHEMA] = f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-        wfl_json[self.PROJECT_SCHEMA] = f'/{self.PROJECTS_SCHEMA}/{project}/'
+        wfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
+        wfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
         wfl_json[self.DESCRIPTION_SCHEMA] = self.description
         wfl_json[self.SOFTWARE_SCHEMA] = [s.replace('@', '_') for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
         wfl_json[self.ARGUMENTS_SCHEMA] = self._arguments_input() + self._arguments_output()
@@ -269,8 +317,10 @@ class YAMLWorkflow(YAMLTemplate):
 #   YAMLMetaWorkflow, YAML MetaWorkflow
 ###############################################################
 class YAMLMetaWorkflow(YAMLTemplate):
+    """Class to work with YAML documents representing MetaWorkflow objects.
+    """
 
-    # Schema constants
+    # schema constants
     DIMENSION_SCHEMA = 'dimension'
     WORKFLOW_SCHEMA = 'workflow'
     WORKFLOWS_SCHEMA = 'workflows'
@@ -279,19 +329,19 @@ class YAMLMetaWorkflow(YAMLTemplate):
     CONFIG_SCHEMA = 'config'
 
     def __init__(self, data):
-        """
+        """Constructor method.
         """
         super().__init__(data, yaml_metaworkflow_schema)
-        # Validate data with schema
+        # validate data with schema
         self._validate()
-        # Load attributes
+        # load attributes
         for key, val in data.items():
             if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
                 val = self._clean_newline(val)
             setattr(self, key, val)
 
     def _arguments(self, input, project):
-        """
+        """Helper to parse arguments and map to expected JSON structure.
         """
         arguments = []
         for name, values in input.items():
@@ -304,7 +354,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
                 argument_.setdefault(self.VALUE_TYPE_SCHEMA, format)
             for k, v in values.items():
                 if k != self.ARGUMENT_TYPE_SCHEMA:
-                    # handle files specifications
+                    # handle files specifications, TODO
+                    #   this system could be improved in how the schema works and deals with types
+                    #
                     #   need to go from file name to dictionary of alias and dimension
                     #    files:
                     #        - foo@v1
@@ -327,38 +379,42 @@ class YAMLMetaWorkflow(YAMLTemplate):
         return arguments
 
     def _workflows(self, version, project):
-        """
+        """Helper to parse workflow definitions and map to expected JSON structure.
         """
         workflows = []
         for name, values in self.workflows.items():
             workflow_ = {
                 self.NAME_SCHEMA: name,
-                self.WORKFLOW_SCHEMA: f'{project}:{name}_{version}',
+                self.WORKFLOW_SCHEMA: f'{project}:{name.split("@")[0]}_{version}',
+                                      # remove unique tag after @ to create the right alias to link
                 self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], project),
-                self.CUSTOM_PF_FIELDS_SCHEMA: values[self.OUTPUT_SCHEMA],
                 self.CONFIG_SCHEMA: values[self.CONFIG_SCHEMA]
             }
+            # file output can be optional
+            #   QC workflows don't always have a file output
+            if values.get(self.OUTPUT_SCHEMA):
+                workflow_[self.CUSTOM_PF_FIELDS_SCHEMA] = values[self.OUTPUT_SCHEMA]
             workflows.append(workflow_)
 
         return workflows
 
     def to_json(
                self,
-               version='VERSION',
-               institution='INSTITUTION', # alias
-               project='PROJECT', # alias
+               version,
+               institution, # alias
+               project # alias
                ):
-        """
+        """Function to build the corresponding object in JSON format.
         """
         metawfl_json = {}
 
         # common metadata
         metawfl_json[self.NAME_SCHEMA] = self.name
         metawfl_json[self.VERSION_SCHEMA] = version # version
-        metawfl_json[self.TITLE_SCHEMA] = f'{getattr(self, self.TITLE_SCHEMA, self.name.replace("_", " "))}, {version}'
+        metawfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
         metawfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{version}']
-        metawfl_json[self.INSTITUTION_SCHEMA] = f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-        metawfl_json[self.PROJECT_SCHEMA] = f'/{self.PROJECTS_SCHEMA}/{project}/'
+        metawfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
+        metawfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
         metawfl_json[self.DESCRIPTION_SCHEMA] = self.description
         metawfl_json[self.INPUT_SCHEMA] = self._arguments(self.input, project)
         metawfl_json[self.WORKFLOWS_SCHEMA] = self._workflows(version, project)
@@ -376,18 +432,20 @@ class YAMLMetaWorkflow(YAMLTemplate):
 #   YAMLSoftware, YAML Software
 ###############################################################
 class YAMLSoftware(YAMLTemplate):
+    """Class to work with YAML documents representing Software objects.
+    """
 
-    # Schema constants
+    # schema constants
     COMMIT_SCHEMA = 'commit'
     SOURCE_URL_SCHEMA = 'source_url'
 
     def __init__(self, data):
-        """
+        """Constructor method.
         """
         super().__init__(data, yaml_software_schema)
-        # Validate data with schema
+        # validate data with schema
         self._validate()
-        # Load attributes
+        # load attributes
         for key, val in data.items():
             if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
                 val = self._clean_newline(val)
@@ -395,17 +453,17 @@ class YAMLSoftware(YAMLTemplate):
 
     def to_json(
                self,
-               institution='INSTITUTION', # alias
-               project='PROJECT', # alias
+               institution, # alias
+               project # alias
                ):
-        """
+        """Function to build the corresponding object in JSON format.
         """
         sftwr_json, version = {}, None
 
         # common metadata
         sftwr_json[self.NAME_SCHEMA] = self.name
-        sftwr_json[self.INSTITUTION_SCHEMA] = f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-        sftwr_json[self.PROJECT_SCHEMA] = f'/{self.PROJECTS_SCHEMA}/{project}/'
+        sftwr_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
+        sftwr_json[self.PROJECT_SCHEMA] = self._link_project(project)
 
         if getattr(self, self.VERSION_SCHEMA, None):
             sftwr_json[self.VERSION_SCHEMA] = self.version
@@ -419,11 +477,7 @@ class YAMLSoftware(YAMLTemplate):
         if getattr(self, self.SOURCE_URL_SCHEMA, None):
             sftwr_json[self.SOURCE_URL_SCHEMA] = self.source_url
 
-        if getattr(self, self.TITLE_SCHEMA, None):
-            sftwr_json[self.TITLE_SCHEMA] = self.title
-        else:
-            sftwr_json[self.TITLE_SCHEMA] = f'{self.name}, {version}'
-
+        sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
         sftwr_json[self.ALIASES_SCHEMA] = [f'{self.name}_{version}']
 
         # uuid, accession if specified
@@ -432,6 +486,10 @@ class YAMLSoftware(YAMLTemplate):
         if getattr(self, self.ACCESSION_SCHEMA, None):
             sftwr_json[self.ACCESSION_SCHEMA] = self.accession
 
+        # license
+        if getattr(self, self.LICENSE_SCHEMA, None):
+            sftwr_json[self.LICENSE_SCHEMA] = self.license
+
         return sftwr_json
 
 
@@ -439,17 +497,19 @@ class YAMLSoftware(YAMLTemplate):
 #   YAMLFileReference, YAML FileReference
 ###############################################################
 class YAMLFileReference(YAMLTemplate):
+    """Class to work with YAML documents representing FileReference objects.
+    """
 
-    # Schema constants
+    # schema constants
     EXTRA_FILES_SCHEMA = 'extra_files'
 
     def __init__(self, data):
-        """
+        """Constructor method.
         """
         super().__init__(data, yaml_file_reference_schema)
-        # Validate data with schema
+        # validate data with schema
         self._validate()
-        # Load attributes
+        # load attributes
         for key, val in data.items():
             if key in [self.DESCRIPTION_SCHEMA]:
                 val = self._clean_newline(val)
@@ -457,16 +517,16 @@ class YAMLFileReference(YAMLTemplate):
 
     def to_json(
                self,
-               institution='INSTITUTION', # alias
-               project='PROJECT', # alias
+               institution, # alias
+               project # alias
                ):
-        """
+        """Function to build the corresponding object in JSON format.
         """
         ref_json = {}
 
         # common metadata
-        ref_json[self.INSTITUTION_SCHEMA] = f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-        ref_json[self.PROJECT_SCHEMA] = f'/{self.PROJECTS_SCHEMA}/{project}/'
+        ref_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
+        ref_json[self.PROJECT_SCHEMA] = self._link_project(project)
         ref_json[self.DESCRIPTION_SCHEMA] = self.description
         ref_json[self.FILE_FORMAT_SCHEMA] = self.format
         ref_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{self.version}']
@@ -482,6 +542,10 @@ class YAMLFileReference(YAMLTemplate):
         if getattr(self, self.ACCESSION_SCHEMA, None):
             ref_json[self.ACCESSION_SCHEMA] = self.accession
 
+        # license
+        if getattr(self, self.LICENSE_SCHEMA, None):
+            ref_json[self.LICENSE_SCHEMA] = self.license
+
         return ref_json
 
 
@@ -489,20 +553,22 @@ class YAMLFileReference(YAMLTemplate):
 #   YAMLFileFormat, YAML FileFormat
 ###############################################################
 class YAMLFileFormat(YAMLTemplate):
+    """Class to work with YAML documents representing FileFormat objects.
+    """
 
-    # Schema constants
+    # schema constants
     STANDARD_FILE_EXTENSION_SCHEMA = 'standard_file_extension'
     VALID_ITEM_TYPES_SCHEMA = 'valid_item_types'
     EXTRAFILE_FORMATS_SCHEMA = 'extrafile_formats'
     FILE_TYPES_SCHEMA = 'file_types'
 
     def __init__(self, data):
-        """
+        """Constructor method.
         """
         super().__init__(data, yaml_file_format_schema)
-        # Validate data with schema
+        # validate data with schema
         self._validate()
-        # Load attributes
+        # load attributes
         for key, val in data.items():
             if key in [self.DESCRIPTION_SCHEMA]:
                 val = self._clean_newline(val)
@@ -510,18 +576,18 @@ class YAMLFileFormat(YAMLTemplate):
 
     def to_json(
                self,
-               institution='INSTITUTION', # alias
-               project='PROJECT', # alias
+               institution, # alias
+               project # alias
                ):
-        """
+        """Function to build the corresponding object in JSON format.
         """
         frmt_json = {}
 
         # common metadata
         frmt_json[self.FILE_FORMAT_SCHEMA] = self.name
         frmt_json[self.ALIASES_SCHEMA] = [self.name]
-        frmt_json[self.INSTITUTION_SCHEMA] = f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-        frmt_json[self.PROJECT_SCHEMA] = f'/{self.PROJECTS_SCHEMA}/{project}/'
+        frmt_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
+        frmt_json[self.PROJECT_SCHEMA] = self._link_project(project)
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json[self.STANDARD_FILE_EXTENSION_SCHEMA] = self.extension
         frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['FileReference', 'FileProcessed'])

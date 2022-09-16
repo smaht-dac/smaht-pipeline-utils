@@ -1,16 +1,26 @@
+===================
+Pipeline Definition
+===================
+
+.. _metaworkflow:
+
+
+Template
+++++++++
 
 .. code-block:: python
 
     ## Pipeline information #####################################
     #     General information for the pipeline
     #############################################################
-    name: <string> # name of the pipeline
-                   #   !!! must be unique !!!
+    # All the following fields are required
+    name: <string>
     description: <string>
 
-    # All the following tags are optional and provided as example,
+    # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    title: <string> # Title of the pipeline
+    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
+    title: <string>
 
     ## General arguments ########################################
     #     Pipeline input, reference files, and general arguments
@@ -18,25 +28,19 @@
     #############################################################
     input:
 
-      a_file: # name of the argument
-              #   !!! must be unique !!!
-        argument_type: file.<format>
-                       # <format> -> bam, fastq, bwt, ...
-                       #   Need to match a format defined on the portal
-        # All the following tags are optional and provided as example,
+      # File argument
+      <file_argument_name>:
+        argument_type: file.<format>        # bam, fastq, bwt, ...
+        # All the following fields are optional and provided as example,
         #   can be expanded to anything accepted by the schema
-        # Check https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
-        #   for more details
-        dimensionality: <integer> # Required for file input arguments
-                                  #   that do not have a default file
-        files: # This tag allows to specify reference files that are constant for the pipeline
-          - <name>@<version> # name and version of the reference file
-                             #   Need to match a reference file defined on the portal
+        dimensionality: <integer>
+        files:
+          - <file_name>@<version>
 
-      a_parameter:
-        argument_type: parameter.<type>
-                       # <type> -> string, integer, float, json, boolean
-        # All the following tags are optional and provided as example,
+      # Parameter argument
+      <parameter_argument_name>:
+        argument_type: parameter.<type>     # string, integer, float, json, boolean
+        # All the following fields are optional and provided as example,
         #   can be expanded to anything accepted by the schema
         value: <...>
 
@@ -47,12 +51,10 @@
 
       ## Workflow definition #####################
       ############################################
-      a_workflow: # name of the workflow
-                  #   !!! must be unique !!!
-                  #   Need to match a workflow defined on the portal
+      <workflow_name>[@<tag>]:
 
         ## Specific arguments ##############
-        #   General arguments that require some tweaking and
+        #   General arguments that need to be referenced and
         #     specific arguments for the workflow:
         #       - file arguments that need to source the output from a previous step
         #       - file arguments that need to scatter or gather
@@ -61,67 +63,195 @@
         ####################################
         input:
 
-          a_file: # name of the argument
-                  #   !!! must be unique !!!
-            argument_type: file.<format>
-                           # <format> -> bam, fastq, bwt, ...
-                           #   Need to match a format defined on the portal
+          # File argument
+          <file_argument_name>:
+            argument_type: file.<format>      # bam, fastq, bwt ...
             # Linking fields
             #   These are optional fields
             #   Check https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
             #     for more details
-            source: <string> # name of the source step to get the argument from
-            source_argument_name: <string> # name of the argument to get
-                                           #  - name of an output of source step
-                                           #  - name of general argument to use
+            source: <workflow_name>[@<tag>]
+            source_argument_name: <file_argument_name>
             # Input dimension
             #   These are optional fields to specify input argument dimensions to use
             #     when creating the pipeline structure or step specific inputs
             #   See https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
             #     for more details
-            scatter: <integer> # Input argument dimension to use to scatter the step
-            gather: <integer> # Increment for input argument dimension when gathering from previous steps
-            input_dimension: <integer> # Additional dimension used to subset the input argument when creating the step specific input
-            extra_dimension: <integer> # Additional increment to dimension used when creating the step specific input
-            # All the following tags are optional and provided as example,
+            scatter: <integer>
+            gather: <integer>
+            input_dimension: <integer>
+            extra_dimension: <integer>
+            # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             mount: <boolean>
-            rename: formula:<parameter_name>
-                  #  !!! formula:<parameter_name> can be used to specify a name
-                  #    for parameter argument to use to set a rename tag for the file !!!
+            rename: formula:<parameter_argument_name>
+                  #  can be used to specify a name for parameter argument
+                  #    to use to set a rename field for the file
             unzip: <string>
 
-          a_parameter:
+          # Parameter argument
+          <parameter_argument_name>:
             argument_type: parameter.<type>
-                           # <type> -> string, integer, float, json, boolean
-            # All the following tags are optional and provided as example,
+            # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             value: <...>
-            source_argument_name: <string> # name of general argument to use
+            source_argument_name: <parameter_argument_name>
 
         ## Output ##########################
         #     Output files for the workflow
         ####################################
         output:
 
-          a_file: # name of the output
-                  #   !!! must be unique !!!
-            # All the following tags are optional and provided as example,
+          # File output
+          <file_output_name>:
+            # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
-            # Check https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-            #   for more information
             description: <string>
             file_type: <file_type>
-                       # <file_type> -> ...
             linkto_location:
-              - <location>
-                # <location> -> Sample, SampleProcessing, ...
+              - <location>                    # Sample, SampleProcessing
             higlass_file: <boolean>
-            variant_type: <variant_type>
-                          # <variant_type> -> SNV, SV, CNV
+            variant_type: <variant_type>      # SNV, SV, CNV
 
         ## EC2 Configuration to use ########
         ####################################
         config:
-          a_config: <...>
-          another_config: <...>
+          <config_parameter>: <...>
+
+
+General Fields Definition
++++++++++++++++++++++++++
+
+Required
+^^^^^^^^
+All the following fields are required.
+
+name
+----
+Name of the pipeline, **MUST BE GLOBALLY UNIQUE**.
+
+description
+-----------
+Description of the pipeline.
+
+input
+-----
+Description of general input files and parameters for the pipeline. See :ref:`Input Definition <input>`.
+
+workflows
+---------
+Description of workflows that are steps of the pipeline. See :ref:`Workflows Definition <workflows>`.
+
+Optional
+^^^^^^^^
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+
+title
+-----
+Title of the pipeline.
+
+
+.. _workflows:
+
+Workflows Definition
+++++++++++++++++++++
+Each workflow is defined by its name and represents a step of the pipeline. Additional subfields need to be specified.
+
+The workflow name must follow the format ``<workflow_name>[@<tag>]``.
+``<workflow_name>`` needs to match a workflow that has been previously defined, see :ref:`Workflow <workflow>`.
+If the same workflow is used for multiple steps in the pipeline, a tag can be added to the name of the workflow after '@' to make it unique (e.g., a QC step that run twice at different moments of the pipeline).
+If a ``<tag>`` is used while defining a workflow, ``<workflow_name>@<tag>`` must be used to reference the correct step as dependency.
+
+input
+^^^^^
+Description of general arguments that need to be referenced and specific arguments for the step. See :ref:`Input Definition <input>`.
+
+output
+^^^^^^
+Description of expected output files for the workflow.
+
+Each output is defined by its name. Additional subfields can be specified.
+See `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+
+Each output name needs to match an output name that has been previously defined in the corresponding workflow, see :ref:`Workflow <workflow>`.
+
+config
+^^^^^^
+Description of configuration parameters to run the workflow.
+Any parameters can be defined here and will be used to configure the run in AWS (e.g., EC2 type, EBS size, ...).
+
+
+.. _input:
+
+Input Definition
+++++++++++++++++
+Each argument is defined by its name. Additional subfields need to be specified depending on the argument type.
+Each argument name needs to match an argument name that has been previously defined in the corresponding workflow, see :ref:`Workflow <workflow>`.
+
+argument_type
+^^^^^^^^^^^^^
+Definition of the type of the argument.
+
+For a **file** argument, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
+``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
+
+For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
+
+files
+^^^^^
+This field can be used to assign specific files to a **file** argument.
+For example, specific reference files that are constant for the pipeline can be specified for the corresponding argument using this field.
+
+Each file is specified using the name of the file and the version in the format ``<file_name>@<version>``.
+For reference files, each file needs to match a file reference that has been previously defined, see :ref:`File Reference <file_reference>`.
+
+value
+^^^^^
+This field can be used to assign a specific value to a **parameter** argument.
+
+Linking Fields
+^^^^^^^^^^^^^^
+These are optional fields that can be used when defining workflow specific arguments to describe dependencies and map to arguments with different names.
+See `magma documentation <https://magma-suite.readthedocs.io/en/latest/meta-workflow.html>`__ for for more details.
+
+source
+------
+This field can be used to assign a dependency for a **file** argument to a previous workflow.
+It must follow the format ``<workflow_name>[@<tag>]`` to reference the correct step as source.
+
+source_argument_name
+--------------------
+This field can be used to source a specific argument by name.
+It can be used to:
+
+  - specify the name of an output of a source step to use
+  - specify the name of a general argument defined in the input section to use when it differs from the argument name
+
+Input Dimension Fields
+^^^^^^^^^^^^^^^^^^^^^^
+These are optional fields that can be used when defining workflow specific arguments to specify the input dimensions to use when creating the pipeline structure or step specific inputs.
+See `magma documentation <https://magma-suite.readthedocs.io/en/latest/meta-workflow.html>`__ for for more details.
+
+scatter
+-------
+Input dimension to use to scatter the workflow.
+This will create multiple shards in the pipeline for the step.
+The same dimension will be used to subset the input when creating the specific input for each shard.
+
+gather
+------
+Increment for input dimension when gathering from previous shards.
+This will collate multiple shards into a single step.
+The same increment in dimension will be used when creating the specific input for the step.
+
+input_dimension
+---------------
+Additional dimension used to subset the input when creating the specific input for the step.
+This will be applied on top of "scatter", if any, and will only affect the input.
+This will not affect the scatter dimension used to create the shards for the step.
+
+extra_dimension
+---------------
+Additional increment to dimension used when creating the specific input for the step.
+This will be applied on top of "gather", if any, and will only affect the input.
+This will not affect gather dimension in building the pipeline structure.

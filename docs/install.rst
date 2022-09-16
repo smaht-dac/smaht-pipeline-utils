@@ -1,6 +1,6 @@
-=======
+=============
 Quick Install
-=======
+=============
 
 The package is available on pypi_:
 

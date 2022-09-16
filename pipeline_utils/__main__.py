@@ -22,8 +22,12 @@ from pipeline_utils import pipeline_deploy
 # Variables
 DEPLOY_PIPELINE_LEGACY = 'deploy_pipeline_legacy'
 PIPELINE_DEPLOY = 'pipeline_deploy'
+CGAP_ALIAS = 'cgap-core'
+DBMI_ALIAS = 'hms-dbmi'
+KEYS_ALIAS = '~/.cgap-keys.json'
 
 
+# MAIN
 def main(args=None):
     '''
         command line wrapper around available commands
@@ -39,7 +43,7 @@ def main(args=None):
     deploy_pipeline_legacy_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
     deploy_pipeline_legacy_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
     deploy_pipeline_legacy_parser.add_argument('--keydicts-json', required=False, help='path to file with key dicts for portal auth in JSON format',
-                                                           default='~/.cgap-keydicts.json')
+                                                           default=KEYS_ALIAS)
     deploy_pipeline_legacy_parser.add_argument('--cwl-bucket', required=False, help='cwl-bucket to use for deployment')
     deploy_pipeline_legacy_parser.add_argument('--account', required=False, help='account to use for deployment')
     deploy_pipeline_legacy_parser.add_argument('--region', required=False, help='region to use for deployment')
@@ -59,7 +63,7 @@ def main(args=None):
 
     # cgap-specific
     deploy_pipeline_legacy_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
-                                                             default='0.0.0.0:0')
+                                                             default=None)
 
     # Add pipeline_deploy to subparsers
     pipeline_deploy_parser = subparsers.add_parser(PIPELINE_DEPLOY, description='Utility to automatically deploy pipeline components from a target repository',
@@ -68,14 +72,14 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
     pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repos to deploy, must follow expected structure (see docs)')
     pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='Path to file with key dicts for portal auth in JSON format (see docs)',
-                                                           default='~/.cgap-keydicts.json')
+                                                           default=KEYS_ALIAS)
     pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for deployment of Workflow Description files')
     pipeline_deploy_parser.add_argument('--account', required=False, help='Account to use for deployment')
     pipeline_deploy_parser.add_argument('--region', required=False, help='Region to use for deployment')
     pipeline_deploy_parser.add_argument('--project', required=False, help='Project to use for deployment',
-                                                          default='cgap-core')
+                                                          default=CGAP_ALIAS)
     pipeline_deploy_parser.add_argument('--institution', required=False, help='Institution to use for deployment',
-                                                              default='hms-dbmi')
+                                                              default=DBMI_ALIAS)
 
     pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')
     pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='POST|PATCH FileFormat objects')
@@ -92,7 +96,7 @@ def main(args=None):
 
     # cgap-specific
     pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='Address for Sentieon license server',
-                                                             default='0.0.0.0:0')
+                                                             default=None)
 
     # Subparsers map
     subparser_map = {

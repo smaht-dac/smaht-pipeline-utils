@@ -1,20 +1,70 @@
+===================
+Software Definition
+===================
+
+.. _software:
+
+
+Template
+++++++++
 
 .. code-block:: python
 
     ## Software information #####################################
     #     Information for software
     #############################################################
-    name: <string> # name of the software
-                   #   !!! must be unique !!!
+    # All the following fields are required
+    name: <string>
 
-    # One between version or commit is required to version the software
-    version: <string> # Version of the software
-    commit: <string>  # Commit of the software
+    # Either version or commit is required to identify the software
+    version: <string>
+    commit: <string>
 
-    # All the following tags are optional and provided as example,
+    # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
     #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    title: <string> # Title for the software
-    source_url: <string>  # URL for the software
-                          #   -> source files, binaries, repository
-    description: <string> # Description for the software
+    title: <string>
+    source_url: <string>
+    description: <string>
+    license: <string>                 # MIT, GPLv3, ...
+
+
+Fields Definition
++++++++++++++++++
+
+Required
+^^^^^^^^
+All the following fields are required.
+Either *version* or *commit* is required to identify the software.
+
+name
+----
+Name of the software, **MUST BE GLOBALLY UNIQUE**.
+
+version
+-------
+Version of the software.
+
+commit
+------
+Commit of the software.
+
+Optional
+^^^^^^^^
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+
+title
+-----
+Title for the software.
+
+source_url
+----------
+URL for the software (e.g, source files, binaries, repository, etc...).
+
+description
+-----------
+Description for the software.
+
+license
+-------
+License information.

@@ -56,7 +56,7 @@ yaml_metaworkflow_schema = {
                             }
                         }
                     },
-                    schema.REQUIRED: ['input', 'output', 'config']
+                    schema.REQUIRED: ['input', 'config']
                 }
             }
         }

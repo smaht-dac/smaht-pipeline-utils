@@ -35,6 +35,10 @@ yaml_file_reference_schema = {
             schema.ITEMS: {
                 schema.TYPE: schema.STRING
             }
+        },
+        'license': {
+            schema.DESCRIPTION: 'License of the FileReference',
+            schema.TYPE: schema.STRING
         }
     },
     schema.REQUIRED: ['name', 'description', 'format', 'version']
