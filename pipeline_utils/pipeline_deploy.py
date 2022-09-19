@@ -9,6 +9,7 @@
 ################################################
 
 import os, sys, subprocess
+import shutil
 import json
 import glob
 import boto3
@@ -278,6 +279,8 @@ class PostPatchRepo(object):
         s3 = boto3.resource('s3')
 
         # Make tmp dir for upload
+        if os.path.isdir(upload_):
+            shutil.rmtree(upload_)
         os.mkdir(upload_)
 
         # Read description files and create modified files for upload
@@ -285,7 +288,7 @@ class PostPatchRepo(object):
         #   with specific values for the target environment
         files_ = glob.glob(f'{filepath_}/*.cwl')
         files_.extend(glob.glob(f'{filepath_}/*.wdl'))
-        for fn in files_:
+        for fn in map(os.path.basename, files_):
             logger.info('> Processing %s' % fn)
             # set file specific variables
             file_ = f'{filepath_}/{fn}'
@@ -307,6 +310,7 @@ class PostPatchRepo(object):
                 if self.kms_key_id:
                     extra_args.update(update_)
                 s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_, ExtraArgs=extra_args)
+                logger.info('> Posted %s' % s3_file_)
                 # delete file to allow tmp folder to be deleted at the end
                 os.remove(upload_file_)
 
