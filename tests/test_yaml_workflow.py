@@ -19,6 +19,7 @@ def test_workflow():
                 "app_version": "v1.0.0",
                 "arguments": [
                     {
+                      "argument_format": "bam",
                       "argument_type": "Input file",
                       "workflow_argument_name": "input_bam"
                     },
@@ -53,7 +54,7 @@ def test_workflow():
                     "cgap-core:gatk_4.2.1",
                     "cgap-core:vcf-tools_5A63Aa1"
                 ],
-                "title": "HaplotypeCaller plus integity-check, v1.0.0",
+                "title": "HaplotypeCaller plus integity-check [v1.0.0]",
                 "wdl_child_filenames": [
                     "gatk-HaplotypeCaller.wdl",
                     "integrity-check.wdl"
@@ -69,6 +70,7 @@ def test_workflow():
                 "app_version": "v1.0.0",
                 "arguments": [
                     {
+                      "argument_format": "bam",
                       "argument_type": "Input file",
                       "workflow_argument_name": "input_bam"
                     },
@@ -84,7 +86,7 @@ def test_workflow():
                 "name": "gatk-HaplotypeCaller_v1.0.0",
                 "project": "/projects/cgap-core/",
                 "software": [],
-                "title": "gatk-HaplotypeCaller, v1.0.0",
+                "title": "gatk-HaplotypeCaller [v1.0.0]",
                 "cwl_child_filenames": [],
                 "cwl_directory_url_v1": "s3://BUCKETCWL/test_pipeline/v1.0.0",
                 "cwl_main_filename": "gatk-HaplotypeCaller-check.cwl",

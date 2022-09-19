@@ -29,7 +29,7 @@ def test_software():
                 "institution": "/institutions/hms-dbmi/",
                 "name": "picard",
                 "project": "/projects/cgap-core/",
-                "title": "picard, 324ePT",
+                "title": "picard [324ePT]",
                 "uuid": "efdac7ec-7da3-4f23-9056-7a04abbc5e8b"
             }
         ]

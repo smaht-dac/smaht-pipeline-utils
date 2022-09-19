@@ -25,7 +25,7 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"dimension": "0", "file": "cgap-core:reference_genome_hg38"}]
+              "files": [{"file": "cgap-core:reference_genome_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -37,7 +37,7 @@ def test_metaworkflow():
           "institution": "/institutions/hms-dbmi/",
           "name": "gatk-HC-GT-pipeline",
           "project": "/projects/cgap-core/",
-          "title": "gatk-HC and gatk-GT pipeline, v1.0.0",
+          "title": "gatk-HC and gatk-GT pipeline [v1.0.0]",
           "version": "v1.0.0",
           "workflows": [
             {
@@ -137,7 +137,7 @@ def test_metaworkflow():
           "institution": "/institutions/hms-dbmi/",
           "name": "gatk-HC-pipeline",
           "project": "/projects/cgap-core/",
-          "title": "gatk-HC-pipeline, v1.0.0",
+          "title": "gatk-HC-pipeline [v1.0.0]",
           "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9",
           "version": "v1.0.0",
           "workflows": [
