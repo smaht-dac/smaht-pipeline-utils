@@ -124,10 +124,14 @@ class PostPatchRepo(object):
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
         """
+        # Use uuid if available as unique identifier,
+        #   else use the alias
+        uuid = data_json.get('uuid', data_json['aliases'][0])
+
         if not self.debug:
             is_patch = True
             try:
-                ff_utils.get_metadata(data_json['aliases'][0], key=self.ff_key)
+                ff_utils.get_metadata(uuid, key=self.ff_key)
             except Exception:
                 is_patch = False
 
@@ -155,7 +159,7 @@ class PostPatchRepo(object):
             ###########################################################
 
             if is_patch:
-                ff_utils.patch_metadata(data_json, data_json['aliases'][0], key=self.ff_key)
+                ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
             else:
                 ff_utils.post_metadata(data_json, type, key=self.ff_key)
 

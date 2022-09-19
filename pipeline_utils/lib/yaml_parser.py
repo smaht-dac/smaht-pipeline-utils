@@ -148,9 +148,9 @@ class YAMLTemplate(object):
             if version in title:
                 return title
             else:
-                return f'{title}, {version}'
+                return f'{title} [{version}]'
         else:
-            return f'{name.replace("_", " ")}, {version}'
+            return f'{name.replace("_", " ")} [{version}]'
 
     def _link_institution(self, institution):
         """Helper to create an "institution" field.
@@ -222,6 +222,12 @@ class YAMLWorkflow(YAMLTemplate):
                 self.ARGUMENT_TYPE_SCHEMA: argument_type,
                 self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
                 }
+            # add format to file argument, TODO
+            #   this can be improved in schema to handle a list of formats so no placeholder is needed
+            if type == self.FILE_SCHEMA and format not in ['any']:
+                # handle format placeholders,
+                #   if format is not a placeholder add format field to argument
+                argument_[self.ARGUMENT_FORMAT_SCHEMA] = format
             arguments.append(argument_)
 
         return arguments
@@ -360,8 +366,14 @@ class YAMLMetaWorkflow(YAMLTemplate):
                     #   need to go from file name to dictionary of alias and dimension
                     #    files:
                     #        - foo@v1
+                    #   ----- or -------
+                    #        - foo@v1
                     #        - bar@v3
                     #   need to convert to:
+                    #    files: [
+                    #        {self.FILE_SCHEMA: 'project:foo_v1'}
+                    #       ]
+                    #   ----- or -------
                     #    files: [
                     #        {self.FILE_SCHEMA: 'project:foo_v1', self.DIMENSION_SCHEMA: '0'},
                     #        {self.FILE_SCHEMA: 'project:bar_v3', self.DIMENSION_SCHEMA: '1'}
@@ -371,6 +383,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
                         for i, name_ in enumerate(v):
                             v_.append({self.FILE_SCHEMA: f'{project}:{name_.replace("@", "_")}',
                                        self.DIMENSION_SCHEMA: str(i)})
+                        # remove DIMENSION_SCHEMA field if only one file
+                        if len(v_) == 1:
+                            del v_[0][self.DIMENSION_SCHEMA]
                         argument_.setdefault(k, v_)
                     else:
                         argument_.setdefault(k, v)
