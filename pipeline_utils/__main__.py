@@ -29,8 +29,7 @@ KEYS_ALIAS = '~/.cgap-keys.json'
 
 # MAIN
 def main(args=None):
-    '''
-        command line wrapper around available commands
+    '''Command line wrapper around available commands.
     '''
     # Adding parser and subparsers
     parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for cgap-pipeline')
@@ -70,10 +69,10 @@ def main(args=None):
                                                     help='Utility to automatically deploy pipeline components from a target repository')
 
     pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
-    pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repos to deploy, must follow expected structure (see docs)')
-    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='Path to file with key dicts for portal auth in JSON format (see docs)',
+    pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repositories to deploy, must follow expected structure (see docs)')
+    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='Path to file with keys for portal auth in JSON format (see docs)',
                                                            default=KEYS_ALIAS)
-    pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for deployment of Workflow Description files')
+    pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for upload of Workflow Description files')
     pipeline_deploy_parser.add_argument('--account', required=False, help='Account to use for deployment')
     pipeline_deploy_parser.add_argument('--region', required=False, help='Region to use for deployment')
     pipeline_deploy_parser.add_argument('--project', required=False, help='Project to use for deployment',
@@ -92,7 +91,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--debug', action='store_true', help='Turn off POST|PATCH action')
     pipeline_deploy_parser.add_argument('--verbose', action='store_true', help='Print the JSON structure created for objects')
 
-    pipeline_deploy_parser.add_argument('--validate', action='store_true', help='Validate YAML object against schemas. Turn off POST|PATCH action and ignore --verbose and --debug flags')
+    pipeline_deploy_parser.add_argument('--validate', action='store_true', help='Validate YAML objects against schemas. Turn off POST|PATCH action and ignore --verbose and --debug flags')
 
     # cgap-specific
     pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='Address for Sentieon license server',

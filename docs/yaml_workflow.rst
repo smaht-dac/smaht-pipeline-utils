@@ -18,10 +18,10 @@ Template
     description: <string>
 
     runner:
-      language: <language>                # CWL, WDL
-      main: <file>                        # <workflow_description>.<cwl|wdl>
+      language: <language>                # cwl, wdl
+      main: <file>                        # .cwl or .wdl file
       child:
-        - <file>                          # <workflow_description>.<cwl|wdl>
+        - <file>                          # .cwl or .wdl file
 
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema

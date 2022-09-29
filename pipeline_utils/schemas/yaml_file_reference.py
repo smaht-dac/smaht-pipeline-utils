@@ -17,7 +17,7 @@ yaml_file_reference_schema = {
             schema.TYPE: schema.STRING
         },
         'format': {
-            schema.DESCRIPTION: 'Description of the FileReference',
+            schema.DESCRIPTION: 'Format of the FileReference',
             schema.TYPE: schema.STRING
         },
         'version': {

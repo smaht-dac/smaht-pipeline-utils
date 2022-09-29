@@ -68,7 +68,7 @@ class PostPatchRepo(object):
             :param pipeline: Name of the file storing pipeline name information
             :type pipeline: str
         """
-        # Init credentials
+        # Init attributes
         self.ff_key = None
         self.kms_key_id = None
         self.repo = repo
@@ -332,13 +332,28 @@ class PostPatchRepo(object):
             logger.error(f'WARNING: {self.filepath[type]} not found in {self.repo}, skipping...')
             return
 
+        # Create ecr object
+        ecr = boto3.client('ecr')
+        response = ecr.describe_repositories()
+
         # Generic bash commands to be modified to correct version and account information
-        for fn in glob.glob(f'{filepath_}/*'):
+        for fn in map(os.path.basename, glob.glob(f'{filepath_}/*')):
             logger.info('> Processing %s' % fn)
             if not self.debug:
                 # set specific variables
                 tag_ = f'{account_}/{fn}:{self.version}'
                 path_ = f'{filepath_}/{fn}'
+                is_repository = False
+                # check if tag is present in ECR repositories,
+                #   if not create it
+                for repository in response['repositories']:
+                    if repository['repositoryArn'].split('/')[-1] == fn:
+                        is_repository = True
+                        break
+                if not is_repository:
+                    logger.info('> Creating ECR Repository %s' % fn)
+                    ecr.create_repository(repositoryName=fn)
+                # build and push the image
                 image = f"""
                             aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
                             docker build -t {tag_} {path_} --no-cache
@@ -405,16 +420,6 @@ def main(args):
     if not args.region:
         if args.post_workflow or args.post_wfl or args.post_ecr:
             error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument.\n'
-            sys.exit(error)
-
-    if not args.project:
-        if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --project argument.\n'
-            sys.exit(error)
-
-    if not args.institution:
-        if args.post_software or args.post_file_format or args.post_file_reference or args.post_workflow or args.post_metaworkflow:
-            error = 'MISSING ARGUMENT, --post-software | --post-file-format | --post-file-reference |  --post-workflow | --post-workflow requires --institution argument.\n'
             sys.exit(error)
 
     # Run

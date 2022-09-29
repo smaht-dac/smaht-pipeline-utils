@@ -104,10 +104,10 @@ Template
 
           # File output
           <file_output_name>:
+            file_type: <file_type>
             # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             description: <string>
-            file_type: <file_type>
             linkto_location:
               - <location>                    # Sample, SampleProcessing
             higlass_file: <boolean>
@@ -224,8 +224,8 @@ source_argument_name
 This field can be used to source a specific argument by name.
 It can be used to:
 
-  - specify the name of an output of a source step to use
-  - specify the name of a general argument defined in the input section to use when it differs from the argument name
+  - Specify the name of an output of a source step to use.
+  - Specify the name of a general argument defined in the input section to use when it differs from the argument name.
 
 Input Dimension Fields
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -247,11 +247,11 @@ The same increment in dimension will be used when creating the specific input fo
 input_dimension
 ---------------
 Additional dimension used to subset the input when creating the specific input for the step.
-This will be applied on top of "scatter", if any, and will only affect the input.
+This will be applied on top of ``scatter``, if any, and will only affect the input.
 This will not affect the scatter dimension used to create the shards for the step.
 
 extra_dimension
 ---------------
 Additional increment to dimension used when creating the specific input for the step.
-This will be applied on top of "gather", if any, and will only affect the input.
+This will be applied on top of ``gather``, if any, and will only affect the input.
 This will not affect gather dimension in building the pipeline structure.
