@@ -114,6 +114,11 @@ class YAMLTemplate(object):
     FILES_SCHEMA = 'files'
     PARAMETER_SCHEMA = 'parameter'
     LICENSE_SCHEMA = 'license'
+    WORKFLOW_TYPE_SCHEMA = 'Workflow'
+    METAWORKFLOW_TYPE_SCHEMA = 'MetaWorkflow'
+    FILEFORMAT_TYPE_SCHEMA = 'FileFormat'
+    FILEREFERENCE_TYPE_SCHEMA = 'FileReference'
+    SOFTWARE_TYPE_SCHEMA = 'Software'
 
     def __init__(self, data, schema):
         """Constructor method.
@@ -289,11 +294,11 @@ class YAMLWorkflow(YAMLTemplate):
         wfl_json[self.APP_VERSION_SCHEMA] = version # version
         wfl_json[self.NAME_SCHEMA] = f'{self.name}_{version}'
         wfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        wfl_json[self.ALIASES_SCHEMA] = [f'{project}:{wfl_json[self.NAME_SCHEMA]}']
+        wfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{wfl_json[self.NAME_SCHEMA]}']
         wfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
         wfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
         wfl_json[self.DESCRIPTION_SCHEMA] = self.description
-        wfl_json[self.SOFTWARE_SCHEMA] = [f'{project}:{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
+        wfl_json[self.SOFTWARE_SCHEMA] = [f'{project}:{self.SOFTWARE_TYPE_SCHEMA}-{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
         wfl_json[self.ARGUMENTS_SCHEMA] = self._arguments_input() + self._arguments_output()
 
         # workflow language (TODO)
@@ -370,17 +375,17 @@ class YAMLMetaWorkflow(YAMLTemplate):
                     #        - bar@v3
                     #   need to convert to:
                     #    files: [
-                    #        {self.FILE_SCHEMA: 'project:foo_v1'}
+                    #        {file: '<project>:FileReference-foo_v1'}
                     #       ]
                     #   ----- or -------
                     #    files: [
-                    #        {self.FILE_SCHEMA: 'project:foo_v1', self.DIMENSION_SCHEMA: '0'},
-                    #        {self.FILE_SCHEMA: 'project:bar_v3', self.DIMENSION_SCHEMA: '1'}
+                    #        {file: '<project>:FileReference-foo_v1', dimension: '0'},
+                    #        {file: '<project>:FileReference-bar_v3', dimension: '1'}
                     #       ]
                     if k == self.FILES_SCHEMA:
                         v_ = []
                         for i, name_ in enumerate(v):
-                            v_.append({self.FILE_SCHEMA: f'{project}:{name_.replace("@", "_")}',
+                            v_.append({self.FILE_SCHEMA: f'{project}:{self.FILEREFERENCE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
                                        self.DIMENSION_SCHEMA: str(i)})
                         # remove DIMENSION_SCHEMA field if only one file
                         if len(v_) == 1:
@@ -399,7 +404,7 @@ class YAMLMetaWorkflow(YAMLTemplate):
         for name, values in self.workflows.items():
             workflow_ = {
                 self.NAME_SCHEMA: name,
-                self.WORKFLOW_SCHEMA: f'{project}:{name.split("@")[0]}_{version}',
+                self.WORKFLOW_SCHEMA: f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{name.split("@")[0]}_{version}',
                                       # remove unique tag after @ to create the right alias to link
                 self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], project),
                 self.CONFIG_SCHEMA: values[self.CONFIG_SCHEMA]
@@ -426,7 +431,7 @@ class YAMLMetaWorkflow(YAMLTemplate):
         metawfl_json[self.NAME_SCHEMA] = self.name
         metawfl_json[self.VERSION_SCHEMA] = version # version
         metawfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        metawfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{version}']
+        metawfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.METAWORKFLOW_TYPE_SCHEMA}-{self.name}_{version}']
         metawfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
         metawfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
         metawfl_json[self.DESCRIPTION_SCHEMA] = self.description
@@ -492,7 +497,7 @@ class YAMLSoftware(YAMLTemplate):
             sftwr_json[self.SOURCE_URL_SCHEMA] = self.source_url
 
         sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        sftwr_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{version}']
+        sftwr_json[self.ALIASES_SCHEMA] = [f'{project}:{self.SOFTWARE_TYPE_SCHEMA}-{self.name}_{version}']
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -543,7 +548,7 @@ class YAMLFileReference(YAMLTemplate):
         ref_json[self.PROJECT_SCHEMA] = self._link_project(project)
         ref_json[self.DESCRIPTION_SCHEMA] = self.description
         ref_json[self.FILE_FORMAT_SCHEMA] = self.format
-        ref_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}_{self.version}']
+        ref_json[self.ALIASES_SCHEMA] = [f'{project}:{self.FILEREFERENCE_TYPE_SCHEMA}-{self.name}_{self.version}']
         ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA, [])
         ref_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, None) # this will be used during post/patch,
                                                            # if None:
@@ -599,7 +604,7 @@ class YAMLFileFormat(YAMLTemplate):
 
         # common metadata
         frmt_json[self.FILE_FORMAT_SCHEMA] = self.name
-        frmt_json[self.ALIASES_SCHEMA] = [f'{project}:{self.name}']
+        frmt_json[self.ALIASES_SCHEMA] = [f'{project}:{self.FILEFORMAT_TYPE_SCHEMA}-{self.name}']
         frmt_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
         frmt_json[self.PROJECT_SCHEMA] = self._link_project(project)
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description

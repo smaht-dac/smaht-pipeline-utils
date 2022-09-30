@@ -24,15 +24,15 @@ from pipeline_utils.lib import yaml_parser
 ### Expected structure for the pipeline repository
 #
 #   pipeline
-#       wfl
+#       descriptions
 #       dockerfiles
 #            <image>
 #                Dockerfile
 #       portal_objects
 #           workflows
-#               <wfl>.yaml
+#               <workflow>.yaml
 #           metaworkflows
-#               <mwfl>.yaml
+#               <metaworkflow>.yaml
 #           file_format.yaml
 #           file_reference.yaml
 #           software.yaml
@@ -86,7 +86,7 @@ class PostPatchRepo(object):
             'Workflow': 'portal_objects/workflows',
             'MetaWorkflow': 'portal_objects/metaworkflows',
             'ECR': 'dockerfiles',
-            'WFL': 'wfl'
+            'WFL': 'descriptions'
         }
 
         # Load attributes
@@ -385,7 +385,7 @@ class PostPatchRepo(object):
         if self.post_metaworkflow:
             self._post_patch_folder('MetaWorkflow')
 
-        # Wfl
+        # Workflow Descriptions
         if self.post_wfl:
             self._post_patch_wfl()
 
