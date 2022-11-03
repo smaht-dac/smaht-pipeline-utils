@@ -58,6 +58,8 @@ Template
       # QC output
       <qc_output_name>:
         argument_type: qc.<type>          # qc_type, e.g. quality_metric_vcfcheck
+                                          # none can be used as <type>
+                                          #   if a qc_type is not defined
         argument_to_be_attached_to: <file_output_name>
         # All the following fields are optional and provided as example,
         #   can be expanded to anything accepted by the schema

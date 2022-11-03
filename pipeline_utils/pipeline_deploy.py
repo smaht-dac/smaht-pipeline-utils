@@ -356,7 +356,7 @@ class PostPatchRepo(object):
                 # build and push the image
                 image = f"""
                             aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
-                            docker build -t {tag_} {path_} --no-cache
+                            docker buildx -t {tag_} {path_} --no-cache --platform linux/amd64,linux/arm64
                             docker push {tag_}
                         """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
                 subprocess.check_call(image, shell=True)

@@ -199,6 +199,8 @@ class YAMLWorkflow(YAMLTemplate):
     QC_ZIPPED_TABLES_SCHEMA = 'qc_zipped_tables'
     HTML_IN_ZIPPED_SCHEMA = 'html_in_zipped'
     TABLES_IN_ZIPPED_SCHEMA = 'tables_in_zipped'
+    QC_ACL = 'qc_acl'
+    QC_UNZIP_FROM_EC2 = 'qc_unzip_from_ec2'
 
     def __init__(self, data):
         """Constructor method.
@@ -256,18 +258,24 @@ class YAMLWorkflow(YAMLTemplate):
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
                     self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
                     self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA: values[self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA],
-                    self.QC_TYPE_SCHEMA: format,
                     self.QC_ZIPPED_SCHEMA: values.get(self.ZIPPED_SCHEMA, False),
                     self.QC_HTML_SCHEMA: values.get(self.HTML_SCHEMA, False),
                     self.QC_JSON_SCHEMA: values.get(self.JSON_SCHEMA, False),
                     self.QC_TABLE_SCHEMA: values.get(self.TABLE_SCHEMA, False)
                 }
+                # handle edge case for missing QC type
+                if format not in ['none']:
+                    argument_[self.QC_TYPE_SCHEMA] = format
                 # quality controls, TODO
                 #   these fields are bad, need to rework how QCs work
                 if values.get(self.HTML_IN_ZIPPED_SCHEMA):
                     argument_[self.QC_ZIPPED_HTML_SCHEMA] = values[self.HTML_IN_ZIPPED_SCHEMA]
                 if values.get(self.TABLES_IN_ZIPPED_SCHEMA):
                     argument_[self.QC_ZIPPED_TABLES_SCHEMA] = values[self.TABLES_IN_ZIPPED_SCHEMA]
+                if values.get(self.QC_ACL):
+                    argument_[self.QC_ACL] = values[self.QC_ACL]
+                if values.get(self.QC_UNZIP_FROM_EC2):
+                    argument_[self.QC_UNZIP_FROM_EC2] = values[self.QC_UNZIP_FROM_EC2]
             elif type == self.REPORT_SCHEMA and format == self.FILE_SCHEMA:
                 argument_type = self.OUTPUT_REPORT_FILE_SCHEMA
                 argument_ = {
@@ -337,6 +345,8 @@ class YAMLMetaWorkflow(YAMLTemplate):
     CUSTOM_PF_FIELDS_SCHEMA = 'custom_pf_fields'
     OUTPUT_SCHEMA = 'output'
     CONFIG_SCHEMA = 'config'
+    DEPENDENCIES_SCHEMA = 'dependencies'
+    PROBAND_ONLY_SCHEMA = 'proband_only'
 
     def __init__(self, data):
         """Constructor method.
@@ -413,6 +423,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
             #   QC workflows don't always have a file output
             if values.get(self.OUTPUT_SCHEMA):
                 workflow_[self.CUSTOM_PF_FIELDS_SCHEMA] = values[self.OUTPUT_SCHEMA]
+            # hard dependencies
+            if values.get(self.DEPENDENCIES_SCHEMA):
+                workflow_[self.DEPENDENCIES_SCHEMA] = values[self.DEPENDENCIES_SCHEMA]
             workflows.append(workflow_)
 
         return workflows
@@ -437,6 +450,10 @@ class YAMLMetaWorkflow(YAMLTemplate):
         metawfl_json[self.DESCRIPTION_SCHEMA] = self.description
         metawfl_json[self.INPUT_SCHEMA] = self._arguments(self.input, project)
         metawfl_json[self.WORKFLOWS_SCHEMA] = self._workflows(version, project)
+
+        # proband_only field
+        if getattr(self, self.PROBAND_ONLY_SCHEMA, None):
+            metawfl_json[self.PROBAND_ONLY_SCHEMA] = self.proband_only
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):

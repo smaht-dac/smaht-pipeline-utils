@@ -20,7 +20,7 @@ Template
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
     #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    title: <string>
+    proband_only: <boolean>
 
     ## General arguments ########################################
     #     Pipeline input, reference files, and general arguments
@@ -52,6 +52,12 @@ Template
       ## Workflow definition #####################
       ############################################
       <workflow_name>[@<tag>]:
+
+        ## Hard dependencies ##############
+        #   Dependencies that must complete
+        ####################################
+        dependencies:
+          - <workflow_name>[@<tag>]
 
         ## Specific arguments ##############
         #   General arguments that need to be referenced and
@@ -112,6 +118,7 @@ Template
               - <location>                    # Sample, SampleProcessing
             higlass_file: <boolean>
             variant_type: <variant_type>      # SNV, SV, CNV
+            vcf_to_ingest: <boolean>
 
         ## EC2 Configuration to use ########
         ####################################
@@ -161,6 +168,11 @@ The workflow name must follow the format ``<workflow_name>[@<tag>]``.
 ``<workflow_name>`` needs to match a workflow that has been previously defined, see :ref:`Workflow <workflow>`.
 If the same workflow is used for multiple steps in the pipeline, a tag can be added to the name of the workflow after '@' to make it unique (e.g., a QC step that run twice at different moments of the pipeline).
 If a ``<tag>`` is used while defining a workflow, ``<workflow_name>@<tag>`` must be used to reference the correct step as dependency.
+
+dependencies
+^^^^^^^^^^^^
+Workflows that must complete before kicking the current step.
+List of workflows in the the format ``<workflow_name>[@<tag>]``.
 
 input
 ^^^^^
