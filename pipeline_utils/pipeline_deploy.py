@@ -15,6 +15,7 @@ import glob
 import boto3
 import structlog
 from dcicutils import ff_utils, s3_utils
+from dcicutils.codebuild_utils import CodeBuildUtils
 from pipeline_utils.lib import yaml_parser
 
 
@@ -54,7 +55,6 @@ logger = structlog.getLogger(__name__)
 class PostPatchRepo(object):
     """Class to handle deployment of pipeline components.
     """
-
 
     def __init__(self, args, repo, version='VERSION', pipeline='PIPELINE'):
         """Constructor method.
@@ -102,7 +102,7 @@ class PostPatchRepo(object):
 
         # Load credentials
         self._get_credentials()
-
+        self._codebuild = CodeBuildUtils()
 
     def _get_credentials(self):
         """Get auth credentials.
@@ -120,7 +120,6 @@ class PostPatchRepo(object):
 
         # Get encryption key
         self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID', None)
-
 
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
@@ -169,7 +168,6 @@ class PostPatchRepo(object):
         if self.verbose:
             logger.info(json.dumps(data_json, sort_keys=True, indent=2))
 
-
     def _yaml_to_json(self, data_yaml, YAMLClass, **kwargs):
         """Helper to validate YAML object and convert to JSON.
         """
@@ -192,7 +190,6 @@ class PostPatchRepo(object):
             return YAMLClass(data_yaml).to_json(**kwargs)
 
         return
-
 
     def _post_patch_file(self, type):
         """
@@ -253,8 +250,8 @@ class PostPatchRepo(object):
                             **kwargs_
                             )
                 # post/patch object
-                if d_: self._post_patch_json(d_, type)
-
+                if d_:
+                    self._post_patch_json(d_, type)
 
     def _post_patch_wfl(self, type='WFL'):
         """
@@ -317,7 +314,6 @@ class PostPatchRepo(object):
         # Clean tmp directory
         os.rmdir(upload_)
 
-
     def _post_patch_ecr(self, type='ECR'):
         """
         """
@@ -354,13 +350,28 @@ class PostPatchRepo(object):
                     logger.info('> Creating ECR Repository %s' % fn)
                     ecr.create_repository(repositoryName=fn)
                 # build and push the image
-                image = f"""
-                            aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
-                            docker buildx -t {tag_} {path_} --no-cache --platform linux/amd64,linux/arm64
-                            docker push {tag_}
-                        """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
-                subprocess.check_call(image, shell=True)
-
+                # do so by triggering a CodeBuild run
+                build_projects = self._codebuild.list_projects()
+                builder = list(filter(lambda b: f'{self.ff_env}-pipeline-builder' == b, build_projects))
+                if not builder:
+                    logger.info('NOTE: no builder job found! Triggering a local build.'
+                                ' Ensure CodeBuild jobs are present by deploying the codebuild stack')
+                    image = f"""
+                                                aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
+                                                docker buildx -t {tag_} {path_} --no-cache --platform linux/amd64,linux/arm64
+                                                docker push {tag_}
+                                            """  # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
+                    subprocess.check_call(image, shell=True)
+                else:
+                    self._codebuild.run_project_build_with_overrides(
+                        project_name=builder[0],  # there should only be one
+                        branch=self.version,  # this self.version will only work once v1.0.1 has been released/tagged
+                        env_overrides={
+                            'IMAGE_REPO_NAME': fn,
+                            'IMAGE_TAG': self.version,
+                            'BUILD_PATH': path_
+                        }
+                    )
 
     def run_post_patch(self):
         """Main function to deploy specified components.
