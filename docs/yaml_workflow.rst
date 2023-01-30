@@ -72,6 +72,10 @@ Template
         html_in_zipped: <file>
         tables_in_zipped:
           - <file>
+        # Fields still used by tibanna that needs refactoring
+        #   listing them as they are
+        qc_acl: <string>                  # e.g. private
+        qc_unzip_from_ec2: <boolean>
 
       # Report output
       <report_output_name>:

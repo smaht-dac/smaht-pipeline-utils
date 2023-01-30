@@ -412,9 +412,16 @@ class YAMLMetaWorkflow(YAMLTemplate):
         """
         workflows = []
         for name, values in self.workflows.items():
+            # check if lock version
+            #   if not use default version
+            if values.get(self.VERSION_SCHEMA):
+                version_ = values[self.VERSION_SCHEMA]
+            else:
+                version_ = version
+            # basic JSON workflow structure
             workflow_ = {
                 self.NAME_SCHEMA: name,
-                self.WORKFLOW_SCHEMA: f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{name.split("@")[0]}_{version}',
+                self.WORKFLOW_SCHEMA: f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{name.split("@")[0]}_{version_}',
                                       # remove unique tag after @ to create the right alias to link
                 self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], project),
                 self.CONFIG_SCHEMA: values[self.CONFIG_SCHEMA]

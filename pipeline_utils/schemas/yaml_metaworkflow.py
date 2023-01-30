@@ -54,6 +54,17 @@ yaml_metaworkflow_schema = {
                             schema.PATTERNPROPERTIES: {
                                 '.+': {schema.REF: '/schemas/argument-output'}
                             }
+                        },
+                        'version': {
+                            schema.DESCRIPTION: 'Version to use for the Workflow',
+                            schema.TYPE: schema.STRING
+                        },
+                        'dependencies': {
+                            schema.DESCRIPTION: 'List of dependencies that need to be satisfied',
+                            schema.TYPE: schema.ARRAY,
+                            schema.ITEMS: {
+                                schema.TYPE: schema.STRING
+                            }
                         }
                     },
                     schema.REQUIRED: ['input', 'config']
@@ -137,6 +148,9 @@ yaml_metaworkflow_schema = {
                 },
                 'variant_type': {
                     schema.TYPE: schema.STRING
+                },
+                'vcf_to_ingest': {
+                    schema.TYPE: schema.BOOLEAN
                 }
             },
             schema.REQUIRED: ['file_type']

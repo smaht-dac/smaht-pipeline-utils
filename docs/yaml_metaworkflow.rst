@@ -53,11 +53,17 @@ Template
       ############################################
       <workflow_name>[@<tag>]:
 
-        ## Hard dependencies ##############
+        ## Hard dependencies ###############
         #   Dependencies that must complete
         ####################################
         dependencies:
           - <workflow_name>[@<tag>]
+
+        ## Lock version ####################
+        #   Specific version to use
+        #     for the workflow
+        ####################################
+        version: <string>
 
         ## Specific arguments ##############
         #   General arguments that need to be referenced and
@@ -173,6 +179,11 @@ dependencies
 ^^^^^^^^^^^^
 Workflows that must complete before kicking the current step.
 List of workflows in the the format ``<workflow_name>[@<tag>]``.
+
+version
+^^^^^^^
+Version to use for the corresponding workflow instead of the default specified for the repository.
+Allows to lock the workflow to specific version.
 
 input
 ^^^^^
