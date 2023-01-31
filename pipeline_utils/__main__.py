@@ -25,6 +25,7 @@ PIPELINE_DEPLOY = 'pipeline_deploy'
 CGAP_ALIAS = 'cgap-core'
 DBMI_ALIAS = 'hms-dbmi'
 KEYS_ALIAS = '~/.cgap-keys.json'
+MAIN_ALIAS = 'main'
 
 
 # MAIN
@@ -69,15 +70,17 @@ def main(args=None):
                                                     help='Utility to automatically deploy pipeline components from a target repository')
 
     pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
+    pipeline_deploy_parser.add_argument('--branch', required=False, help=f'Branch to check out for cgap-pipeline-main to build ECR through codebuild [{MAIN_ALIAS}]',
+                                                        default=MAIN_ALIAS)
     pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repositories to deploy, must follow expected structure (see docs)')
-    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help='Path to file with keys for portal auth in JSON format (see docs)',
+    pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help=f'Path to file with keys for portal auth in JSON format [{KEYS_ALIAS}]',
                                                            default=KEYS_ALIAS)
     pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for upload of Workflow Description files')
     pipeline_deploy_parser.add_argument('--account', required=False, help='Account to use for deployment')
     pipeline_deploy_parser.add_argument('--region', required=False, help='Region to use for deployment')
-    pipeline_deploy_parser.add_argument('--project', required=False, help='Project to use for deployment',
+    pipeline_deploy_parser.add_argument('--project', required=False, help=f'Project to use for deployment [{CGAP_ALIAS}]',
                                                           default=CGAP_ALIAS)
-    pipeline_deploy_parser.add_argument('--institution', required=False, help='Institution to use for deployment',
+    pipeline_deploy_parser.add_argument('--institution', required=False, help=f'Institution to use for deployment [{DBMI_ALIAS}]',
                                                               default=DBMI_ALIAS)
 
     pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')

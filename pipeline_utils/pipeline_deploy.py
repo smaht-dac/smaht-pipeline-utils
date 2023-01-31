@@ -354,18 +354,17 @@ class PostPatchRepo(object):
                 build_projects = self._codebuild.list_projects()
                 builder = list(filter(lambda b: f'{self.ff_env}-pipeline-builder' == b, build_projects))
                 if not builder:
-                    logger.info('NOTE: no builder job found! Triggering a local build.'
-                                ' Ensure CodeBuild jobs are present by deploying the codebuild stack')
-                    image = f"""
-                                                aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
-                                                docker buildx -t {tag_} {path_} --no-cache --platform linux/amd64,linux/arm64
-                                                docker push {tag_}
-                                            """  # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
-                    subprocess.check_call(image, shell=True)
+                    logger.error('NOTE: no builder job found!')
+                    ## TODO
+                    #
+                    # image = f"""  """
+                    # subprocess.check_call(image, shell=True)
+                    #
+                    # to run a local build
                 else:
                     self._codebuild.run_project_build_with_overrides(
                         project_name=builder[0],  # there should only be one
-                        branch=self.version,  # this self.version will only work once v1.0.1 has been released/tagged
+                        branch=self.branch, # this is the branch of cgap-pipeline-main to use
                         env_overrides={
                             'IMAGE_REPO_NAME': fn,
                             'IMAGE_TAG': self.version,
