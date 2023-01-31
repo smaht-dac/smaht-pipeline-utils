@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cgap-pipeline-utils"
-version = "1.7.0"
+version = "2.0.0"
 description = "Repository implementing utilities for deploying pipelines that implement the CGAP-Pipeline specification."
 authors = ["CGAP Team"]
 license = "MIT"
