@@ -151,6 +151,14 @@ yaml_metaworkflow_schema = {
                 },
                 'vcf_to_ingest': {
                     schema.TYPE: schema.BOOLEAN
+                },
+                's3_lifecycle_category': {
+                    schema.TYPE: schema.STRING,
+                    schema.PATTERN: '''
+                                short_term_access_long_term_archive|short_term_access|short_term_archive|
+                                long_term_access_long_term_archive|long_term_access|long_term_archive|
+                                no_storage|ignore
+                            '''
                 }
             },
             schema.REQUIRED: ['file_type']
