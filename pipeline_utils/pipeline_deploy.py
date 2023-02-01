@@ -337,7 +337,7 @@ class PostPatchRepo(object):
             logger.info('> Processing %s' % fn)
             if not self.debug:
                 # set specific variables
-                tag_ = f'{account_}/{fn}:{self.version}'
+                # tag_ = f'{account_}/{fn}:{self.version}'
                 path_ = f'{filepath_}/{fn}'
                 is_repository = False
                 # check if tag is present in ECR repositories,
