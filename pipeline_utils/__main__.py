@@ -41,7 +41,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
     pipeline_deploy_parser.add_argument('--branch', required=False, help=f'Branch to check out for cgap-pipeline-main to build ECR through codebuild [{MAIN_ALIAS}]',
                                                         default=MAIN_ALIAS)
-    pipeline_deploy_parser.add_argument('--local-build', required=False, help='Trigger a local ECR build instead of using codebuild')
+    pipeline_deploy_parser.add_argument('--local-build', action='store_true', help='Trigger a local ECR build instead of using codebuild')
     pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repositories to deploy, must follow expected structure (see docs)')
     pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help=f'Path to file with keys for portal auth in JSON format [{KEYS_ALIAS}]',
                                                            default=KEYS_ALIAS)
