@@ -15,12 +15,10 @@ import argparse
 
 
 # Commands
-from pipeline_utils import deploy_pipeline_legacy
 from pipeline_utils import pipeline_deploy
 
 
 # Variables
-DEPLOY_PIPELINE_LEGACY = 'deploy_pipeline_legacy'
 PIPELINE_DEPLOY = 'pipeline_deploy'
 CGAP_ALIAS = 'cgap-core'
 DBMI_ALIAS = 'hms-dbmi'
@@ -36,35 +34,6 @@ def main(args=None):
     parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for cgap-pipeline')
     subparsers = parser.add_subparsers(dest='func', metavar="<command>")
 
-    # Add deploy_pipeline to subparsers, LEGACY
-    deploy_pipeline_legacy_parser = subparsers.add_parser(DEPLOY_PIPELINE_LEGACY, description='Utility to automatically deploy a pipeline from a target repository, LEGACY',
-                                                help='Utility to automatically deploy a pipeline from a target repository, LEGACY')
-
-    deploy_pipeline_legacy_parser.add_argument('--ff-env', required=True, help='environment to use for deployment')
-    deploy_pipeline_legacy_parser.add_argument('--repos', required=True, nargs='+', help='list of repos to deploy, must follow expected structure (see docs)')
-    deploy_pipeline_legacy_parser.add_argument('--keydicts-json', required=False, help='path to file with key dicts for portal auth in JSON format',
-                                                           default=KEYS_ALIAS)
-    deploy_pipeline_legacy_parser.add_argument('--cwl-bucket', required=False, help='cwl-bucket to use for deployment')
-    deploy_pipeline_legacy_parser.add_argument('--account', required=False, help='account to use for deployment')
-    deploy_pipeline_legacy_parser.add_argument('--region', required=False, help='region to use for deployment')
-    deploy_pipeline_legacy_parser.add_argument('--project-uuid', required=False, help='uuid for project to use for deployment',
-                                                          default='12a92962-8265-4fc0-b2f8-cf14f05db58b')
-    deploy_pipeline_legacy_parser.add_argument('--institution-uuid', required=False, help='uuid for institution to use for deployment',
-                                                              default='828cd4fe-ebb0-4b36-a94a-d2e3a36cc989')
-
-    deploy_pipeline_legacy_parser.add_argument('--post-software', action='store_true', help='post | patch Software objects')
-    deploy_pipeline_legacy_parser.add_argument('--post-file-format', action='store_true', help='post | patch FileFormat objects')
-    deploy_pipeline_legacy_parser.add_argument('--post-file-reference', action='store_true', help='post | patch FileReference objects')
-    deploy_pipeline_legacy_parser.add_argument('--post-workflow', action='store_true', help='post | patch Workflow objects')
-    deploy_pipeline_legacy_parser.add_argument('--post-metaworkflow', action='store_true', help='post | patch MetaWorkflow objects')
-    deploy_pipeline_legacy_parser.add_argument('--post-cwl', action='store_true', help='upload cwl files')
-    deploy_pipeline_legacy_parser.add_argument('--post-ecr', action='store_true', help='create docker images and push to ECR')
-    deploy_pipeline_legacy_parser.add_argument('--del-prev-version', action='store_true')
-
-    # cgap-specific
-    deploy_pipeline_legacy_parser.add_argument('--sentieon-server', required=False, help='address for sentieon license server',
-                                                             default=None)
-
     # Add pipeline_deploy to subparsers
     pipeline_deploy_parser = subparsers.add_parser(PIPELINE_DEPLOY, description='Utility to automatically deploy pipeline components from a target repository',
                                                     help='Utility to automatically deploy pipeline components from a target repository')
@@ -72,6 +41,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--ff-env', required=True, help='Environment to use for deployment')
     pipeline_deploy_parser.add_argument('--branch', required=False, help=f'Branch to check out for cgap-pipeline-main to build ECR through codebuild [{MAIN_ALIAS}]',
                                                         default=MAIN_ALIAS)
+    pipeline_deploy_parser.add_argument('--local-build', required=False, help='Trigger a local ECR build instead of using codebuild')
     pipeline_deploy_parser.add_argument('--repos', required=True, nargs='+', help='List of repositories to deploy, must follow expected structure (see docs)')
     pipeline_deploy_parser.add_argument('--keydicts-json', required=False, help=f'Path to file with keys for portal auth in JSON format [{KEYS_ALIAS}]',
                                                            default=KEYS_ALIAS)
@@ -102,7 +72,6 @@ def main(args=None):
 
     # Subparsers map
     subparser_map = {
-                    DEPLOY_PIPELINE_LEGACY: deploy_pipeline_legacy_parser, # LEGACY
                     PIPELINE_DEPLOY: pipeline_deploy_parser
                     }
 
@@ -120,9 +89,7 @@ def main(args=None):
     args = parser.parse_args()
 
     # Call the right tool
-    if args.func == DEPLOY_PIPELINE_LEGACY:
-        deploy_pipeline_legacy.main(args)
-    elif args.func == PIPELINE_DEPLOY:
+    if args.func == PIPELINE_DEPLOY:
         pipeline_deploy.main(args)
 
 

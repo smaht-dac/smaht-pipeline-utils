@@ -337,7 +337,7 @@ class PostPatchRepo(object):
             logger.info('> Processing %s' % fn)
             if not self.debug:
                 # set specific variables
-                # tag_ = f'{account_}/{fn}:{self.version}'
+                tag_ = f'{account_}/{fn}:{self.version}'
                 path_ = f'{filepath_}/{fn}'
                 is_repository = False
                 # check if tag is present in ECR repositories,
@@ -350,20 +350,23 @@ class PostPatchRepo(object):
                     logger.info('> Creating ECR Repository %s' % fn)
                     ecr.create_repository(repositoryName=fn)
                 # build and push the image
-                # do so by triggering a CodeBuild run
+                #   do so by local build or triggering a CodeBuild run
                 build_projects = self._codebuild.list_projects()
                 builder = list(filter(lambda b: f'{self.ff_env}-pipeline-builder' == b, build_projects))
-                if not builder:
+                if self.local_build:
+                    # TODO
+                    #   enable amd/arm build
+                    image = f"""
+                            aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin {account_}
+                            docker build -t {tag_} {path_} --no-cache
+                            docker push {tag_}
+                        """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
+                    subprocess.check_call(image, shell=True)
+                elif not builder:
                     logger.error('NOTE: no builder job found!')
-                    ## TODO
-                    #
-                    # image = f"""  """
-                    # subprocess.check_call(image, shell=True)
-                    #
-                    # to run a local build
                 else:
                     self._codebuild.run_project_build_with_overrides(
-                        project_name=builder[0],  # there should only be one
+                        project_name=builder[0], # there should only be one
                         branch=self.branch, # this is the branch of cgap-pipeline-main to use
                         env_overrides={
                             'IMAGE_REPO_NAME': fn,
