@@ -1,9 +1,8 @@
-=========================
-File Reference Definition
-=========================
-
 .. _file_reference:
 
+==============
+File Reference
+==============
 
 Template
 ++++++++

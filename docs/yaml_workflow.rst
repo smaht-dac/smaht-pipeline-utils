@@ -1,9 +1,8 @@
-===================
-Workflow Definition
-===================
-
 .. _workflow:
 
+========
+Workflow
+========
 
 Template
 ++++++++
@@ -111,11 +110,11 @@ Several subfields need to be specified:
 
 input
 -----
-Description of input files and parameters for the workflow. See :ref:`Input Definition <input>`.
+Description of input files and parameters for the workflow. See :ref:`Input Definition <input_a>`.
 
 output
 ------
-Description of expected outputs for the workflow. See :ref:`Output Definition <output>`.
+Description of expected outputs for the workflow. See :ref:`Output Definition <output_a>`.
 
 Optional
 ^^^^^^^^
@@ -132,7 +131,7 @@ Each software is specified using the name of the software and the version (eithe
 Each software needs to match a software that has been previously defined, see :ref:`Software <software>`.
 
 
-.. _input:
+.. _input_a:
 
 Input Definition
 ++++++++++++++++
@@ -148,7 +147,7 @@ For a **file** argument, the argument type is defined as ``file.<format>``, wher
 For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
 
 
-.. _output:
+.. _output_a:
 
 Output Definition
 +++++++++++++++++

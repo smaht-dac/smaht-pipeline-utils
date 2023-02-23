@@ -1,9 +1,8 @@
-===================
-Software Definition
-===================
-
 .. _software:
 
+========
+Software
+========
 
 Template
 ++++++++

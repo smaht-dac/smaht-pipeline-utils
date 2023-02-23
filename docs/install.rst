@@ -1,6 +1,11 @@
-=============
-Quick Install
-=============
+.. _install:
+
+=======
+Install
+=======
+
+PyPI
+^^^^
 
 The package is available on pypi_:
 
@@ -10,8 +15,11 @@ The package is available on pypi_:
 
     pip install cgap-pipeline-utils
 
-Note however that the version on pypi may be outdated or may not be
-the required version. To install the latest version from source:
+Source
+^^^^^^
+
+The version on pypi may be outdated or may not be the required version.
+To install the latest version from source:
 
 .. code-block:: bash
 

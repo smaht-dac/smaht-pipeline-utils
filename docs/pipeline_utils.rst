@@ -4,7 +4,7 @@ pipeline_utils
 
 This is the entry point for a collection of utilities available as commands:
 
-  - :ref:`deploy_pipeline <deploy_pipeline>`
+  - :ref:`pipeline_deploy <pipeline_deploy>`
 
 Usage:
 
@@ -12,40 +12,79 @@ Usage:
 
     pipeline_utils [COMMAND] [ARGS]
 
-.. _deploy_pipeline:
+.. _pipeline_deploy:
 
-deploy_pipeline
+pipeline_deploy
 +++++++++++++++
 
-Utility to automatically deploy a pipeline from a target repository.
+Utility to automatically deploy pipeline's components from a target repository.
 It is possible to specify multiple target repositories to deploy multiple pipelines at the same time.
 It is also possible to specify the current repository as a target as ``.``.
-If one of the components to deploy (e.g. MetaWorkflow objects) is missing in the target repository, the program will fail and return an error.
 
 Usage:
 
 .. code-block:: bash
 
-    pipeline_utils deploy_pipeline --ff-env FF_ENV --repos REPOS [REPOS ...] [OPTIONAL ARGS]
+    pipeline_utils pipeline_deploy --ff-env FF_ENV --repos REPO [REPO ...] [OPTIONAL ARGS]
 
-Arguments:
+**Arguments:**
 
---ff-env                 environment to use for deployment
---repos                  list of repos to deploy, must follow expected structure (see :ref:`docs <repo>`)
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
 
-Optional Arguments:
+   * - Argument
+     - Definition
+   * - *-\-ff-env*
+     - Environment to use for deployment.
+   * - *-\-repos*
+     - List of repositories to deploy, must follow expected structure (see :ref:`docs <repo>`).
 
---keydicts-json          path to file with key dicts for portal auth in json format [~/.cgap-keydicts.json]
---cwl-bucket             cwl-bucket to use for deployment
---account                account to use for deployment
---region                 region to use for deployment
---project-uuid           uuid for project to use for deployment
---institution-uuid       uuid for institution to use for deployment
---post-software          post | patch Software objects
---post-file-format       post | patch FileFormat objects
---post-file-reference    post | patch FileReference objects
---post-workflow          post | patch Workflow objects
---post-metaworkflow      post | patch MetaWorkflow objects
---post-cwl               upload cwl files
---post-ecr               create docker images and push to ECR
---del-prev-version       delete previous versions information
+**Optional Arguments:**
+
+.. list-table::
+  :widths: 25 75
+  :header-rows: 1
+
+  * - Argument
+    - Definition
+  * - *-\-branch*
+    - Branch to check out for cgap-pipeline-main to build ECR through codebuild [main].
+  * - *-\-local-build*
+    - Trigger a local ECR build instead of using codebuild.
+  * - *-\-keydicts-json*
+    - Path to file with keys for portal auth in JSON format [~/.cgap-keys.json].
+  * - *-\-wfl-bucket*
+    - Bucket to use for upload of Workflow Description files (e.g, WDL, CWL).
+  * - *-\-account*
+    - Account to use for deployment.
+  * - *-\-region*
+    - Region to use for deployment.
+  * - *-\-project*
+    - Project to use for deployment [cgap-core].
+  * - *-\-institution*
+    - Institution to use for deployment [hms-dbmi].
+  * - *-\-post-software*
+    - POST | PATCH Software objects.
+  * - *-\-post-file-format*
+    - POST | PATCH FileFormat objects.
+  * - *-\-post-file-reference*
+    - POST | PATCH FileReference objects.
+  * - *-\-post-workflow*
+    - POST | PATCH Workflow objects.
+  * - *-\-post-metaworkflow*
+    - POST | PATCH MetaWorkflow objects.
+  * - *-\-post-wfl*
+    - Upload Workflow Description files (.cwl, .wdl).
+  * - *-\-post-ecr*
+    - Build Docker images and push to ECR. By default will use codebuild unless --local-build flag is set.
+  * - *-\-debug*
+    - Turn off POST | PATCH action.
+  * - *-\-verbose*
+    - Print the JSON structure created for objects.
+  * - *-\-validate*
+    - Validate YAML objects against schemas (turn off POST | PATCH).
+  * - *-\-sentieon-server*
+    - Address for Sentieon license server.
+  * -
+    -

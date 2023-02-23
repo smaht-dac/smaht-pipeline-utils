@@ -1,9 +1,8 @@
-===================
-Pipeline Definition
-===================
-
 .. _metaworkflow:
 
+========
+Pipeline
+========
 
 Template
 ++++++++
@@ -125,6 +124,11 @@ Template
             higlass_file: <boolean>
             variant_type: <variant_type>      # SNV, SV, CNV
             vcf_to_ingest: <boolean>
+            s3_lifecycle_category: <string>   # short_term_access_long_term_archive,
+                                              # short_term_access, short_term_archive,
+                                              # long_term_access_long_term_archive,
+                                              # long_term_access, long_term_archive,
+                                              # no_storage, ignore
 
         ## EC2 Configuration to use ########
         ####################################

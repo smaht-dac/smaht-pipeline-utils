@@ -1,9 +1,8 @@
-======================
-File Format Definition
-======================
-
 .. _file_format:
 
+===========
+File Format
+===========
 
 Template
 ++++++++

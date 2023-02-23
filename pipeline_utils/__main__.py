@@ -59,7 +59,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='POST|PATCH Workflow objects')
     pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='POST|PATCH MetaWorkflow objects')
     pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='Upload Workflow Description files (.cwl, .wdl)')
-    pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='Build Docker images and push to ECR')
+    pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='Build Docker images and push to ECR. By default will use codebuild unless --local-build flag is set')
 
     pipeline_deploy_parser.add_argument('--debug', action='store_true', help='Turn off POST|PATCH action')
     pipeline_deploy_parser.add_argument('--verbose', action='store_true', help='Print the JSON structure created for objects')
