@@ -36,9 +36,9 @@ Usage:
    * - Argument
      - Definition
    * - *-\-ff-env*
-     - Environment to use for deployment.
+     - Environment to use for deployment
    * - *-\-repos*
-     - List of repositories to deploy, must follow expected structure (see :ref:`docs <repo>`).
+     - List of repositories to deploy, must follow expected structure (see :ref:`docs <repo>`)
 
 **Optional Arguments:**
 
@@ -49,42 +49,43 @@ Usage:
   * - Argument
     - Definition
   * - *-\-branch*
-    - Branch to check out for cgap-pipeline-main to build ECR through codebuild [main].
+    - Branch to check out for cgap-pipeline-main to build ECR through codebuild [main]
   * - *-\-local-build*
-    - Trigger a local ECR build instead of using codebuild.
+    - Trigger a local ECR build instead of using codebuild
   * - *-\-keydicts-json*
-    - Path to file with keys for portal auth in JSON format [~/.cgap-keys.json].
+    - Path to file with keys for portal auth in JSON format [~/.cgap-keys.json]
   * - *-\-wfl-bucket*
-    - Bucket to use for upload of Workflow Description files (e.g, WDL, CWL).
+    - Bucket to use for upload of Workflow Description files (CWL or WDL)
   * - *-\-account*
-    - Account to use for deployment.
+    - Account to use for deployment
   * - *-\-region*
-    - Region to use for deployment.
+    - Region to use for deployment
   * - *-\-project*
-    - Project to use for deployment [cgap-core].
+    - Project to use for deployment [cgap-core]
   * - *-\-institution*
-    - Institution to use for deployment [hms-dbmi].
+    - Institution to use for deployment [hms-dbmi]
   * - *-\-post-software*
-    - POST | PATCH Software objects.
+    - POST | PATCH Software objects (.yaml)
   * - *-\-post-file-format*
-    - POST | PATCH FileFormat objects.
+    - POST | PATCH FileFormat objects (.yaml)
   * - *-\-post-file-reference*
-    - POST | PATCH FileReference objects.
+    - POST | PATCH FileReference objects (.yaml)
   * - *-\-post-workflow*
-    - POST | PATCH Workflow objects.
+    - POST | PATCH Workflow objects (.yaml)
   * - *-\-post-metaworkflow*
-    - POST | PATCH MetaWorkflow objects.
+    - POST | PATCH MetaWorkflow objects (.yaml)
   * - *-\-post-wfl*
-    - Upload Workflow Description files (.cwl, .wdl).
+    - Upload Workflow Description files (.cwl or .wdl)
   * - *-\-post-ecr*
-    - Build Docker images and push to ECR. By default will use codebuild unless --local-build flag is set.
+    - Build Docker images and push to ECR.
+      By default will try to use codebuild unless *-\-local-build* flag is set
   * - *-\-debug*
-    - Turn off POST | PATCH action.
+    - Turn off POST | PATCH action
   * - *-\-verbose*
-    - Print the JSON structure created for objects.
+    - Print the JSON structure created for the objects
   * - *-\-validate*
-    - Validate YAML objects against schemas (turn off POST | PATCH).
+    - Validate YAML objects against schemas (turn off POST | PATCH)
   * - *-\-sentieon-server*
-    - Address for Sentieon license server.
+    - Address for Sentieon license server
   * -
     -

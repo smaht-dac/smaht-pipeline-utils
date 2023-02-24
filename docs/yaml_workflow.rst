@@ -106,7 +106,7 @@ Several subfields need to be specified:
   - **main** [required]: Main description file
   - **child** [optional]: List of supplementary description files used by main
 
-*Note*: At the moment we support two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL).
+At the moment we support two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL).
 
 input
 -----

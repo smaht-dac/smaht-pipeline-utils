@@ -22,7 +22,7 @@ Install Docker
 ==============
 
 The deployment code will try to trigger remote codebuild jobs to build and push the Docker containers implemented for the pipelines directly in AWS.
-However, if no builder has been setup and it's available, the code will try to run a local build using Docker.
+However, if no builder has been setup and it's available, it is possible to run a local build using Docker by passing the flag ``--local-build`` to the deployment command.
 
 Running a local build requires having a Docker application running on the machine.
 To install Docker in a EC2 machine, refer to the following instructions based on an Amazon Linux AMI:
@@ -103,6 +103,7 @@ we need to setup the following environmental variables to authenticate to the ac
 * *S3_ENCRYPT_KEY* and *S3_ENCRYPT_KEY_ID* can be found in the AWS Secrets Manager.
 * *AWS_SESSION_TOKEN* is used by some single sign-on platforms for managing
   credentials but may not be required otherwise.
+* *TIBANNA_AWS_REGION* is the region for the AWS account.
 
 Portal Credentials
 ------------------
@@ -144,7 +145,7 @@ Finally we need to setup the information to identify the target environment to u
   #   e.g., 0.0.0.0
   export SENTIEON_LICENSE=
 
-**Tips and Options:**
+**Tips:**
 
 * *ENV_NAME* can be found in the portal health page under ``Namespace``.
 * *WFL_BUCKET* can be found in the portal health page under ``Tibanna CWLs Bucket``.
