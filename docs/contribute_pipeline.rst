@@ -90,7 +90,7 @@ To create these dependencies and specify the necessary details for the execution
 The objects currently available are:
 
 - :ref:`Pipeline <metaworkflow>`,
-  this object allows to define all the dependencies between workflows, scatter and gather concepts to parallelize execution, constant referece files and parameters for the pipeline, and EC2 configurations to run each of the workflows.
+  this object defines dependencies between workflows, scatter and gather parameters to parallelize execution, reference files and constant input parameters, and EC2 configurations for each of the workflows.
 - :ref:`Workflow <workflow>`,
   this object represents a step for the pipeline and allows to store metadata to track inputs, outputs, software, and the workflow description files used by the step.
 - :ref:`Software <software>`,
