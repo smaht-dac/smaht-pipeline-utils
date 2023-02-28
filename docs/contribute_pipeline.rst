@@ -105,7 +105,7 @@ Please refer to each of the linked pages for details on the schema definitions s
 *Note: the files defining portal objects must have a .yaml extension to be recognized during the automated deployment.*
 
 The following example implements workflow objects for the steps ``foo`` and ``bar`` and a pipeline object for the ``foo_bar`` pipeline.
-Additional metadata to track reference files, file formats and software used by the pipeline are also implemented as the corresponding YAML objects.
+Additional metadata to track reference files, file formats, and software used by the pipeline are also implemented as corresponding YAML objects.
 
 ::
 
