@@ -21,7 +21,7 @@ A pipeline requires several components to be compatible and run within our infra
 - Portal objects
 - A name and a version for the pipeline
 
-These components need to be organized following a validated structure, to enable the automated deployment.
+These components need to be organized following a validated structure to enable automated deployment.
 More information on this specific structure is available :ref:`here <repo>`.
 
 Although it's not strictly necessary, it is highly recommended to set up a GitHub repository to store and organize all the components.
