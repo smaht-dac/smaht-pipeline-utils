@@ -55,7 +55,7 @@ Each step will execute independently on a single EC2 machine.
 Docker Containers
 -----------------
 
-As we are using temporary EC2 machines, all the code that a pipeline execute need to be packaged and distributed as Docker containers.
+As we are using temporary EC2 machines, all code to be executed must be packaged and distributed in Docker containers.
 
 Each pipeline can have multiple containers, and each container requires its own directory with all the related components and the corresponding *Dockerfile*.
 
