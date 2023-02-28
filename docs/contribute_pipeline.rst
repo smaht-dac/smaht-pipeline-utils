@@ -35,7 +35,7 @@ Workflow description languages are standards for describing data analysis pipeli
 Each step of the pipeline that needs to execute in a single computing environment must be defined in a corresponding workflow description file using one of the supported languages.
 At the moment we are supporting two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL), and we are working to add support for more standards (e.g., Snakemake).
 
-Each step codified as a workflow description file will execute on a single EC2 machine through our executioner software, Tibanna.
+Each step codified as a workflow description file will execute on a single EC2 machine through our executioner software, `Tibanna <https://github.com/4dn-dcic/tibanna>`__. 
 
 *Note: the workflow description file must have a .wdl or .cwl extension to be recognized during the automated deployment.*
 

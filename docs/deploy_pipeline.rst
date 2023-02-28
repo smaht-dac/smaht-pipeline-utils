@@ -73,7 +73,7 @@ Once the virtual environment is set up and activated, we can proceed to :ref:`in
   pip install cgap-pipeline-utils
 
 To check that the software is correctly installed, try to run ``pipeline_utils``.
-If this fail with a bash "command not found" error, try ``poetry run pipeline_utils`` instead.
+If installed from source, this command may fail with a bash "command not found" error, try ``poetry run pipeline_utils`` instead.
 
 Set Up Credentials and Environmental Variables
 ==============================================
@@ -100,12 +100,11 @@ we need to setup the following environmental variables to authenticate to the ac
 
 **Tips**:
 
-* *GLOBAL_ENV_BUCKET* can be found in AWS S3. After logging into the AWS
-  console and navigating to the S3 page, this variable is the name of the bucket that ends in "-envs".
+* *GLOBAL_ENV_BUCKET* can be found in the AWS Secrets Manager.
 * *S3_ENCRYPT_KEY* and *S3_ENCRYPT_KEY_ID* can be found in the AWS Secrets Manager.
 * *AWS_SESSION_TOKEN* is used by some single sign-on platforms for managing
   credentials but may not be required otherwise.
-* *TIBANNA_AWS_REGION* is the region for the AWS account.
+* *TIBANNA_AWS_REGION* is the main region for the AWS account.
 
 Portal Credentials
 ------------------
@@ -115,7 +114,7 @@ These credentials need to be stored as a keypair file as described
 `here <https://github.com/dbmi-bgm/cgap-portal/blob/master/docs/public/help/access_keys.md>`_.
 
 The default path used by the code to locate this file is ``~/.cgap-keys.json``.
-However, it is possible to specify a different keypair file throug the command line, if desired.
+However, it is possible to specify a different keypair file through a command line argument, if desired.
 
 Target Account Information
 --------------------------
@@ -155,7 +154,7 @@ Finally we need to setup the information to identify the target environment to u
 Running the Deployment
 ======================
 
-The following code will use ``pipeline_deploy`` command to deploy all the components from the repositories specified
+The following code will use the ``pipeline_deploy`` command to deploy all the components from the repositories specified
 by the ``--repos`` argument.
 
 .. code-block:: bash
@@ -182,9 +181,9 @@ It is possible to add flags to run the command in various debug modes, to valida
 For more details on the command line arguments refer to the documentation for the :ref:`pipeline_deploy <pipeline_deploy>` command.
 
 An important argument is ``--branch``, this argument specifies the branch to check out for cgap-pipeline-main to build ECR through codebuild.
-The default is set to the main branch. The ``--local-build`` flag will prevent the code to try using codebuild and force a local build using Docker instead.
+The default is set to the main branch. The ``--local-build`` flag will prevent the code from using codebuild and force a local build with Docker instead.
 
-*Note: we are working to enable more builder and a selection with a command line argument for which builder to use to deploy modules from different repositories through codebuild.*
+*Note: we are working to enable more builders with a command line argument for which builder to use to deploy modules from different repositories through codebuild.*
 
 Deploying CGAP Pipelines
 ========================
@@ -236,7 +235,7 @@ This will build from source the latest version linked for the current release.
 
 .. code-block:: bash
 
-  makde deploy-all
+  make deploy-all
 
 Troubleshooting
 ===============
