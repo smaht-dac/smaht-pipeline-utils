@@ -94,16 +94,26 @@ def test_workflow():
             }
         ]
 
-    for i, fn in enumerate(glob.glob('tests/repo_correct/portal_objects/workflows/*.yaml')):
-        for d in yaml_parser.load_yaml(fn):
-            d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                                institution='hms-dbmi',
-                                project='cgap-core',
-                                version='v1.0.0',
-                                wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
-                            )
-            # check
-            assert d_ == res[i]
+    for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/workflows/A_gatk-HC.yaml'):
+        d_ = yaml_parser.YAMLWorkflow(d).to_json(
+                            institution='hms-dbmi',
+                            project='cgap-core',
+                            version='v1.0.0',
+                            wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
+                        )
+        # check
+        assert d_ == res[0]
+
+    for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/workflows/B_minimal-gatk-HC.yaml'):
+        d_ = yaml_parser.YAMLWorkflow(d).to_json(
+                            institution='hms-dbmi',
+                            project='cgap-core',
+                            version='v1.0.0',
+                            wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
+                        )
+        # check
+        assert d_ == res[1]
+
 
 def test_workflow_error():
     """

@@ -174,15 +174,24 @@ def test_metaworkflow():
         }
     ]
 
-    for i, fn in enumerate(glob.glob('tests/repo_correct/portal_objects/metaworkflows/*.yaml')):
-        for d in yaml_parser.load_yaml(fn):
-            d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
-                                institution='hms-dbmi',
-                                project='cgap-core',
-                                version='v1.0.0'
-                            )
-            # check
-            assert d_ == res[i]
+    for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/metaworkflows/A_gatk-HC-GT.yaml'):
+        d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
+                            institution='hms-dbmi',
+                            project='cgap-core',
+                            version='v1.0.0'
+                        )
+        # check
+        assert d_ == res[0]
+
+    for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/metaworkflows/B_minimal-gatk-HC-GT.yaml'):
+        d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
+                            institution='hms-dbmi',
+                            project='cgap-core',
+                            version='v1.0.0'
+                        )
+        # check
+        assert d_ == res[1]
+
 
 def test_metaworkflow_error():
     """
