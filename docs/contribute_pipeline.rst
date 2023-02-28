@@ -131,7 +131,7 @@ PIPELINE and VERSION Files
 
 Finally, automated deployment requires a pipeline version and name. These will also be used to tag some of the components deployed with the pipeline (i.e., Docker containers, workflow description files, Pipeline and Workflow objects).
 
-These information must be provided in a VERSION and PIPELINE one-line files.
+This information must be provided in separate VERSION and PIPELINE one-line files.
 
 Example
 
