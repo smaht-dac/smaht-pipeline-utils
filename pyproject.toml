@@ -25,6 +25,10 @@ jsonschema = "^4.7.2"
 magma-suite = "^1.0.1"
 
 
+[tool.poetry.dev-dependencies]
+pytest = "*"
+
+
 [tool.poetry.scripts]
 pipeline_utils = "pipeline_utils.__main__:main"
 
