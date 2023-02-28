@@ -84,7 +84,7 @@ Usage:
   * - *-\-verbose*
     - Print the JSON structure created for the objects
   * - *-\-validate*
-    - Validate YAML objects against schemas (turn off POST | PATCH)
+    - Validate YAML objects against schemas. Turn off POST | PATCH action
   * - *-\-sentieon-server*
     - Address for Sentieon license server
   * -

@@ -28,17 +28,29 @@ Running a local build requires having a Docker application running on the machin
 To install Docker in a EC2 machine, refer to the following instructions based on an Amazon Linux AMI:
 
 Update packages:
-``sudo yum update -y``
+
+.. code-block:: bash
+
+  sudo yum update -y
 
 Install the Docker Engine package:
-``sudo yum install docker``
+
+.. code-block:: bash
+
+  sudo yum install docker
 
 Start the docker service:
-``sudo service docker start``
+
+.. code-block:: bash
+
+  sudo service docker start
 
 Ensure Docker is installed correctly and has the proper permissions
 by running a test command:
-``docker run hello-world``
+
+.. code-block:: bash
+
+  docker run hello-world
 
 More information on how to setup Docker can be found in the
 `AWS Documentation <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html>`_.
@@ -51,7 +63,7 @@ Install pipeline_utils
 The software is python based.
 To install the software and the required packages, we recommend
 using a fresh virtual environment.
-Please refer to ``pyproject.toml`` for the supported Python version.
+Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
 
 We recommend using pyenv to manage virtual environments.
 Instructions for installing and using
@@ -110,11 +122,27 @@ Portal Credentials
 ------------------
 
 We also need to setup credentials to authenticate to the portal database to push some of the portal components.
-These credentials need to be stored as a keypair file as described
+These credentials need to be stored as a key-pair file as described
 `here <https://github.com/dbmi-bgm/cgap-portal/blob/master/docs/public/help/access_keys.md>`_.
 
 The default path used by the code to locate this file is ``~/.cgap-keys.json``.
-However, it is possible to specify a different keypair file through a command line argument, if desired.
+However, it is possible to specify a different key-pair file through a command line argument, if desired.
+
+Example of a key-pair entry:
+
+.. code-block:: json
+
+  {
+    "<namespace>": {
+        "key": "XXXXXXXX",
+        "secret": "xxxxxxxxxxxxxxxx",
+        "server": "<URL>"
+    }
+  }
+
+``<namespace>`` is the namespace for the environment and can be found in the portal health page (e.g., cgap-wolf).
+
+.. _account_vars:
 
 Target Account Information
 --------------------------
@@ -123,7 +151,7 @@ Finally we need to setup the information to identify the target environment to u
 
 .. code-block:: bash
 
-  # Set the name of the target environment
+  # Set the namespace of the target environment
   #   e.g., cgap-wolf
   export ENV_NAME=
 
@@ -132,8 +160,7 @@ Finally we need to setup the information to identify the target environment to u
   export WFL_BUCKET=
 
   # Set the path to the keypair file with the portal credential
-  #   e.g., /.cgap-keys.json
-  export KEYDICTS_JSON=
+  export KEYDICTS_JSON=~/.cgap-keys.json
 
   # Set up project and institution
   #   Project and institution need to correspond to metadata present on the portal
@@ -143,13 +170,13 @@ Finally we need to setup the information to identify the target environment to u
 
   # If running sentieon code,
   #   specify the address for the server that validate the software license
-  #   e.g., 0.0.0.0
-  export SENTIEON_LICENSE=
+  export SENTIEON_LICENSE=0.0.0.0
 
 **Tips:**
 
-* *ENV_NAME* can be found in the portal health page under ``Namespace``.
+* *ENV_NAME* is the namespace for the environment and can be found in the portal health page under ``Namespace``.
 * *WFL_BUCKET* can be found in the portal health page under ``Tibanna CWLs Bucket``.
+  This bucket will be used to store the workflow description files.
 
 Running the Deployment
 ======================
@@ -223,7 +250,7 @@ This will build from source the latest version linked for the current release.
 
 5. Set up the auth credentials as described above.
 
-6. Set the target account information in the ``.env`` file.
+6. Set the target account information in the ``.env`` file (see :ref:`above <account_vars>`).
 
 7. Test the deployment using the base module only.
 

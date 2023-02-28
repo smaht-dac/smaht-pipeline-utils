@@ -28,3 +28,5 @@ To install the latest version from source:
     make configure
     make update
     make build
+
+Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
