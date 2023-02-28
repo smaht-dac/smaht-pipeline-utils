@@ -147,4 +147,4 @@ Example
 Examples
 --------
 
-Real examples of implemented pipeline's modules can be found linked as submodules in our main pipelines repository here: https://github.com/dbmi-bgm/cgap-pipeline-main.
+Real examples of implemented pipeline modules can be found linked as submodules in our main pipeline repository here: https://github.com/dbmi-bgm/cgap-pipeline-main.
