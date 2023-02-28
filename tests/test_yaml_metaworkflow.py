@@ -14,7 +14,7 @@ def test_metaworkflow():
     """
     res = [
         {
-          "aliases": ["cgap-core:gatk-HC-GT-pipeline_v1.0.0"],
+          "aliases": ["cgap-core:MetaWorkflow-gatk-HC-GT-pipeline_v1.0.0"],
           "description": "Pipeline to run gatk-HC and gatk-GT to call and genotype variants",
           "input": [
             {
@@ -25,7 +25,7 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"file": "cgap-core:reference_genome_hg38"}]
+              "files": [{"file": "cgap-core:FileReference-reference_genome_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -76,7 +76,7 @@ def test_metaworkflow():
                 }
               ],
               "name": "gatk-HC",
-              "workflow": "cgap-core:gatk-HC_v1.0.0"
+              "workflow": "cgap-core:Workflow-gatk-HC_v1.0.0"
             },
             {
               "config": {
@@ -109,13 +109,13 @@ def test_metaworkflow():
                 }
               ],
               "name": "gatk-GT",
-              "workflow": "cgap-core:gatk-GT_v1.0.0"
+              "workflow": "cgap-core:Workflow-gatk-GT_v1.0.0"
             }
           ]
         },
         {
           "accession": "GAPFIXRDPDK1",
-          "aliases": ["cgap-core:gatk-HC-pipeline_v1.0.0"],
+          "aliases": ["cgap-core:MetaWorkflow-gatk-HC-pipeline_v1.0.0"],
           "description": "Pipeline to run gatk-HC to call variants",
           "input": [
             {
@@ -125,8 +125,8 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"dimension": "0", "file": "cgap-core:reference_genome_hg38"},
-                        {"dimension": "1", "file": "cgap-core:reference_bam_hg38"}]
+              "files": [{"dimension": "0", "file": "cgap-core:FileReference-reference_genome_hg38"},
+                        {"dimension": "1", "file": "cgap-core:FileReference-reference_bam_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -168,7 +168,7 @@ def test_metaworkflow():
                 }
               ],
               "name": "gatk-HC",
-              "workflow": "cgap-core:gatk-HC_v1.0.0"
+              "workflow": "cgap-core:Workflow-gatk-HC_v1.0.0"
             }
           ]
         }

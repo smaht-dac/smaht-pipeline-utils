@@ -14,7 +14,7 @@ def test_file_reference():
     res = [
             {
                 "accession": "GAPFIXRDPDK5",
-                "aliases": ["cgap-core:reference_genome_hg38"],
+                "aliases": ["cgap-core:FileReference-reference_genome_hg38"],
                 "description": "hg38 full reference genome plus decoy for CGAP, fasta format",
                 "extra_files": ["fa_fai", "dict"],
                 "file_format": "fa",
@@ -24,7 +24,7 @@ def test_file_reference():
                 "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe7"
             },
             {
-                "aliases": ["cgap-core:reference_genome_hg38"],
+                "aliases": ["cgap-core:FileReference-reference_genome_hg38"],
                 "description": "hg38 full reference genome plus decoy for CGAP, fasta format",
                 "extra_files": [],
                 "file_format": "fa",

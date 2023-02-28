@@ -13,7 +13,7 @@ def test_software():
     """
     res = [
             {
-                "aliases": ["cgap-core:gatk_4.1.2"],
+                "aliases": ["cgap-core:Software-gatk_4.1.2"],
                 "description": "gatk software package",
                 "institution": "/institutions/hms-dbmi/",
                 "name": "gatk",
@@ -24,7 +24,7 @@ def test_software():
             },
             {
                 "accession": "GAPMKF1LL29K",
-                "aliases": ["cgap-core:picard_324ePT"],
+                "aliases": ["cgap-core:Software-picard_324ePT"],
                 "commit": "324ePT",
                 "institution": "/institutions/hms-dbmi/",
                 "name": "picard",

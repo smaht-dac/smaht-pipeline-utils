@@ -14,7 +14,7 @@ def test_workflow():
     """
     res = [
             {
-                "aliases": ["cgap-core:gatk-HaplotypeCaller_v1.0.0"],
+                "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
                 "app_name": "gatk-HaplotypeCaller",
                 "app_version": "v1.0.0",
                 "arguments": [
@@ -51,8 +51,8 @@ def test_workflow():
                 "name": "gatk-HaplotypeCaller_v1.0.0",
                 "project": "/projects/cgap-core/",
                 "software": [
-                    "cgap-core:gatk_4.2.1",
-                    "cgap-core:vcf-tools_5A63Aa1"
+                    "cgap-core:Software-gatk_4.2.1",
+                    "cgap-core:Software-vcf-tools_5A63Aa1"
                 ],
                 "title": "HaplotypeCaller plus integity-check [v1.0.0]",
                 "wdl_child_filenames": [
@@ -65,7 +65,7 @@ def test_workflow():
             },
             {
                 "accession": "GAPFIXRDPDK1",
-                "aliases": ["cgap-core:gatk-HaplotypeCaller_v1.0.0"],
+                "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
                 "app_name": "gatk-HaplotypeCaller",
                 "app_version": "v1.0.0",
                 "arguments": [
