@@ -49,8 +49,9 @@ Install pipeline_utils
 ======================
 
 The software is python based.
-To install the software and the required packages it is recommended to
-use a fresh virtual environment running Python 3.7 or 3.8.
+To install the software and the required packages, we recommend
+using a fresh virtual environment.
+Please refer to ``pyproject.toml`` for the supported Python version.
 
 We recommend using pyenv to manage virtual environments.
 Instructions for installing and using
