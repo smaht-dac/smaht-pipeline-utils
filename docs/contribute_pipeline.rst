@@ -129,7 +129,7 @@ Additional metadata to track reference files, file formats, and software used by
 PIPELINE and VERSION Files
 --------------------------
 
-Finally, the automated deployment requires version information and a name for the pipeline to tag and version all the components that are deployed.
+Finally, automated deployment requires a pipeline version and name. These will also be used to tag some of the components deployed with the pipeline (i.e., Docker containers, workflow description files, Pipeline and Workflow objects).
 
 These information must be provided in a VERSION and PIPELINE one-line files.
 
