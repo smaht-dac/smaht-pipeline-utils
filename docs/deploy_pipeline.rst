@@ -27,7 +27,8 @@ However, if no builder has been setup and it's available, it is possible to run 
 Running a local build requires having a Docker application running on the machine.
 To install Docker in a EC2 machine, refer to the following instructions based on an Amazon Linux AMI:
 
-Update packages: ``sudo yum update -y``
+Update packages:
+``sudo yum update -y``
 
 Install the Docker Engine package:
 ``sudo yum install docker``
