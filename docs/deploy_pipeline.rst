@@ -22,7 +22,7 @@ Install Docker
 ==============
 
 The deployment code will try to trigger remote codebuild jobs to build and push the Docker containers implemented for the pipelines directly in AWS.
-However, if no builder has been setup and it's available, it is possible to run a local build using Docker by passing the flag ``--local-build`` to the deployment command.
+However, if no builder has been setup, it is possible to run a local build using Docker by passing the flag ``--local-build`` to the deployment command.
 
 Running a local build requires having a Docker application running on the machine.
 To install Docker in a EC2 machine, refer to the following instructions based on an Amazon Linux AMI:

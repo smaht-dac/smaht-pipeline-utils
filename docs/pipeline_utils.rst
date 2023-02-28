@@ -17,7 +17,7 @@ Usage:
 pipeline_deploy
 +++++++++++++++
 
-Utility to automatically deploy pipeline's components from a target repository.
+Utility to automatically deploy a pipeline's components from a target repository.
 It is possible to specify multiple target repositories to deploy multiple pipelines at the same time.
 It is also possible to specify the current repository as a target as ``.``.
 

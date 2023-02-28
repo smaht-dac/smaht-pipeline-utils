@@ -92,7 +92,7 @@ The objects currently available are:
 - :ref:`Pipeline <metaworkflow>`,
   this object defines dependencies between workflows, scatter and gather parameters to parallelize execution, reference files and constant input parameters, and EC2 configurations for each of the workflows.
 - :ref:`Workflow <workflow>`,
-  this object represents a pipeline step and stores metadata to track its inputs, outputs, software, and description files (e.g., WDL or CWL) used.
+  this object represents a pipeline step and stores metadata to track its inputs, outputs, software, and description files (e.g., WDL or CWL).
 - :ref:`Software <software>`,
   this object stores information to track and version a specific software used by the pipeline.
 - :ref:`File Reference <file_reference>`,
