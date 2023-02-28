@@ -1,6 +1,11 @@
+.. _install:
+
 =======
-Quick Install
+Install
 =======
+
+PyPI
+^^^^
 
 The package is available on pypi_:
 
@@ -10,8 +15,11 @@ The package is available on pypi_:
 
     pip install cgap-pipeline-utils
 
-Note however that the version on pypi may be outdated or may not be
-the required version. To install the latest version from source:
+Source
+^^^^^^
+
+The version on pypi may be outdated or may not be the required version.
+To install the latest version from source:
 
 .. code-block:: bash
 
@@ -20,3 +28,5 @@ the required version. To install the latest version from source:
     make configure
     make update
     make build
+
+Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.

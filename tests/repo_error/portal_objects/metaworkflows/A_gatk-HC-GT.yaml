@@ -1,0 +1,75 @@
+
+# gatk-HC-GT-pipeline (FULL)
+#   error: missing output for gatk-GT
+name: gatk-HC-GT-pipeline
+description: Pipeline to run gatk-HC and gatk-GT to call and genotype variants
+title: gatk-HC and gatk-GT pipeline
+
+input:
+  input_vcf:
+    argument_type: file.vcf
+    dimensionality: 1
+
+  reference:
+    argument_type: file.fa
+    files:
+      - reference_genome@hg38
+
+  samples:
+    argument_type: parameter.json
+    value: ['SAMPLENAME']
+
+workflows:
+  ##########################################
+  # gatk-HC
+  ##########################################
+  gatk-HC:
+    # gatk-HC input
+    input:
+      vcf:
+        argument_type: file.vcf
+        source_argument_name: input_vcf
+        extra_dimension: 1
+        mount: True
+        unzip: gz
+
+      reference_genome:
+        argument_type: file.fa
+        source_argument_name: reference
+
+      nthreads:
+        argument_type: parameter.integer
+        value: 16
+    # gatk-HC output
+    output:
+      HC_vcf:
+        description: output from gatk-HC
+        file_type: hc-vcf
+        linkto_location:
+          - SampleProcessing
+    # gatk-HC config
+    config:
+      ebs_size: 2x
+      ec2_type: m.5xlarge
+
+  ##########################################
+  # gatk-GT
+  ##########################################
+  gatk-GT:
+    # gatk-GT input
+    input:
+      input_vcf_HC:
+        argument_type: file.vcf
+        source: gatk-HC
+        source_argument_name: HC_vcf
+        scatter: 0
+        gather: 0
+
+      sample_name:
+        argument_type: parameter.json
+        source_argument_name: samples
+        input_dimension: 1
+    # gatk-GT config
+    config:
+      ebs_size: 3x
+      ec2_type: c.5xlarge

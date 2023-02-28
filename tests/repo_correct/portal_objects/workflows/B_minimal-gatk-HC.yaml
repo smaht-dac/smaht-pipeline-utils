@@ -1,0 +1,21 @@
+
+# HaplotypeCaller cwl (MINIMAL)
+#   + uuid
+#   + accession
+name: gatk-HaplotypeCaller
+description: Run HaplotypeCaller from gatk package
+
+runner:
+  language: CWL
+  main: gatk-HaplotypeCaller-check.cwl
+
+input:
+  input_bam:
+    argument_type: file.bam
+
+output:
+  output_vcf:
+    argument_type: file.vcf
+
+uuid: 1936f246-22e1-45dc-bb5c-9cfd55537fe9
+accession: GAPFIXRDPDK1

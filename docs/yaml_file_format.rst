@@ -1,0 +1,62 @@
+.. _file_format:
+
+===========
+File Format
+===========
+
+Template
+++++++++
+
+.. code-block:: python
+
+    ## File Format information ##################################
+    #     Information for file format
+    #############################################################
+    # All the following fields are required
+    name: <string>
+    extension: <extension>    # fa, fa.fai, dict, ...
+    description: <string>
+
+    # All the following fields are optional and provided as example,
+    #   can be expanded to anything accepted by the schema
+    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
+    secondary_formats:
+      - <format>              # bam, fastq, bwt, ...
+    file_types:
+      - <filetype>            # FileReference, FileProcessed, FileSubmitted
+    status: <status>          # shared
+
+
+Fields Definition
++++++++++++++++++
+
+Required
+^^^^^^^^
+All the following fields are required.
+
+name
+----
+Name of the file format, **MUST BE GLOBALLY UNIQUE**.
+
+extension
+---------
+Extension used by the file format.
+
+description
+-----------
+Description of the file format.
+
+Optional
+^^^^^^^^
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+
+secondary_formats
+-----------------
+List of secondary ``<format>`` available for the file format.
+Each ``<format>`` needs to match a file format that has been previously defined.
+
+file_types
+----------
+File types that can use the file format.
+List of ``<filetype>``. The possible values are ``FileReference``, ``FileProcessed`` and ``FileSubmitted``.
+Default value if not specified is ``FileReference`` and ``FileProcessed``.

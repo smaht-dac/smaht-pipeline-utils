@@ -1,0 +1,23 @@
+
+# bam format (FULL)
+#   error: name as number
+name: 1
+extension: bam
+description: format to represent aligned reads
+secondary_formats:
+  - bai
+file_types:
+  - FileReference
+  - FileProcessed
+status: shared
+
+---
+
+# bam_bai format (MINIMAL)
+#   + uuid
+#   + accession
+name: bam_bai
+extension: bam.bai
+description: index for bam format
+uuid: 1936f246-22e1-45dc-bb5c-9cfd55537fe9
+accession: GAPFIXRDPDK1

@@ -21,3 +21,7 @@ To install from source (note that we recommend a fresh virtualenv):
     make build
 
 See ``make info`` for details on make targets.
+
+## Setting Up Credentials
+
+To set up portal credentials check [*documentation*](https://github.com/dbmi-bgm/SubmitCGAP/blob/master/docs/source/installation.rst#setting-up-credentials).

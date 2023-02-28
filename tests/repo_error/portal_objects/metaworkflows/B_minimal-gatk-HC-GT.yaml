@@ -1,0 +1,46 @@
+
+# gatk-HC-GT-pipeline (MINIMAL)
+#   + uuid
+#   + accession
+name: gatk-HC-pipeline
+description: Pipeline to run gatk-HC to call variants
+uuid: 1936f246-22e1-45dc-bb5c-9cfd55537fe9
+accession: GAPFIXRDPDK1
+
+input:
+  input_vcf:
+    argument_type: file.vcf
+
+  reference:
+    argument_type: file.fa
+    files:
+      - reference_genome@hg38
+      - reference_bam@hg38
+
+  samples:
+    argument_type: parameter.json
+
+workflows:
+  ##########################################
+  # gatk-HC
+  ##########################################
+  gatk-HC:
+    # gatk-HC input
+    input:
+      vcf:
+        argument_type: file.vcf
+        source_argument_name: input_vcf
+
+      reference:
+        argument_type: file.fa
+
+      samples:
+        argument_type: parameter.json
+    # gatk-HC output
+    output:
+      HC_vcf:
+        file_type: hc-vcf
+    # gatk-HC config
+    config:
+      ebs_size: 2x
+      ec2_type: m.5xlarge

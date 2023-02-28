@@ -1,48 +1,59 @@
 .. _repo:
 
-====================
-Repository structure
-====================
+===============================
+Pipeline's Repository Structure
+===============================
 
-To be picked up correctly by some of the commands, a repository needs to be set up as follows:
+To be picked up correctly by some of the commands, a repository needs to be set up as follow:
 
-  - A **cwl** folder to store *cwl* and *workflow cwl* files.
-  - A **dockerfiles** folder to store docker images.
-    Each image should have its own folder with all the required components and the *Dockerfile*.
-    The folder name will be used to tag the image together with the version from the VERSION file.
-  - A **portal_objects** folder to store the objects representing metadata for the pipeline.
-    This folder should include several subfolders:
-      - A **workflows** folder to store metadata for Workflow objects as json files.
-      - A **metaworkflows** folder to store metadata for MetaWorkflow objects as json files.
-      - A **file_format.json** to store metadata for FileFormat objects.
-      - A **file_reference.json** to store metadata for FileReference objects.
-      - A **software.json** to store metadata for Software objects.
-  - A **PIPELINE** file with the pipeline name.
-  - A **VERSION** file with the pipeline version.
+- A **descriptions** folder to store workflow description files (CWL and WDL).
+- A **dockerfiles** folder to store Docker images.
+  Each image should have its own subfolder with all the required components and the *Dockerfile*.
+  Subfolder names will be used to tag the corresponding images together with the version from the VERSION file.
+- A **portal_objects** folder to store the objects representing metadata for the pipeline.
+  This folder should include several subfolders:
+    - A **workflows** folder to store metadata for :ref:`Workflow <workflow>` objects as YAML files.
+    - A **metaworkflows** folder to store metadata for :ref:`Pipeline <metaworkflow>` objects as YAML files.
+    - A **file_format.yaml** file to store metadata for :ref:`File Format <file_format>` objects.
+    - A **file_reference.yaml** file to store metadata for :ref:`File Reference <file_reference>` objects.
+    - A **software.yaml** file to store metadata for :ref:`Software <software>` objects.
+- A **PIPELINE** one line file with the pipeline name.
+- A **VERSION** one line file with the pipeline version.
+
+Example ``foo_bar`` pipeline:
 
 ::
 
-    Example foo_bar pipeline
-
     pipeline-foo_bar
-    ├── cwl
+    │
+    ├── descriptions
     │   ├── foo.cwl
-    │   └── bar.cwl
+    │   └── bar.wdl
+    │
     ├── dockerfiles
+    │   │
     │   ├── image_foo
     │   │   ├── foo.sh
     │   │   └── Dockerfile
+    │   │
     │   └── image_bar
-    │       ├── bar.sh
+    │       ├── bar.py
     │       └── Dockerfile
+    │
     ├── portal_objects
+    │   │
     │   ├── workflows
-    │   │   ├── foo.json
-    │   │   └── bar.json
+    │   │   ├── foo.yaml
+    │   │   └── bar.yaml
+    │   │
     │   ├── metaworkflows
-    │   │   └── foo_bar.json
-    │   ├── file_format.json
-    │   ├── file_reference.json
-    │   └── software.json
+    │   │   └── foo_bar.yaml
+    │   │
+    │   ├── file_format.yaml
+    │   ├── file_reference.yaml
+    │   └── software.yaml
+    │
     ├── PIPELINE
     └── VERSION
+
+Real examples can be found linked as submodules in our pipelines repository here: https://github.com/dbmi-bgm/cgap-pipeline-main.

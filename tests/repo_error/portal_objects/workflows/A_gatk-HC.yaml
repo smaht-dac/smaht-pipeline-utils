@@ -1,0 +1,36 @@
+
+# HaplotypeCaller wdl (FULL)
+name: gatk-HaplotypeCaller
+description: Run HaplotypeCaller from gatk package
+
+runner:
+  language: wdl
+  main: workflow_gatk-HaplotypeCaller-check.wdl
+  child:
+    - gatk-HaplotypeCaller.wdl
+    - integrity-check.wdl
+
+title: HaplotypeCaller plus integity-check
+
+software:
+  - gatk@4.2.1
+  - vcf-tools@5A63Aa1
+
+input:
+  input_bam:
+    argument_type: file.bam
+
+  nthreads:
+    argument_type: parameter.integer
+
+output:
+  output_vcf:
+    argument_type: file.vcf_gz
+    secondary_files:
+      - vcf_gz_tbi
+
+  vcfcheck:
+    argument_type: qc.quality_metric_vcfcheck
+    argument_to_be_attached_to: output_vcf
+    zipped: False
+    json: True
