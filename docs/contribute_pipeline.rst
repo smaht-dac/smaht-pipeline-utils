@@ -35,7 +35,7 @@ Workflow description languages are standards for describing data analysis pipeli
 Each step of the pipeline that needs to execute in a single computing environment must be defined in a corresponding workflow description file using one of the supported languages.
 At the moment we are supporting two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL), and we are working to add support for more standards (e.g., Snakemake).
 
-Each step codified as a workflow description file will execute on a single EC2 machine through our executioner software, `Tibanna <https://github.com/4dn-dcic/tibanna>`__. 
+Each step codified as a workflow description file will execute on a single EC2 machine through our executioner software, `Tibanna <https://github.com/4dn-dcic/tibanna>`__.
 
 *Note: the workflow description file must have a .wdl or .cwl extension to be recognized during the automated deployment.*
 
@@ -51,6 +51,37 @@ Each step will execute independently on a single EC2 machine.
   │   └── bar.wdl
   ..
 
+Typically, when creating a workflow description file, the code will make reference to a Docker container.
+To store these containers, we use private ECR repositories that are specific to each AWS account.
+To ensure that the description file points to the appropriate image, we utilize two placeholders, **VERSION** and **ACCOUNT**,
+which will be automatically substituted in the file with the relevant account information during deployment.
+If the code runs Sentieon software and requires the *SENTIEON_LICENSE* environmental variable to be set,
+the **LICENSEID** placeholder will be substituted by the code with the server address provided to the :ref:`deploy command <pipeline_deploy>`.
+
+Example of a CWL code with the placeholders
+
+.. code-block:: yaml
+
+  #!/usr/bin/env cwl-runner
+
+  cwlVersion: v1.0
+
+  class: CommandLineTool
+
+  requirements:
+    - class: EnvVarRequirement
+      envDef:
+        -
+          envName: SENTIEON_LICENSE
+          envValue: LICENSEID
+
+  hints:
+    - class: DockerRequirement
+      dockerPull: ACCOUNT/upstream_sentieon:VERSION
+
+  baseCommand: [sentieon, driver]
+
+  ...
 
 Docker Containers
 -----------------
@@ -84,7 +115,7 @@ Portal Objects
 --------------
 
 Workflow description files and Docker containers are necessary to execute the code and run each step of the pipeline in isolation.
-However, a pipeline is a complex object that tipically consist of multiple steps chained together.
+However, a pipeline is a complex object that consists of multiple steps chained together.
 
 To create these dependencies and specify the necessary details for the execution of each individual workflow and the end-to-end processing of the pipeline, we need additional supporting metadata in the form of YAML objects.
 The objects currently available are:
