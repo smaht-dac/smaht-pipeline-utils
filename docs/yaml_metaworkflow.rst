@@ -4,6 +4,10 @@
 Pipeline
 ========
 
+This documentation provides a comprehensive guide to the template structure necessary for implementing *Pipeline* objects in CGAP.
+These objects enable users to define workflow dependencies, parallelize execution by defining scattering and gathering parameters,
+specify reference files and constant input parameters, and configure AWS EC2 instances for executing each workflow within the pipeline.
+
 Template
 ++++++++
 
@@ -145,7 +149,7 @@ All the following fields are required.
 
 name
 ----
-Name of the pipeline, **MUST BE GLOBALLY UNIQUE**.
+Name of the pipeline, **MUST BE GLOBALLY UNIQUE (ACROSS THE PORTAL OBJECTS)**.
 
 description
 -----------
@@ -236,6 +240,25 @@ value
 ^^^^^
 This field can be used to assign a specific value to a **parameter** argument.
 
+*Note*: As of now, the value needs to be always encoded as ``<string>``.
+We are working to improve this and enable usage of real types.
+
+Example
+
+.. code-block:: yaml
+
+  a_float:
+  argument_type: parameter.float
+  value: "0.8"
+
+  an_integer:
+  argument_type: parameter.integer
+  value: "1"
+
+  a_string_array:
+  argument_type: parameter.json
+  value: "[\"DEL\", \"DUP\"]"
+
 Linking Fields
 ^^^^^^^^^^^^^^
 These are optional fields that can be used when defining workflow specific arguments to describe dependencies and map to arguments with different names.
@@ -257,7 +280,7 @@ It can be used to:
 Input Dimension Fields
 ^^^^^^^^^^^^^^^^^^^^^^
 These are optional fields that can be used when defining workflow specific arguments to specify the input dimensions to use when creating the pipeline structure or step specific inputs.
-See `magma documentation <https://magma-suite.readthedocs.io/en/latest/meta-workflow.html>`__ for for more details.
+See `magma documentation <https://magma-suite.readthedocs.io/en/latest/meta-workflow.html>`__ for more details.
 
 scatter
 -------

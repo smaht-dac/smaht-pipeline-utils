@@ -4,6 +4,9 @@
 File Format
 ===========
 
+This documentation provides a comprehensive guide to the template structure necessary for implementing *File Format* objects in CGAP.
+These objects enable users to codify file formats used by the pipeline.
+
 Template
 ++++++++
 
@@ -36,7 +39,7 @@ All the following fields are required.
 
 name
 ----
-Name of the file format, **MUST BE GLOBALLY UNIQUE**.
+Name of the file format, **MUST BE GLOBALLY UNIQUE (ACROSS THE PORTAL OBJECTS)**.
 
 extension
 ---------

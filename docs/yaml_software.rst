@@ -4,6 +4,9 @@
 Software
 ========
 
+This documentation provides a comprehensive guide to the template structure necessary for implementing *Software* objects in CGAP.
+These objects enable users to codify information to track and version specific softwares used by the pipeline.
+
 Template
 ++++++++
 
@@ -38,7 +41,7 @@ Either *version* or *commit* is required to identify the software.
 
 name
 ----
-Name of the software, **MUST BE GLOBALLY UNIQUE**.
+Name of the software, **MUST BE GLOBALLY UNIQUE (ACROSS THE PORTAL OBJECTS)**.
 
 version
 -------

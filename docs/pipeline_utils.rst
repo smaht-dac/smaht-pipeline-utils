@@ -17,9 +17,8 @@ Usage:
 pipeline_deploy
 +++++++++++++++
 
-Utility to automatically deploy a pipeline's components from a target repository.
+Utility to automatically deploy pipeline's components from a target repository.
 It is possible to specify multiple target repositories to deploy multiple pipelines at the same time.
-It is also possible to specify the current repository as a target as ``.``.
 
 Usage:
 
@@ -38,7 +37,7 @@ Usage:
    * - *-\-ff-env*
      - Environment to use for deployment
    * - *-\-repos*
-     - List of repositories to deploy, must follow expected structure (see :ref:`docs <repo>`)
+     - List of directories for the repositories to deploy, each repository must follow the expected structure (see :ref:`docs <repo>`)
 
 **Optional Arguments:**
 
@@ -48,43 +47,45 @@ Usage:
 
   * - Argument
     - Definition
+  * - *-\-builder*
+    - Builder to use to deploy Docker containers to AWS ECR through AWS CodeBuild [<ff-env>-pipeline-builder]
   * - *-\-branch*
-    - Branch to check out for cgap-pipeline-main to build ECR through codebuild [main]
+    - Branch to use to deploy Docker containers to AWS ECR through AWS CodeBuild [main]
   * - *-\-local-build*
-    - Trigger a local ECR build instead of using codebuild
+    - Trigger a local build for Docker containers instead of using AWS CodeBuild
   * - *-\-keydicts-json*
     - Path to file with keys for portal auth in JSON format [~/.cgap-keys.json]
   * - *-\-wfl-bucket*
     - Bucket to use for upload of Workflow Description files (CWL or WDL)
   * - *-\-account*
-    - Account to use for deployment
+    - AWS account to use for deployment
   * - *-\-region*
-    - Region to use for deployment
+    - AWS account region to use for deployment
   * - *-\-project*
     - Project to use for deployment [cgap-core]
   * - *-\-institution*
     - Institution to use for deployment [hms-dbmi]
   * - *-\-post-software*
-    - POST | PATCH Software objects (.yaml)
+    - DEPLOY | UPDATE Software objects (.yaml or .yml)
   * - *-\-post-file-format*
-    - POST | PATCH FileFormat objects (.yaml)
+    - DEPLOY | UPDATE File Format objects (.yaml or .yml)
   * - *-\-post-file-reference*
-    - POST | PATCH FileReference objects (.yaml)
+    - DEPLOY | UPDATE File Reference objects (.yaml or .yml)
   * - *-\-post-workflow*
-    - POST | PATCH Workflow objects (.yaml)
+    - DEPLOY | UPDATE Workflow objects (.yaml or .yml)
   * - *-\-post-metaworkflow*
-    - POST | PATCH MetaWorkflow objects (.yaml)
+    - DEPLOY | UPDATE Pipeline objects (.yaml or .yml)
   * - *-\-post-wfl*
     - Upload Workflow Description files (.cwl or .wdl)
   * - *-\-post-ecr*
-    - Build Docker images and push to ECR.
-      By default will try to use codebuild unless *-\-local-build* flag is set
+    - Build Docker container images and push to AWS ECR.
+      By default will use AWS CodeBuild unless *-\-local-build* flag is set
   * - *-\-debug*
-    - Turn off POST | PATCH action
+    - Turn off DEPLOY | UPDATE action
   * - *-\-verbose*
     - Print the JSON structure created for the objects
   * - *-\-validate*
-    - Validate YAML objects against schemas. Turn off POST | PATCH action
+    - Validate YAML objects against schemas. Turn off DEPLOY | UPDATE action
   * - *-\-sentieon-server*
     - Address for Sentieon license server
   * -

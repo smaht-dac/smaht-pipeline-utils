@@ -4,6 +4,10 @@
 Workflow
 ========
 
+This documentation provides a comprehensive guide to the template structure necessary for implementing *Workflow* objects in CGAP.
+These objects enable users to codify pipeline steps and store metadata to track inputs, outputs, software,
+and description files (e.g., WDL or CWL) for each workflow.
+
 Template
 ++++++++
 
@@ -90,7 +94,7 @@ All the following fields are required.
 
 name
 ----
-Name of the workflow, **MUST BE GLOBALLY UNIQUE**.
+Name of the workflow, **MUST BE GLOBALLY UNIQUE (ACROSS THE PORTAL OBJECTS)**.
 
 description
 -----------

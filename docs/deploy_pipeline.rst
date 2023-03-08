@@ -5,7 +5,7 @@ Deploy Pipelines to a CGAP Environment
 ======================================
 
 This document describes how to deploy pipelines to a target CGAP environment.
-Although it's possible to run the deployment from a local machine, we highly recommend using an EC2 machine.
+Although it's possible to run the deployment from a local machine, we highly recommend using an AWS EC2 machine.
 
 Setup an EC2 Machine
 ====================
@@ -21,7 +21,7 @@ We recommend using the following configuration:
 Install Docker
 ==============
 
-The deployment code will try to trigger remote codebuild jobs to build and push the Docker containers implemented for the pipelines directly in AWS.
+The deployment code will try to trigger remote AWS CodeBuild jobs to build and push the Docker containers implemented for the pipelines directly in AWS.
 However, if no builder has been setup, it is possible to run a local build using Docker by passing the flag ``--local-build`` to the deployment command.
 
 Running a local build requires having a Docker application running on the machine.
@@ -60,7 +60,7 @@ We now need to install the ``pipeline_utils`` software to deploy the pipeline co
 Install pipeline_utils
 ======================
 
-The software is python based.
+The software is Python-based.
 To install the software and the required packages, we recommend
 using a fresh virtual environment.
 Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
@@ -89,6 +89,8 @@ If installed from source, this command may fail with a bash "command not found" 
 
 Set Up Credentials and Environmental Variables
 ==============================================
+
+.. _auth_vars:
 
 AWS Auth Credentials
 --------------------
@@ -207,10 +209,10 @@ by the ``--repos`` argument.
 It is possible to add flags to run the command in various debug modes, to validate the objects and test the pipeline implementation without running a real deployment.
 For more details on the command line arguments refer to the documentation for the :ref:`pipeline_deploy <pipeline_deploy>` command.
 
-An important argument is ``--branch``, this argument specifies the branch to check out for cgap-pipeline-main to build ECR through codebuild.
-The default is set to the main branch. The ``--local-build`` flag will prevent the code from using codebuild and force a local build with Docker instead.
+An important argument is ``--branch``, this argument specifies the branch to check out for cgap-pipeline-main to build ECR through AWS CodeBuild.
+The default is set to the main branch. The ``--local-build`` flag will prevent the code from using AWS CodeBuild and force a local build with Docker instead.
 
-*Note: we are working to enable more builders with a command line argument for which builder to use to deploy modules from different repositories through codebuild.*
+*Note: we are working to enable more builders with a command line argument for which builder to use to deploy modules from different repositories through AWS CodeBuild.*
 
 Deploying CGAP Pipelines
 ========================
@@ -263,6 +265,30 @@ This will build from source the latest version linked for the current release.
 .. code-block:: bash
 
   make deploy-all
+
+Uploading the Reference Files
+=============================
+
+After a successful deployment, all required metadata and components for the pipelines are available within the infrastructure.
+However, we are still missing the reference files necessary to run the pipelines.
+We need to copy these files to the correct locations in AWS S3 buckets.
+
+This can be done using the AWS Command Line Interface (CLI) (see :ref:`above <auth_vars>` how to set the auth credentials):
+
+.. code-block:: bash
+
+  # Copy the reference file to the right S3 bucket
+  aws s3 cp <file> s3://<file_upload_bucket>/<file_location>
+
+More details on how to setup the AWS CLI are available `here <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html>`_, and documentation for the ``cp`` command can be found `here <https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html>`_.
+
+**Tips:**
+
+  - ``<file_upload_bucket>`` can be found in the portal health page under ``File Upload Bucket``.
+  - ``<file_location>`` can be found in the metadata page created for the reference file under ``Upload Key``.
+    It follows the structure ``<uuid>/<accession>.<extension>``.
+
+*Note: if a reference file has secondary files, these all need to be uploaded as well to the correct S3 location.*
 
 Troubleshooting
 ===============

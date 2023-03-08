@@ -4,6 +4,9 @@
 File Reference
 ==============
 
+This documentation provides a comprehensive guide to the template structure necessary for implementing *File Reference* objects in CGAP.
+These objects enable users to codify information to track and version the reference files used by the pipeline.
+
 Template
 ++++++++
 
@@ -40,7 +43,7 @@ All the following fields are required.
 
 name
 ----
-Name of the reference file, **MUST BE GLOBALLY UNIQUE**.
+Name of the reference file, **MUST BE GLOBALLY UNIQUE (ACROSS THE PORTAL OBJECTS)**.
 
 description
 -----------
@@ -68,7 +71,9 @@ status
 ------
 Status of the upload.
 The possible values are ``uploading`` and ``uploaded``.
-If no value is specified, the status will not be updated during patching and set to ``uploading`` if posting for the first time.
+If no value is specified, the status will not be updated during patching and set to ``uploading`` if posting the object for the first time.
+
+Most likely you don't want to set this field and just use the default logic automatically applied during deployment.
 
 license
 -------

@@ -232,7 +232,9 @@ class PostPatchRepo(object):
             return
 
         # Create JSON objects
-        for fn in glob.glob(f'{filepath_}/*.yaml'):
+        files_ = glob.glob(f'{filepath_}/*.yaml')
+        files_.extend(glob.glob(f'{filepath_}/*.yml'))
+        for fn in map(os.path.basename, files_):
             for d in yaml_parser.load_yaml(fn):
                 # creating _yaml_to_json **kwargs
                 kwargs_ = {
@@ -352,7 +354,11 @@ class PostPatchRepo(object):
                 # build and push the image
                 #   do so by local build or triggering a CodeBuild run
                 build_projects = self._codebuild.list_projects()
-                builder = list(filter(lambda b: f'{self.ff_env}-pipeline-builder' == b, build_projects))
+                if self.builder:
+                    builder_ = self.builder
+                else:
+                    builder_ = f'{self.ff_env}-pipeline-builder'
+                builder = list(filter(lambda b: builder_ == b, build_projects))
                 if self.local_build:
                     # TODO
                     #   enable amd/arm build
@@ -363,11 +369,11 @@ class PostPatchRepo(object):
                         """ # note that we are ALWAYS doing no-cache builds so that we can get updated base images whenever applicable
                     subprocess.check_call(image, shell=True)
                 elif not builder:
-                    logger.error('NOTE: no builder job found!')
+                    logger.error('NOTE: no builder job found in Build projects!')
                 else:
                     self._codebuild.run_project_build_with_overrides(
                         project_name=builder[0], # there should only be one
-                        branch=self.branch, # this is the branch of cgap-pipeline-main to use
+                        branch=self.branch, # this is the branch to use
                         env_overrides={
                             'IMAGE_REPO_NAME': fn,
                             'IMAGE_TAG': self.version,
