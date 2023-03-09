@@ -80,9 +80,15 @@ class PostPatchRepo(object):
             'MetaWorkflow': yaml_parser.YAMLMetaWorkflow
         }
         self.filepath = {
+            # .yaml files
             'Software': 'portal_objects/software.yaml',
             'FileFormat': 'portal_objects/file_format.yaml',
             'FileReference': 'portal_objects/file_reference.yaml',
+            # .yml files
+            'Software_yml': 'portal_objects/software.yml',
+            'FileFormat_yml': 'portal_objects/file_format.yml',
+            'FileReference_yml': 'portal_objects/file_reference.yml',
+            # folders
             'Workflow': 'portal_objects/workflows',
             'MetaWorkflow': 'portal_objects/metaworkflows',
             'ECR': 'dockerfiles',
@@ -200,10 +206,15 @@ class PostPatchRepo(object):
         # Set general variables
         filepath_ = f'{self.repo}/{self.filepath[type]}'
 
-        # Check
+        # Check .yaml
         if not os.path.isfile(filepath_):
-            logger.error(f'WARNING: {self.filepath[type]} not found in {self.repo}, skipping...')
-            return
+
+            # Check .yml
+            type_yml = f'{type}_yml'
+            filepath_ = f'{self.repo}/{self.filepath[type_yml]}'
+            if not os.path.isfile(filepath_):
+                logger.error(f'WARNING: {self.filepath[type]} or .yml not found in {self.repo}, skipping...')
+                return
 
         # Read YAML file and create JSON objects from documents in file
         for d in yaml_parser.load_yaml(filepath_):
@@ -234,7 +245,7 @@ class PostPatchRepo(object):
         # Create JSON objects
         files_ = glob.glob(f'{filepath_}/*.yaml')
         files_.extend(glob.glob(f'{filepath_}/*.yml'))
-        for fn in map(os.path.basename, files_):
+        for fn in files_:
             for d in yaml_parser.load_yaml(fn):
                 # creating _yaml_to_json **kwargs
                 kwargs_ = {
