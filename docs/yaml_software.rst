@@ -4,7 +4,7 @@
 Software
 ========
 
-This documentation provides a comprehensive guide to the template structure necessary for implementing *Software* objects in CGAP.
+This documentation provides a comprehensive guide to the template structure necessary for implementing *Software* objects.
 These objects enable users to codify information to track and version specific softwares used by the pipeline.
 
 Template

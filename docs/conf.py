@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'cgap-pipeline-utils'
-copyright = '2021, CGAP team, HMS DBMI'
-author = 'Michele Berselli, Phil Grayson'
+project = 'portal-pipeline-utils'
+copyright = '2021, HMS DBMI'
+author = 'Michele Berselli, Phil Grayson, CGAP & SMaHT Team'
 
 # The full version, including alpha/beta/rc tags
 release = '2.0.0'

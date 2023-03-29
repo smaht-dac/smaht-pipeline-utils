@@ -9,11 +9,11 @@ PyPI
 
 The package is available on pypi_:
 
-.. _pypi: https://pypi.org/project/cgap-pipeline-utils
+.. _pypi: https://pypi.org/project/portal-pipeline-utils
 
 .. code-block:: bash
 
-    pip install cgap-pipeline-utils
+    pip install portal-pipeline-utils
 
 Source
 ^^^^^^
@@ -23,10 +23,10 @@ To install the latest version from source:
 
 .. code-block:: bash
 
-    git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
-    cd cgap-pipeline-utils
+    git clone https://github.com/dbmi-bgm/portal-pipeline-utils.git
+    cd portal-pipeline-utils
     make configure
     make update
     make build
 
-Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
+Please refer to `pyproject.toml <https://github.com/dbmi-bgm/portal-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.

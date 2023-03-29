@@ -4,7 +4,7 @@
 File Format
 ===========
 
-This documentation provides a comprehensive guide to the template structure necessary for implementing *File Format* objects in CGAP.
+This documentation provides a comprehensive guide to the template structure necessary for implementing *File Format* objects.
 These objects enable users to codify file formats used by the pipeline.
 
 Template

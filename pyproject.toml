@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "portal-pipeline-utils"
 version = "2.0.0"
-description = "Repository implementing utilities for deploying pipelines and interfacing with portal infrastructure."
-authors = ["CGAP Team", "SMaHT Team"]
+description = "Utilities for deploying pipelines and interfacing with portal infrastructure."
+authors = [
+        "Michele Berselli <berselli.michele@gmail.com>",
+        "CGAP & SMaHT Team"
+]
 license = "MIT"
 repository = 'https://github.com/dbmi-bgm/portal-pipeline-utils'
+readme = "README.md"
 classifiers = [
     'License :: OSI Approved :: MIT License',
     'Operating System :: POSIX :: Linux',

@@ -4,11 +4,11 @@
 Contribute a Pipeline
 ======================
 
-Welcome to the Computational Genome Analysis Platform, CGAP!
+Welcome to the contribute a pipeline documentation.
 
 We're glad that you're interested in contributing a pipeline to the project.
 Pipelines are an essential part of the project, and we appreciate your help in expanding and improving our offering.
-This document will guide you through the process of building and deploying a new pipeline in the CGAP infrastructure.
+This document will guide you through the process of building and deploying a new pipeline in the portal infrastructure.
 
 
 Building a Pipeline
@@ -178,4 +178,4 @@ Example
 Examples
 --------
 
-Real examples of implemented pipeline modules can be found linked as submodules in our main pipeline repository here: https://github.com/dbmi-bgm/cgap-pipeline-main.
+Real examples of implemented pipeline modules can be found linked as submodules in our main pipeline repository for the CGAP project here: https://github.com/dbmi-bgm/cgap-pipeline-main.

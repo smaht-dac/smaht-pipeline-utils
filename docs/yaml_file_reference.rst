@@ -4,7 +4,7 @@
 File Reference
 ==============
 
-This documentation provides a comprehensive guide to the template structure necessary for implementing *File Reference* objects in CGAP.
+This documentation provides a comprehensive guide to the template structure necessary for implementing *File Reference* objects.
 These objects enable users to codify information to track and version the reference files used by the pipeline.
 
 Template

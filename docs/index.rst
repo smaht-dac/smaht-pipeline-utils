@@ -1,10 +1,10 @@
-=======================
-CGAP Pipeline Utilities
-=======================
+=========================
+Portal Pipeline Utilities
+=========================
 
-Documentation for cgap-pipeline-utils_, a collection of utilities for CGAP pipelines.
+Documentation for portal-pipeline-utils_, a collection of utilities for deploying pipelines and interfacing with portal infrastructure.
 
-.. _cgap-pipeline-utils: https://github.com/dbmi-bgm/cgap-pipeline-utils
+.. _portal-pipeline-utils: https://github.com/dbmi-bgm/portal-pipeline-utils
 
 Contents
 ########

@@ -32,7 +32,7 @@ def main(args=None):
     '''Command line wrapper around available commands.
     '''
     # Adding parser and subparsers
-    parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for cgap-pipeline')
+    parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for deploying pipelines and interfacing with portal infrastructure')
     subparsers = parser.add_subparsers(dest='func', metavar="<command>")
 
     # Add pipeline_deploy to subparsers
@@ -68,7 +68,7 @@ def main(args=None):
 
     pipeline_deploy_parser.add_argument('--validate', action='store_true', help='Validate YAML objects against schemas. Turn off POST|PATCH action and ignore --verbose and --debug flags')
 
-    # cgap-specific
+    # sentieon-specific
     pipeline_deploy_parser.add_argument('--sentieon-server', required=False, help='Address for Sentieon license server',
                                                              default=None)
 

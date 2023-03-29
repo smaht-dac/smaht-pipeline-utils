@@ -1,10 +1,10 @@
 .. _deploy_pipeline:
 
-======================================
-Deploy Pipelines to a CGAP Environment
-======================================
+===================================
+Deploy Pipelines to AWS Environment
+===================================
 
-This document describes how to deploy pipelines to a target CGAP environment.
+This document describes how to deploy pipelines to a target AWS environment.
 Although it's possible to run the deployment from a local machine, we highly recommend using an AWS EC2 machine.
 
 Setup an EC2 Machine
@@ -63,26 +63,26 @@ Install pipeline_utils
 The software is Python-based.
 To install the software and the required packages, we recommend
 using a fresh virtual environment.
-Please refer to `pyproject.toml <https://github.com/dbmi-bgm/cgap-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
+Please refer to `pyproject.toml <https://github.com/dbmi-bgm/portal-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
 
 We recommend using pyenv to manage virtual environments.
 Instructions for installing and using
 pyenv can be found `here <https://realpython.com/intro-to-pyenv/>`_.
 
-Once the virtual environment is set up and activated, we can proceed to :ref:`install <install>` cgap-pipeline-utils software.
+Once the virtual environment is set up and activated, we can proceed to :ref:`install <install>` portal-pipeline-utils software.
 
 .. code-block:: bash
 
   # Install from source
-  git clone https://github.com/dbmi-bgm/cgap-pipeline-utils.git
-  cd cgap-pipeline-utils
+  git clone https://github.com/dbmi-bgm/portal-pipeline-utils.git
+  cd portal-pipeline-utils
   make configure
   make update
   make build
   cd ..
 
   # Install from pypi
-  pip install cgap-pipeline-utils
+  pip install portal-pipeline-utils
 
 To check that the software is correctly installed, try to run ``pipeline_utils``.
 If installed from source, this command may fail with a bash "command not found" error, try ``poetry run pipeline_utils`` instead.
@@ -209,8 +209,8 @@ by the ``--repos`` argument.
 It is possible to add flags to run the command in various debug modes, to validate the objects and test the pipeline implementation without running a real deployment.
 For more details on the command line arguments refer to the documentation for the :ref:`pipeline_deploy <pipeline_deploy>` command.
 
-An important argument is ``--branch``, this argument specifies the branch to check out for cgap-pipeline-main to build ECR through AWS CodeBuild.
-The default is set to the main branch. The ``--local-build`` flag will prevent the code from using AWS CodeBuild and force a local build with Docker instead.
+An important argument is ``--branch``, this argument specifies the branch to check out for the target GitHub repository to build ECR through AWS CodeBuild.
+The default is set to the ``main`` branch. The ``--local-build`` flag will prevent the code from using AWS CodeBuild and force a local build with Docker instead.
 
 *Note: we are working to enable more builders with a command line argument for which builder to use to deploy modules from different repositories through AWS CodeBuild.*
 

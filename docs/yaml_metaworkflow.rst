@@ -4,7 +4,7 @@
 Pipeline
 ========
 
-This documentation provides a comprehensive guide to the template structure necessary for implementing *Pipeline* objects in CGAP.
+This documentation provides a comprehensive guide to the template structure necessary for implementing *Pipeline* objects.
 These objects enable users to define workflow dependencies, parallelize execution by defining scattering and gathering parameters,
 specify reference files and constant input parameters, and configure AWS EC2 instances for executing each workflow within the pipeline.
 
