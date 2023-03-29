@@ -4,10 +4,9 @@
 Contribute a Pipeline
 ======================
 
-Welcome to the contribute a pipeline documentation.
+Welcome to the documentation on how to contribute pipelines.
 
-We're glad that you're interested in contributing a pipeline to the project.
-Pipelines are an essential part of the project, and we appreciate your help in expanding and improving our offering.
+We're glad that you're interested in contributing a pipeline, and we appreciate your help in expanding and improving our offering.
 This document will guide you through the process of building and deploying a new pipeline in the portal infrastructure.
 
 

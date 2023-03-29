@@ -19,7 +19,7 @@
 
 project = 'portal-pipeline-utils'
 copyright = '2021, HMS DBMI'
-author = 'Michele Berselli, Phil Grayson, CGAP & SMaHT Team'
+author = 'Michele Berselli, CGAP & SMaHT Team'
 
 # The full version, including alpha/beta/rc tags
 release = '2.0.0'
