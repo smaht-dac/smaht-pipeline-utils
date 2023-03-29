@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "cgap-pipeline-utils"
+name = "portal-pipeline-utils"
 version = "2.0.0"
-description = "Repository implementing utilities for deploying pipelines that implement the CGAP-Pipeline specification."
-authors = ["CGAP Team"]
+description = "Repository implementing utilities for deploying pipelines and interfacing with portal infrastructure."
+authors = ["CGAP Team", "SMaHT Team"]
 license = "MIT"
-repository = 'https://github.com/dbmi-bgm/cgap-pipeline-utils'
+repository = 'https://github.com/dbmi-bgm/portal-pipeline-utils'
 classifiers = [
     'License :: OSI Approved :: MIT License',
     'Operating System :: POSIX :: Linux',
