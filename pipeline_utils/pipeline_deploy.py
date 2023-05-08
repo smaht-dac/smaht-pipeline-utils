@@ -114,13 +114,13 @@ class PostPatchRepo(object):
         """Get auth credentials.
         """
         # Get portal credentials
-        if os.environ.get('GLOBAL_ENV_BUCKET') and os.environ.get('S3_ENCRYPT_KEY'):
-            s3 = s3_utils.s3Utils(env=self.ff_env)
-            self.ff_key = s3.get_access_keys('access_key_admin')
-        elif os.path.exists(self.keydicts_json):
+        if os.path.exists(self.keydicts_json):
             with open(os.path.expanduser(self.keydicts_json)) as keyfile:
                 keys = json.load(keyfile)
             self.ff_key = keys.get(self.ff_env)
+        elif os.environ.get('GLOBAL_ENV_BUCKET') and os.environ.get('S3_ENCRYPT_KEY'):
+            s3 = s3_utils.s3Utils(env=self.ff_env)
+            self.ff_key = s3.get_access_keys('access_key_admin')
         else:
             raise Exception('Required deployment vars GLOBAL_ENV_BUCKET and/or S3_ENCRYPT_KEY not set, and no entry for specified enivornment exists in keydicts file.')
 
