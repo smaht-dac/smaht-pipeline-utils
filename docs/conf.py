@@ -22,7 +22,7 @@ copyright = '2021, HMS DBMI'
 author = 'Michele Berselli, CGAP & SMaHT Team'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+release = '2.1.0'
 
 
 # -- General configuration ---------------------------------------------------

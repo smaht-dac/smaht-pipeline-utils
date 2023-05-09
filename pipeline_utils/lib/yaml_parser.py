@@ -178,8 +178,10 @@ class YAMLWorkflow(YAMLTemplate):
     INPUT_FILE_SCHEMA = 'Input file'
     OUTPUT_PROCESSED_FILE_SCHEMA = 'Output processed file'
     OUTPUT_QC_FILE_SCHEMA = 'Output QC file'
+    GENERIC_QC_FILE_SCHEMA = 'Generic QC file'
     OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
     QC_SCHEMA = 'qc'
+    QUALITY_METRIC_GENERIC_SCHEMA = 'quality_metric_generic'
     REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
     ZIPPED_SCHEMA = 'zipped'
@@ -253,7 +255,12 @@ class YAMLWorkflow(YAMLTemplate):
                     self.SECONDARY_FILE_FORMATS_SCHEMA: values.get(self.SECONDARY_FILES_SCHEMA, [])
                 }
             elif type == self.QC_SCHEMA:
-                argument_type = self.OUTPUT_QC_FILE_SCHEMA
+                # handle generic vs specific QC schema
+                if format == self.QUALITY_METRIC_GENERIC_SCHEMA:
+                    argument_type = self.GENERIC_QC_FILE_SCHEMA
+                else:
+                    argument_type = self.OUTPUT_QC_FILE_SCHEMA
+                # create base QC argument
                 argument_ = {
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
                     self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
@@ -263,9 +270,15 @@ class YAMLWorkflow(YAMLTemplate):
                     self.QC_JSON_SCHEMA: values.get(self.JSON_SCHEMA, False),
                     self.QC_TABLE_SCHEMA: values.get(self.TABLE_SCHEMA, False)
                 }
-                # handle edge case for missing QC type
-                if format not in ['none']:
+                # handle edge case for missing or generic QC type
+                if format not in ['none', self.QUALITY_METRIC_GENERIC_SCHEMA]:
                     argument_[self.QC_TYPE_SCHEMA] = format
+                # create argument format for generic QCs (JSON or ZIP)
+                elif format == self.QUALITY_METRIC_GENERIC_SCHEMA:
+                    if argument_[self.QC_JSON_SCHEMA]:
+                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'json'
+                    else:
+                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'zip'
                 # quality controls, TODO
                 #   these fields are bad, need to rework how QCs work
                 if values.get(self.HTML_IN_ZIPPED_SCHEMA):
@@ -371,7 +384,7 @@ class YAMLMetaWorkflow(YAMLTemplate):
                 self.ARGUMENT_TYPE_SCHEMA: type
             }
             if type == self.PARAMETER_SCHEMA:
-                argument_.setdefault(self.VALUE_TYPE_SCHEMA, format)
+                argument_[self.VALUE_TYPE_SCHEMA] = format
             for k, v in values.items():
                 if k != self.ARGUMENT_TYPE_SCHEMA:
                     # handle files specifications, TODO
