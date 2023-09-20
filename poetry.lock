@@ -91,7 +91,7 @@ files = [
 
 [[package]]
 name = "dcicutils"
-version = "8.0.0"
+version = "7.12.0.1b1"
 description = "Utility package for interacting with the 4DN Data Portal and other 4DN resources"
 optional = false
 python-versions = "*"
@@ -494,4 +494,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.7,<3.12"
-content-hash = "fff0edc19b9b2d63db74ff7a2e66e1e63665e8fb1e484df4912d27fa83886a70"
+content-hash = "45160cedbb37a9639396a09198ea6eeab95255e0e9c365f730d4fb48517fd6f8"
