@@ -359,6 +359,7 @@ class YAMLMetaWorkflow(YAMLTemplate):
     OUTPUT_SCHEMA = 'output'
     CONFIG_SCHEMA = 'config'
     DEPENDENCIES_SCHEMA = 'dependencies'
+    SHARDS_SCHEMA = 'shards'
     PROBAND_ONLY_SCHEMA = 'proband_only'
 
     def __init__(self, data):
@@ -446,6 +447,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
             # hard dependencies
             if values.get(self.DEPENDENCIES_SCHEMA):
                 workflow_[self.DEPENDENCIES_SCHEMA] = values[self.DEPENDENCIES_SCHEMA]
+            # fixed shards
+            if values.get(self.SHARDS_SCHEMA):
+                workflow_[self.SHARDS_SCHEMA] = values[self.SHARDS_SCHEMA]
             workflows.append(workflow_)
 
         return workflows

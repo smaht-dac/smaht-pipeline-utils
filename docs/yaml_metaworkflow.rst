@@ -62,6 +62,12 @@ Template
         dependencies:
           - <workflow_name>[@<tag>]
 
+        ## Fixed shards ####################
+        #   Allows to force a fixed shards structure ignoring
+        #     the input structure, scatter and gather dimensions
+        ####################################
+        shards: [[<string>], ..]               # e.g., [['0'], ['1'], ['2']]
+
         ## Lock version ####################
         #   Specific version to use
         #     for the workflow
@@ -96,6 +102,7 @@ Template
             gather: <integer>
             input_dimension: <integer>
             extra_dimension: <integer>
+            gather_input: <integer>
             # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             mount: <boolean>
@@ -187,6 +194,12 @@ dependencies
 ^^^^^^^^^^^^
 Workflows that must complete before kicking the current step.
 List of workflows in the the format ``<workflow_name>[@<tag>]``.
+
+shards
+^^^^^^
+Allows to force a fixed shards structure for the current step.
+Override input structure, scatter and gather dimensions.
+Shards structure as list, e.g., ``[['0'], ['1'], ['2']]``.
 
 version
 ^^^^^^^
@@ -305,3 +318,8 @@ extra_dimension
 Additional increment to dimension used when creating the specific input for the step.
 This will be applied on top of ``gather``, if any, and will only affect the input.
 This will not affect gather dimension in building the pipeline structure.
+
+gather_input
+------------
+Equivalent to ``gather`` in collecting output from previous shards.
+This will not affect scatter or gather dimensions in building pipeline structure.

@@ -65,6 +65,10 @@ yaml_metaworkflow_schema = {
                             schema.ITEMS: {
                                 schema.TYPE: schema.STRING
                             }
+                        },
+                        'shards': {
+                            schema.DESCRIPTION: 'Shards structure to create for the step',
+                            schema.TYPE: schema.ARRAY
                         }
                     },
                     schema.REQUIRED: ['input', 'config']
@@ -105,6 +109,9 @@ yaml_metaworkflow_schema = {
                     schema.TYPE: schema.NUMBER
                 },
                 'gather': {
+                    schema.TYPE: schema.NUMBER
+                },
+                'gather_input': {
                     schema.TYPE: schema.NUMBER
                 },
                 'input_dimension': {
