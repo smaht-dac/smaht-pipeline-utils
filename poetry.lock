@@ -288,13 +288,13 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "dcicutils"
-version = "7.12.0.2b7"
+version = "7.12.0.2b9"
 description = "Utility package for interacting with the 4DN Data Portal and other 4DN resources"
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "dcicutils-7.12.0.2b7-py3-none-any.whl", hash = "sha256:1a4585c654e1c3bc3756cc7cca8a9f537990075357f81f13ac0304ad6ba6cc87"},
-    {file = "dcicutils-7.12.0.2b7.tar.gz", hash = "sha256:f6d5ddd9f525e9f4de5b8ec18c84112bb08ac1cbaca302e26ef6e42c393107e3"},
+    {file = "dcicutils-7.12.0.2b9-py3-none-any.whl", hash = "sha256:12d3e6cd0f26ad7e464a5e8c7c646d28d23f63a1e423ca4fa7ae536f3b9fd4d2"},
+    {file = "dcicutils-7.12.0.2b9.tar.gz", hash = "sha256:ef0da351164cd2495e5570d393c6564fdf8dab1f60a1b613c40dfd405693894e"},
 ]
 
 [package.dependencies]
@@ -508,18 +508,18 @@ referencing = ">=0.28.0"
 
 [[package]]
 name = "magma-suite"
-version = "1.5.0.3b4"
+version = "1.5.0.3b5"
 description = "Collection of tools to manage meta-workflows automation."
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "magma_suite-1.5.0.3b4-py3-none-any.whl", hash = "sha256:af16e0edd7032cddd2741a2400ff179bfa3acfbf7033b2baa72e72a12b940ea3"},
-    {file = "magma_suite-1.5.0.3b4.tar.gz", hash = "sha256:8345f633be0d271d87fe539e06e0e8aba02be9ca2eb351067482ed8a67f02a42"},
+    {file = "magma_suite-1.5.0.3b5-py3-none-any.whl", hash = "sha256:bc9b97bae6dc2457cd66bd965238836e7a9d952c08417086e7ecf63abc47480b"},
+    {file = "magma_suite-1.5.0.3b5.tar.gz", hash = "sha256:85aa56cb69fb42377a95ceec80015e028dfa8d1262bc7539fe92be3fccafaccf"},
 ]
 
 [package.dependencies]
-dcicutils = "7.12.0.2b7"
-tibanna-ff = "2.0.1.1b9"
+dcicutils = "7.12.0.2b9"
+tibanna-ff = "2.0.1.1b10"
 
 [[package]]
 name = "opensearch-py"
@@ -1050,19 +1050,19 @@ tomlkit = ">=0.11.0,<0.12.0"
 
 [[package]]
 name = "tibanna-ff"
-version = "2.0.1.1b9"
+version = "2.0.1.1b10"
 description = "Tibanna runs portable pipelines (in CWL/WDL) on the AWS Cloud."
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "tibanna_ff-2.0.1.1b9-py3-none-any.whl", hash = "sha256:6b685b27608f1116960e1ee6e93a505b2c968d0d716bd7cda0c983658173175f"},
-    {file = "tibanna_ff-2.0.1.1b9.tar.gz", hash = "sha256:cc61da8f161377b5b2ce6ff5dd09153f2ef1aea19717a05626b9585d54f57e3b"},
+    {file = "tibanna_ff-2.0.1.1b10-py3-none-any.whl", hash = "sha256:0e482f6cf98bfa18b4353e91686da176d4cdc1b4636b5cc0bde1529bd70ef0bd"},
+    {file = "tibanna_ff-2.0.1.1b10.tar.gz", hash = "sha256:f08ad73325dce65157c36a780b8e0252ec56829dae17b0960bd86faae18aa594"},
 ]
 
 [package.dependencies]
 boto3 = ">=1.28.56,<2.0.0"
 botocore = ">=1.31.56,<2.0.0"
-dcicutils = "7.12.0.2b7"
+dcicutils = "7.12.0.2b9"
 requests = "2.27.1"
 tibanna = "4.0.0.1b4"
 tomlkit = ">=0.11.0,<0.12.0"
@@ -1232,4 +1232,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "9d067d1a0fbcbbe8ae45c4dbf37da27c6e63150a02459ffbde47968a66a9e8a7"
+content-hash = "3d06fdb30e728232d2522e73a684412fc66385bfcacd8aee2aea7cf5a5ebdad2"
