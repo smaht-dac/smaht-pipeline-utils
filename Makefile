@@ -8,6 +8,7 @@ update:
 	poetry update
 
 build:
+	make configure
 	poetry install
 
 test:
