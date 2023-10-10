@@ -45,17 +45,17 @@ requests = ">=0.14.0"
 
 [[package]]
 name = "awscli"
-version = "1.29.60"
+version = "1.29.62"
 description = "Universal Command Line Environment for AWS."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "awscli-1.29.60-py3-none-any.whl", hash = "sha256:92fd2e9e34e02327e251fc0c3820f0e254b2c68919babd07f060890851782075"},
-    {file = "awscli-1.29.60.tar.gz", hash = "sha256:a96a7db174dbdfd9338aa5459a75d11ae14f7e242181b440dda6776af0143f3a"},
+    {file = "awscli-1.29.62-py3-none-any.whl", hash = "sha256:642c2b1bfceba5af29a4b2648cce86f765fd48749fd21d79e0480cfacf0af907"},
+    {file = "awscli-1.29.62.tar.gz", hash = "sha256:aef24cdcdc6d8acdb482a06620289a76ccc264424536e235c2a5705810651b2b"},
 ]
 
 [package.dependencies]
-botocore = "1.31.60"
+botocore = "1.31.62"
 colorama = ">=0.2.5,<0.4.5"
 docutils = ">=0.10,<0.17"
 PyYAML = ">=3.10,<6.1"
@@ -93,17 +93,17 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.28.60"
+version = "1.28.62"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.60-py3-none-any.whl", hash = "sha256:d5f270c2c9a051f78c308cbba4268458e8df441057b73ba140742707ac1bc7ea"},
-    {file = "boto3-1.28.60.tar.gz", hash = "sha256:dccb49cc10b31314b8553c6c9614c44b2249e0d0285d73f608a5d2010f6e1d82"},
+    {file = "boto3-1.28.62-py3-none-any.whl", hash = "sha256:0dfa2fc96ccafce4feb23044d6cba8b25075ad428a0c450d369d099c6a1059d2"},
+    {file = "boto3-1.28.62.tar.gz", hash = "sha256:148eeba0f1867b3db5b3e5ae2997d75a94d03fad46171374a0819168c36f7ed0"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.60,<1.32.0"
+botocore = ">=1.31.62,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.7.0,<0.8.0"
 
@@ -112,13 +112,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "boto3-stubs"
-version = "1.28.60"
-description = "Type annotations for boto3 1.28.60 generated with mypy-boto3-builder 7.19.0"
+version = "1.28.62"
+description = "Type annotations for boto3 1.28.62 generated with mypy-boto3-builder 7.19.0"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "boto3-stubs-1.28.60.tar.gz", hash = "sha256:1586dfac8f92c2c03237d99c2a412f17241084d39e89d2baa8c51cf3cb38082c"},
-    {file = "boto3_stubs-1.28.60-py3-none-any.whl", hash = "sha256:dcadcae758b170d8fa0e6aee7b768c57686ebca93093f79e3ece6663cc3cc681"},
+    {file = "boto3-stubs-1.28.62.tar.gz", hash = "sha256:f5ae08d2abae7709fff3e7cacea66c41cb43236527cfaf3975e506c6c67439a0"},
+    {file = "boto3_stubs-1.28.62-py3-none-any.whl", hash = "sha256:22a08e27d2ede1849dd0d75e8501099240b34bd70adb606584a2af2e12f3a22b"},
 ]
 
 [package.dependencies]
@@ -164,7 +164,7 @@ batch = ["mypy-boto3-batch (>=1.28.0,<1.29.0)"]
 bedrock = ["mypy-boto3-bedrock (>=1.28.0,<1.29.0)"]
 bedrock-runtime = ["mypy-boto3-bedrock-runtime (>=1.28.0,<1.29.0)"]
 billingconductor = ["mypy-boto3-billingconductor (>=1.28.0,<1.29.0)"]
-boto3 = ["boto3 (==1.28.60)", "botocore (==1.31.60)"]
+boto3 = ["boto3 (==1.28.62)", "botocore (==1.31.62)"]
 braket = ["mypy-boto3-braket (>=1.28.0,<1.29.0)"]
 budgets = ["mypy-boto3-budgets (>=1.28.0,<1.29.0)"]
 ce = ["mypy-boto3-ce (>=1.28.0,<1.29.0)"]
@@ -491,19 +491,22 @@ xray = ["mypy-boto3-xray (>=1.28.0,<1.29.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.60"
+version = "1.31.62"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.60-py3-none-any.whl", hash = "sha256:b6de7a6a03ca3da18b78615a2cb5221c9fdb9483d3f50cb4281ae038b3f22d9f"},
-    {file = "botocore-1.31.60.tar.gz", hash = "sha256:578470a15a5bd64f67437a81f23feccba85084167acf63c56acada2c1c1d95d8"},
+    {file = "botocore-1.31.62-py3-none-any.whl", hash = "sha256:be792d806afc064694a2d0b9b25779f3ca0c1584b29a35ac32e67f0064ddb8b7"},
+    {file = "botocore-1.31.62.tar.gz", hash = "sha256:272b78ac65256b6294cb9cdb0ac484d447ad3a85642e33cb6a3b1b8afee15a4c"},
 ]
 
 [package.dependencies]
 jmespath = ">=0.7.1,<2.0.0"
 python-dateutil = ">=2.1,<3.0.0"
-urllib3 = ">=1.25.4,<1.27"
+urllib3 = [
+    {version = ">=1.25.4,<1.27", markers = "python_version < \"3.10\""},
+    {version = ">=1.25.4,<2.1", markers = "python_version >= \"3.10\""},
+]
 
 [package.extras]
 crt = ["awscrt (==0.16.26)"]
@@ -902,18 +905,18 @@ referencing = ">=0.28.0"
 
 [[package]]
 name = "magma-suite"
-version = "1.5.0.3b6"
+version = "2.0.0"
 description = "Collection of tools to manage meta-workflows automation."
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "magma_suite-1.5.0.3b6-py3-none-any.whl", hash = "sha256:32bc67b5af6af2b5b70a4369cb044a85881b733358d8b42b527dd448c9493f8b"},
-    {file = "magma_suite-1.5.0.3b6.tar.gz", hash = "sha256:1698e8ffc97371febbb7cac54e7f162405453673ffe9aa5594b743b3d21fef1e"},
+    {file = "magma_suite-2.0.0-py3-none-any.whl", hash = "sha256:462845484ebf1edef187c74f4c470e49726c95ab30c90555ada112e2bbb90c95"},
+    {file = "magma_suite-2.0.0.tar.gz", hash = "sha256:03577b5567ffe6fb99409d26575dd44b836a166b7ed9b8ec268b8e754d46403a"},
 ]
 
 [package.dependencies]
 dcicutils = "8.0.0"
-tibanna-ff = "3.0.0.1b2"
+tibanna-ff = "3.1.1"
 
 [[package]]
 name = "opensearch-py"
@@ -1426,13 +1429,13 @@ tests = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "pyth
 
 [[package]]
 name = "tibanna"
-version = "5.0.0.1b4"
+version = "5.1.0"
 description = "Tibanna runs portable pipelines (in CWL/WDL) on the AWS Cloud."
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "tibanna-5.0.0.1b4-py3-none-any.whl", hash = "sha256:f79a0b6c8d9bf6a107950e0e350061ae6d98e429582d3af990b8b9480e49bb60"},
-    {file = "tibanna-5.0.0.1b4.tar.gz", hash = "sha256:29390ce6250d11bee9c1d20724516d35a35c0be31f619f9ce74f67b40cd4241a"},
+    {file = "tibanna-5.1.0-py3-none-any.whl", hash = "sha256:fbe066eda6544a680690e9510f2cb535c79cb8b05ee70d627079e1e1cf8339ff"},
+    {file = "tibanna-5.1.0.tar.gz", hash = "sha256:3d293d701c822a97cb1e7ff0a015b310a87f6461087670898b4db4c41b918dfd"},
 ]
 
 [package.dependencies]
@@ -1444,13 +1447,13 @@ tomlkit = ">=0.11.0,<0.12.0"
 
 [[package]]
 name = "tibanna-ff"
-version = "3.0.0.1b2"
+version = "3.1.1"
 description = "Tibanna runs portable pipelines (in CWL/WDL) on the AWS Cloud."
 optional = false
 python-versions = ">=3.8,<3.12"
 files = [
-    {file = "tibanna_ff-3.0.0.1b2-py3-none-any.whl", hash = "sha256:3aea44426870de0ef9f18c602cc5e5cf2a45ecf7ed53833738c0e735cd6fda57"},
-    {file = "tibanna_ff-3.0.0.1b2.tar.gz", hash = "sha256:f5e65028afdd862eec5db2f6d6d546d94337ff5dfbe8f6c8cbd9fb60f19b6c89"},
+    {file = "tibanna_ff-3.1.1-py3-none-any.whl", hash = "sha256:fac37cc31318dcc9f0fa6ce9dd9b1ce6347452c704f499939d054d51cab167b4"},
+    {file = "tibanna_ff-3.1.1.tar.gz", hash = "sha256:7801dface3e60ef6b867b8cda875238cf511bce3938d2f52f28ccb77a83c6e17"},
 ]
 
 [package.dependencies]
@@ -1458,7 +1461,7 @@ boto3 = ">=1.28.56,<2.0.0"
 botocore = ">=1.31.56,<2.0.0"
 dcicutils = "8.0.0"
 requests = "2.27.1"
-tibanna = "5.0.0.1b4"
+tibanna = "5.1.0"
 tomlkit = ">=0.11.0,<0.12.0"
 
 [[package]]
@@ -1648,4 +1651,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "16dd9cba288db21e384e61dd61e204cff0da001fa87d7d3a6d3bebfbb9efb952"
+content-hash = "f3cd22be536c69007722c405bf993e73c8f4863bc6b8f2a2ca3a63e8efcf4383"
