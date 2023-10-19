@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'portal-pipeline-utils'
+project = 'smaht-pipeline-utils'
 copyright = '2021, HMS DBMI'
-author = 'Michele Berselli, CGAP & SMaHT Team'
+author = 'Michele Berselli, SMaHT Team'
 
 # The full version, including alpha/beta/rc tags
 release = '2.1.0'

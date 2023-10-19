@@ -20,11 +20,6 @@ Template
     name: <string>
     description: <string>
 
-    # All the following fields are optional and provided as example,
-    #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    proband_only: <boolean>
-
     ## General arguments ########################################
     #     Pipeline input, reference files, and general arguments
     #       define all arguments for the pipeline here

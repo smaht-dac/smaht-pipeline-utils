@@ -9,11 +9,11 @@ PyPI
 
 The package is available on pypi_:
 
-.. _pypi: https://pypi.org/project/portal-pipeline-utils
+.. _pypi: https://pypi.org/project/smaht-pipeline-utils
 
 .. code-block:: bash
 
-    pip install portal-pipeline-utils
+    pip install smaht-pipeline-utils
 
 Source
 ^^^^^^
@@ -23,10 +23,10 @@ To install the latest version from source:
 
 .. code-block:: bash
 
-    git clone https://github.com/dbmi-bgm/portal-pipeline-utils.git
-    cd portal-pipeline-utils
+    git clone https://github.com/smaht-dac/smaht-pipeline-utils.git
+    cd smaht-pipeline-utils
     make configure
     make update
     make build
 
-Please refer to `pyproject.toml <https://github.com/dbmi-bgm/portal-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
+Please refer to `pyproject.toml <https://github.com/smaht-dac/smaht-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.

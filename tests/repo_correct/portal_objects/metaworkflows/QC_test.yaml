@@ -23,6 +23,21 @@ input:
   samples:
     argument_type: parameter.json
 
+  qc_ruleset_name_1:
+    argument_type: parameter.qc_ruleset
+    qc_thresholds:
+      c1:
+        rule: coverage|>=|100|80
+        flag: True
+      c2:
+        rule: coverage|<=|200|180
+      c3:
+        rule: coverage|>|80|3.3
+      rl:
+        rule: read_length|==|PASS|NOT PASS
+        flag: True
+    qc_rule: ( {c1} and {c2} ) or not ( {c3} and {rl} )
+
 workflows:
   ##########################################
   # gatk-HC
@@ -39,6 +54,10 @@ workflows:
 
       samples:
         argument_type: parameter.json
+
+      qc_ruleset:
+        argument_type: parameter.qc_ruleset
+        source_argument_name: qc_ruleset_name_1
     # gatk-HC output
     output:
       HC_vcf:

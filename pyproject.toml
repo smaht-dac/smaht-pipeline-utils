@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "portal-pipeline-utils"
+name = "smaht-pipeline-utils"
 version = "3.0.0"
-description = "Utilities for deploying pipelines and interfacing with portal infrastructure."
+description = "Utilities for deploying pipelines and interfacing with SMaHT portal infrastructure."
 authors = [
         "Michele Berselli <berselli.michele@gmail.com>",
-        "CGAP & SMaHT Team"
+        "SMaHT Team"
 ]
 license = "MIT"
-repository = 'https://github.com/dbmi-bgm/portal-pipeline-utils'
+repository = 'https://github.com/smaht-dac/smaht-pipeline-utils'
 readme = "README.md"
 classifiers = [
     'License :: OSI Approved :: MIT License',
@@ -35,7 +35,7 @@ boto3-stubs = "^1.28.62"
 
 
 [tool.poetry.scripts]
-pipeline_utils = "pipeline_utils.__main__:main"
+smaht_pipeline_utils = "pipeline_utils.__main__:main"
 publish-to-pypi = "dcicutils.scripts.publish_to_pypi:main"
 
 

@@ -37,9 +37,13 @@ yaml_software_schema = {
         'license': {
             schema.DESCRIPTION: 'License of the Software',
             schema.TYPE: schema.STRING
+        },
+        'category': {
+            schema.DESCRIPTION: 'Category of the Software',
+            schema.TYPE: schema.STRING
         }
     },
-    schema.REQUIRED: ['name'],
+    schema.REQUIRED: ['name', 'category'],
     schema.ONEOF: [
         {schema.REQUIRED: ['version']},
         {schema.REQUIRED: ['commit']}

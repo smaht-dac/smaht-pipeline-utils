@@ -1,6 +1,6 @@
-==============
-pipeline_utils
-==============
+====================
+smaht_pipeline_utils
+====================
 
 This is the entry point for a collection of utilities available as commands:
 
@@ -10,7 +10,7 @@ Usage:
 
 .. code-block:: bash
 
-    pipeline_utils [COMMAND] [ARGS]
+    smaht_pipeline_utils [COMMAND] [ARGS]
 
 .. _pipeline_deploy:
 
@@ -24,7 +24,7 @@ Usage:
 
 .. code-block:: bash
 
-    pipeline_utils pipeline_deploy --ff-env FF_ENV --repos REPO [REPO ...] [OPTIONAL ARGS]
+    smaht_pipeline_utils pipeline_deploy --ff-env FF_ENV --repos REPO [REPO ...] [OPTIONAL ARGS]
 
 **Arguments:**
 

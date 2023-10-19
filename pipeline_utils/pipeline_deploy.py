@@ -221,8 +221,8 @@ class PostPatchRepo(object):
             # creating JSON object
             d_ = self._yaml_to_json(
                         d, self.object_[type],
-                        institution=self.institution,
-                        project=self.project
+                        submission_centers=self.submission_centers,
+                        consortia=self.consortia
                         )
             # post/patch object
             if d_: self._post_patch_json(d_, type)
@@ -250,8 +250,8 @@ class PostPatchRepo(object):
                 # creating _yaml_to_json **kwargs
                 kwargs_ = {
                     'version': self.version,
-                    'institution': self.institution,
-                    'project': self.project
+                    'submission_centers': self.submission_centers,
+                    'consortia': self.consortia
                 }
                 if type == 'Workflow':
                     kwargs_.setdefault(

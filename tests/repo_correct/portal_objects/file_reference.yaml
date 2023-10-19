@@ -12,11 +12,15 @@ secondary_files:
 status: uploading
 uuid: 1936f246-22e1-45dc-bb5c-9cfd55537fe7
 accession: GAPFIXRDPDK5
+category: Sequencing Reads
+type: Unaligned Reads
 
 ---
 
 # hg38 fasta (MINIMAL)
 name: reference_genome
+category: Sequencing Reads
+type: Aligned Reads
 description: hg38 full reference genome plus decoy for CGAP, fasta format
 format: fa
 version: hg38

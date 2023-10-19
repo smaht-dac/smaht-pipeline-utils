@@ -55,6 +55,10 @@ yaml_workflow_schema = {
                 schema.PATTERN: '.+\@.+' # check for <name>@<version>
             }
         },
+        'category': {
+            schema.DESCRIPTION: 'Category of the Workflow',
+            schema.TYPE: schema.STRING
+        },
 
         ## Input information ##########
         'input': {
@@ -74,7 +78,7 @@ yaml_workflow_schema = {
             }
         }
     },
-    schema.REQUIRED: ['name', 'description', 'runner', 'input', 'output'],
+    schema.REQUIRED: ['name', 'description', 'runner', 'category', 'input', 'output'],
 
     ## Sub-schemas ####################
     schema.DEFS: {

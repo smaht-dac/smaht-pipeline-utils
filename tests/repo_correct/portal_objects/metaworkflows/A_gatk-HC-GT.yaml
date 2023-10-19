@@ -18,6 +18,10 @@ input:
     argument_type: parameter.json
     value: ['SAMPLENAME']
 
+category:
+  - Alignment
+  - Format Conversion
+
 workflows:
   ##########################################
   # gatk-HC

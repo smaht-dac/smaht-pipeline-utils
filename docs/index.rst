@@ -2,9 +2,9 @@
 Portal Pipeline Utilities
 =========================
 
-Documentation for portal-pipeline-utils_, a collection of utilities for deploying pipelines and interfacing with portal infrastructure.
+Documentation for smaht-pipeline-utils_, a collection of utilities for deploying pipelines and interfacing with portal infrastructure.
 
-.. _portal-pipeline-utils: https://github.com/dbmi-bgm/portal-pipeline-utils
+.. _smaht-pipeline-utils: https://github.com/smaht-dac/smaht-pipeline-utils
 
 Contents
 ########

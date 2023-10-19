@@ -20,6 +20,14 @@ yaml_file_reference_schema = {
             schema.DESCRIPTION: 'Format of the FileReference',
             schema.TYPE: schema.STRING
         },
+        'category': {
+            schema.DESCRIPTION: 'Category of the FileReference',
+            schema.TYPE: schema.STRING
+        },
+        'type': {
+            schema.DESCRIPTION: 'Type of the FileReference',
+            schema.TYPE: schema.STRING
+        },
         'version': {
             schema.DESCRIPTION: 'Version of the FileReference',
             schema.TYPE: schema.STRING
@@ -41,5 +49,5 @@ yaml_file_reference_schema = {
             schema.TYPE: schema.STRING
         }
     },
-    schema.REQUIRED: ['name', 'description', 'format', 'version']
+    schema.REQUIRED: ['name', 'description', 'format', 'category', 'type', 'version']
 }

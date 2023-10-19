@@ -22,6 +22,13 @@ yaml_metaworkflow_schema = {
             schema.DESCRIPTION: 'Description of the MetaWorkflow',
             schema.TYPE: schema.STRING
         },
+        'category': {
+            schema.DESCRIPTION: 'Categories of the MetaWorkflow',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
+            }
+        },
 
         ## General input information ##
         'input': {
@@ -76,7 +83,7 @@ yaml_metaworkflow_schema = {
             }
         }
     },
-    schema.REQUIRED: ['name', 'description', 'input', 'workflows'],
+    schema.REQUIRED: ['name', 'description', 'category', 'input', 'workflows'],
 
     ## Sub-schemas ####################
     schema.DEFS: {
@@ -87,7 +94,7 @@ yaml_metaworkflow_schema = {
             schema.PROPERTIES: {
                 'argument_type': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^file\..+|^parameter\..+'
+                    schema.PATTERN: '^file\\..+|^parameter\\..+'
                 },
                 'dimensionality': {
                     schema.TYPE: schema.NUMBER
@@ -96,7 +103,7 @@ yaml_metaworkflow_schema = {
                     schema.TYPE: schema.ARRAY,
                     schema.ITEMS: {
                         schema.TYPE: schema.STRING,
-                        schema.PATTERN: '.+\@.+' # check for <name>@<version>
+                        schema.PATTERN: '.+\\@.+' # check for <name>@<version>
                     }
                 },
                 'source': {
@@ -125,9 +132,29 @@ yaml_metaworkflow_schema = {
                 },
                 'rename': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^formula\:.+'
+                    schema.PATTERN: '^formula\\:.+'
                 },
                 'unzip': {
+                    schema.TYPE: schema.STRING
+                },
+                'qc_thresholds': {
+                    schema.TYPE: schema.OBJECT,
+                    schema.PATTERNPROPERTIES: {
+                        '.+': {
+                            schema.TYPE: schema.OBJECT,
+                            schema.PROPERTIES: {
+                                'rule': {
+                                    schema.TYPE: schema.STRING,
+                                    schema.PATTERN: '^([^|]+\\|[^|]+\\|[^|]+\\|[^|]+)$'
+                                },
+                                'flag': {
+                                    schema.TYPE: schema.BOOLEAN
+                                }
+                            }
+                        }
+                    }
+                },
+                'qc_rule': {
                     schema.TYPE: schema.STRING
                 }
             },
