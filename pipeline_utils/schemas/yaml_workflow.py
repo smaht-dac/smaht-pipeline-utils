@@ -56,8 +56,11 @@ yaml_workflow_schema = {
             }
         },
         'category': {
-            schema.DESCRIPTION: 'Category of the Workflow',
-            schema.TYPE: schema.STRING
+            schema.DESCRIPTION: 'Categories of the Workflow',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
+            }
         },
 
         ## Input information ##########
