@@ -3,7 +3,8 @@
 name: gatk-HaplotypeCaller
 description: Run HaplotypeCaller from gatk package
 
-category: Annotation
+category:
+  - Annotation
 
 runner:
   language: wdl

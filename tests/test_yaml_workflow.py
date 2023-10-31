@@ -17,7 +17,7 @@ def test_workflow():
                 "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
                 "name": "gatk-HaplotypeCaller",
                 "version": "v1.0.0",
-                "category": "Annotation",
+                "category": ["Annotation"],
                 "arguments": [
                     {
                       "argument_format": "bam",
@@ -65,7 +65,7 @@ def test_workflow():
             },
             {
                 "accession": "GAPFIXRDPDK1",
-                "category": "Feature Calling",
+                "category": ["Feature Calling"],
                 "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
                 "name": "gatk-HaplotypeCaller",
                 "version": "v1.0.0",

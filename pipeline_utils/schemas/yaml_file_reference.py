@@ -28,8 +28,11 @@ yaml_file_reference_schema = {
             }
         },
         'type': {
-            schema.DESCRIPTION: 'Type of the FileReference',
-            schema.TYPE: schema.STRING
+            schema.DESCRIPTION: 'Types of the FileReference',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
+            }
         },
         'version': {
             schema.DESCRIPTION: 'Version of the FileReference',

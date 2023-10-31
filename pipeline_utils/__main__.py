@@ -20,8 +20,8 @@ from pipeline_utils import pipeline_deploy
 
 # Variables
 PIPELINE_DEPLOY = 'pipeline_deploy'
-CONSORTIA_ALIAS = 'CONSORTIUM'
-SUBMISSION_CENTERS_ALIAS = 'SUBMISSION_CENTER'
+CONSORTIA_ALIAS = ['smaht_consortium']
+SUBMISSION_CENTERS_ALIAS = ['smaht_dac']
 KEYS_ALIAS = '~/.cgap-keys.json'
 MAIN_ALIAS = 'main'
 BUILDER_ALIAS = '<ff-env>-pipeline-builder'
@@ -51,9 +51,9 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--account', required=False, help='AWS account to use for deployment')
     pipeline_deploy_parser.add_argument('--region', required=False, help='AWS account region to use for deployment')
     pipeline_deploy_parser.add_argument('--consortia', required=False, nargs='+', help='List of consortia to use for deployment',
-                                                       default=[CONSORTIA_ALIAS])
+                                                       default=CONSORTIA_ALIAS)
     pipeline_deploy_parser.add_argument('--submission-centers', required=False, nargs='+', help='List of centers to use for deployment',
-                                                                default=[SUBMISSION_CENTERS_ALIAS])
+                                                                default=SUBMISSION_CENTERS_ALIAS)
 
     pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')
     pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='POST|PATCH FileFormat objects')

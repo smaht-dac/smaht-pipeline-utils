@@ -5,9 +5,9 @@ extension: bam
 description: format to represent aligned reads
 secondary_formats:
   - bai
-file_types:
-  - FileReference
-  - FileProcessed
+# file_types:
+#   - FileReference
+#   - FileProcessed
 status: shared
 
 ---

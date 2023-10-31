@@ -21,7 +21,7 @@ def test_software():
                 "source_url": "http:/broad",
                 "title": "gatk 4.1.2",
                 "version": "4.1.2",
-                "category": "Aligner"
+                "category": ["Aligner"]
             },
             {
                 "accession": "GAPMKF1LL29K",
@@ -32,7 +32,7 @@ def test_software():
                 "consortia": ["cgap-core"],
                 "title": "picard [324ePT]",
                 "uuid": "efdac7ec-7da3-4f23-9056-7a04abbc5e8b",
-                "category": "Variant Caller"
+                "category": ["Variant Caller"]
             }
         ]
 

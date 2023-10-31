@@ -22,8 +22,8 @@ def test_file_reference():
                 "consortia": ["cgap-core"],
                 "status": "uploading",
                 "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe7",
-                "data_category": "Sequencing Reads",
-                "data_type": "Unaligned Reads"
+                "data_category": ["Sequencing Reads"],
+                "data_type": ["Unaligned Reads"]
             },
             {
                 "aliases": ["cgap-core:FileReference-reference_genome_hg38"],
@@ -33,8 +33,8 @@ def test_file_reference():
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
                 "status": None,
-                "data_category": "Sequencing Reads",
-                "data_type": "Aligned Reads"
+                "data_category": ["Sequencing Reads"],
+                "data_type": ["Aligned Reads"]
             }
         ]
 
