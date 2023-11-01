@@ -33,7 +33,7 @@ output:
       - vcf_gz_tbi
 
   vcfcheck:
-    argument_type: qc.quality_metric_vcfcheck
+    argument_type: qc
     argument_to_be_attached_to: output_vcf
     zipped: False
     json: True

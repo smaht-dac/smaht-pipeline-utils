@@ -20,7 +20,7 @@ yaml_software_schema = {
             schema.DESCRIPTION: 'Source url of the Software',
             schema.TYPE: schema.STRING,
             schema.FORMAT: 'uri',
-            schema.PATTERN: '^https?\:.+'
+            schema.PATTERN: '^https?\\:.+'
         },
         'description': {
             schema.DESCRIPTION: 'Description of the Software',

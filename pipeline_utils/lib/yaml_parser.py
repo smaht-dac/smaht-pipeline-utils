@@ -171,7 +171,6 @@ class YAMLWorkflow(YAMLTemplate):
     # schema constants
     INPUT_FILE_SCHEMA = 'Input file'
     OUTPUT_PROCESSED_FILE_SCHEMA = 'Output processed file'
-    OUTPUT_QC_FILE_SCHEMA = 'Output QC file'
     GENERIC_QC_FILE_SCHEMA = 'Generic QC file'
     OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
     QC_SCHEMA = 'qc'
@@ -179,22 +178,11 @@ class YAMLWorkflow(YAMLTemplate):
     REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
     ZIPPED_SCHEMA = 'zipped'
-    HTML_SCHEMA = 'html'
     JSON_SCHEMA = 'json'
-    TABLE_SCHEMA = 'table'
     SOFTWARE_SCHEMA = 'software'
     ARGUMENTS_SCHEMA = 'arguments'
-    QC_TYPE_SCHEMA = 'qc_type'
     QC_ZIPPED_SCHEMA = 'qc_zipped'
-    QC_HTML_SCHEMA = 'qc_html'
     QC_JSON_SCHEMA = 'qc_json'
-    QC_TABLE_SCHEMA = 'qc_table'
-    QC_ZIPPED_HTML_SCHEMA = 'qc_zipped_html'
-    QC_ZIPPED_TABLES_SCHEMA = 'qc_zipped_tables'
-    HTML_IN_ZIPPED_SCHEMA = 'html_in_zipped'
-    TABLES_IN_ZIPPED_SCHEMA = 'tables_in_zipped'
-    QC_ACL = 'qc_acl'
-    QC_UNZIP_FROM_EC2 = 'qc_unzip_from_ec2'
 
     def __init__(self, data):
         """Constructor method.
@@ -237,7 +225,16 @@ class YAMLWorkflow(YAMLTemplate):
         """
         arguments = []
         for name, values in self.output.items():
-            type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
+            # check if it is a file or qc or report argument
+            #   if it is file it has a type and a format
+            #       argument_type: file.<format>
+            #   if it is qc or report only has type
+            #       argument_type: qc | report
+            try:
+                type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
+            except ValueError:
+                type = values[self.ARGUMENT_TYPE_SCHEMA]
+            # create right argument schema according to type
             if type == self.FILE_SCHEMA:
                 argument_type = self.OUTPUT_PROCESSED_FILE_SCHEMA
                 argument_ = {
@@ -247,41 +244,21 @@ class YAMLWorkflow(YAMLTemplate):
                     self.SECONDARY_FILE_FORMATS_SCHEMA: values.get(self.SECONDARY_FILES_SCHEMA, [])
                 }
             elif type == self.QC_SCHEMA:
-                # handle generic vs specific QC schema
-                if format == self.QUALITY_METRIC_GENERIC_SCHEMA:
-                    argument_type = self.GENERIC_QC_FILE_SCHEMA
-                else:
-                    argument_type = self.OUTPUT_QC_FILE_SCHEMA
+                argument_type = self.GENERIC_QC_FILE_SCHEMA
                 # create base QC argument
                 argument_ = {
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
                     self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
                     self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA: values[self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA],
                     self.QC_ZIPPED_SCHEMA: values.get(self.ZIPPED_SCHEMA, False),
-                    self.QC_HTML_SCHEMA: values.get(self.HTML_SCHEMA, False),
                     self.QC_JSON_SCHEMA: values.get(self.JSON_SCHEMA, False),
-                    self.QC_TABLE_SCHEMA: values.get(self.TABLE_SCHEMA, False)
                 }
-                # handle edge case for missing or generic QC type
-                if format not in ['none', self.QUALITY_METRIC_GENERIC_SCHEMA]:
-                    argument_[self.QC_TYPE_SCHEMA] = format
-                # create argument format for generic QCs (JSON or ZIP)
-                elif format == self.QUALITY_METRIC_GENERIC_SCHEMA:
-                    if argument_[self.QC_JSON_SCHEMA]:
-                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'json'
-                    else:
-                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'zip'
-                # quality controls, TODO
-                #   these fields are bad, need to rework how QCs work
-                if values.get(self.HTML_IN_ZIPPED_SCHEMA):
-                    argument_[self.QC_ZIPPED_HTML_SCHEMA] = values[self.HTML_IN_ZIPPED_SCHEMA]
-                if values.get(self.TABLES_IN_ZIPPED_SCHEMA):
-                    argument_[self.QC_ZIPPED_TABLES_SCHEMA] = values[self.TABLES_IN_ZIPPED_SCHEMA]
-                if values.get(self.QC_ACL):
-                    argument_[self.QC_ACL] = values[self.QC_ACL]
-                if values.get(self.QC_UNZIP_FROM_EC2):
-                    argument_[self.QC_UNZIP_FROM_EC2] = values[self.QC_UNZIP_FROM_EC2]
-            elif type == self.REPORT_SCHEMA and format == self.FILE_SCHEMA:
+                # check if it is json or zip
+                if argument_[self.QC_JSON_SCHEMA]:
+                    argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'json'
+                else:
+                    argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'zip'
+            elif type == self.REPORT_SCHEMA:
                 argument_type = self.OUTPUT_REPORT_FILE_SCHEMA
                 argument_ = {
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,

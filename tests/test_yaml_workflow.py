@@ -38,13 +38,11 @@ def test_workflow():
                     },
                     {
                       "argument_to_be_attached_to": "output_vcf",
-                      "argument_type": "Output QC file",
-                      "qc_html": False,
+                      "argument_type": "Generic QC file",
                       "qc_json": True,
-                      "qc_table": False,
-                      "qc_type": "quality_metric_vcfcheck",
                       "qc_zipped": False,
-                      "workflow_argument_name": "vcfcheck"
+                      "workflow_argument_name": "vcfcheck",
+                      "argument_format": "json"
                     }
                 ],
                 "description": "Run HaplotypeCaller from gatk package",
