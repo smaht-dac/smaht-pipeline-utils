@@ -20,7 +20,7 @@ from pipeline_utils import pipeline_deploy
 
 # Variables
 PIPELINE_DEPLOY = 'pipeline_deploy'
-CONSORTIA_ALIAS = ['smaht_consortium']
+CONSORTIA_ALIAS = ['smaht']
 SUBMISSION_CENTERS_ALIAS = ['smaht_dac']
 KEYS_ALIAS = '~/.cgap-keys.json'
 MAIN_ALIAS = 'main'

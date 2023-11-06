@@ -76,16 +76,13 @@ def test_workflow():
                     {
                       "argument_format": "vcf",
                       "argument_type": "Output processed file",
-                      "secondary_file_formats": [],
                       "workflow_argument_name": "output_vcf"
                     }
                 ],
                 "description": "Run HaplotypeCaller from gatk package",
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
-                "software": [],
                 "title": "gatk-HaplotypeCaller [v1.0.0]",
-                "child_file_names": [],
                 "directory_url": "s3://BUCKETCWL/test_pipeline/v1.0.0",
                 "main_file_name": "gatk-HaplotypeCaller-check.cwl",
                 "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9",

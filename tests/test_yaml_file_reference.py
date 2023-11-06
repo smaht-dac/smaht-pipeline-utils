@@ -28,7 +28,6 @@ def test_file_reference():
             {
                 "aliases": ["cgap-core:FileReference-reference_genome_hg38"],
                 "description": "hg38 full reference genome plus decoy for CGAP, fasta format",
-                "extra_files": [],
                 "file_format": "fa",
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],

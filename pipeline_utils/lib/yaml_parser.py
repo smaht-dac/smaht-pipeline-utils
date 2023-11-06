@@ -240,9 +240,11 @@ class YAMLWorkflow(YAMLTemplate):
                 argument_ = {
                     self.ARGUMENT_FORMAT_SCHEMA: format,
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
-                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
-                    self.SECONDARY_FILE_FORMATS_SCHEMA: values.get(self.SECONDARY_FILES_SCHEMA, [])
+                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
                 }
+                # check for secondary files
+                if values.get(self.SECONDARY_FILES_SCHEMA):
+                    argument_[self.SECONDARY_FILE_FORMATS_SCHEMA] = values.get(self.SECONDARY_FILES_SCHEMA)
             elif type == self.QC_SCHEMA:
                 argument_type = self.GENERIC_QC_FILE_SCHEMA
                 # create base QC argument
@@ -288,14 +290,18 @@ class YAMLWorkflow(YAMLTemplate):
         wfl_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
         wfl_json[self.CONSORTIA_SCHEMA] = consortia
         wfl_json[self.DESCRIPTION_SCHEMA] = self.description
-        wfl_json[self.SOFTWARE_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.SOFTWARE_TYPE_SCHEMA}-{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
+        # check if software
+        if getattr(self, self.SOFTWARE_SCHEMA, None):
+            wfl_json[self.SOFTWARE_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.SOFTWARE_TYPE_SCHEMA}-{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA)]
         wfl_json[self.ARGUMENTS_SCHEMA] = self._arguments_input() + self._arguments_output()
 
         # workflow language and description files
         wfl_json['language'] = self.runner['language'].upper()
         wfl_json['directory_url'] = wflbucket_url
         wfl_json['main_file_name'] = self.runner['main']
-        wfl_json['child_file_names'] = self.runner.get('child', [])
+        # check if child description files
+        if self.runner.get('child'):
+            wfl_json['child_file_names'] = self.runner.get('child')
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -587,7 +593,9 @@ class YAMLFileReference(YAMLTemplate):
         ref_json[self.DESCRIPTION_SCHEMA] = self.description
         ref_json[self.FILE_FORMAT_SCHEMA] = self.format
         ref_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.FILEREFERENCE_TYPE_SCHEMA}-{self.name}_{self.version}']
-        ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA, [])
+        # check for secondary files
+        if getattr(self, self.SECONDARY_FILES_SCHEMA, None):
+            ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA)
         ref_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, None) # this will be used during post/patch,
                                                            # if None:
                                                            #    - leave it as is if patch
@@ -651,7 +659,9 @@ class YAMLFileFormat(YAMLTemplate):
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json[self.STANDARD_FILE_EXTENSION_SCHEMA] = self.extension
         # frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['FileReference', 'FileProcessed'])
-        frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA, [])
+        # check for secondary formats
+        if getattr(self, self.SECONDARY_FORMATS_SCHEMA, None):
+            frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA)
         frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'shared')
 
         # uuid, accession if specified

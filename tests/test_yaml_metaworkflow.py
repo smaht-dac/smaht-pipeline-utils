@@ -49,10 +49,11 @@ def test_metaworkflow():
               "custom_pf_fields": {
                 "HC_vcf": {
                   "description": "output from gatk-HC",
-                  "file_type": "hc-vcf",
                   "linkto_location": [
                     "SampleProcessing"
-                  ]
+                  ],
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -87,9 +88,10 @@ def test_metaworkflow():
               "custom_pf_fields": {
                 "GT_vcf": {
                   "description": "output from gatk-GT",
-                  "file_type": "GT-vcf",
                   "higlass_file": True,
-                  "variant_type": "SNV"
+                  "variant_type": "SNV",
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -150,7 +152,9 @@ def test_metaworkflow():
               },
               "custom_pf_fields": {
                 "HC_vcf": {
-                  "file_type": "hc-vcf"
+                  "description": "hc-vcf",
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -273,7 +277,9 @@ def test_qc_ruleset():
           },
           "custom_pf_fields": {
             "HC_vcf": {
-              "file_type": "hc-vcf"
+              "description": "hc-vcf",
+              "data_category": ["Sequencing Reads"],
+              "data_type": ["Unaligned Reads"]
             }
           },
           "input": [

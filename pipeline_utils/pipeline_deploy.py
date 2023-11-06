@@ -275,7 +275,7 @@ class PostPatchRepo(object):
         filepath_ = f'{self.repo}/{self.filepath[type]}'
         upload_ = f'{filepath_}/upload'
         account_ = f'{self.account}.dkr.ecr.{self.region}.amazonaws.com'
-        update_ = {
+        auth_keys_ = {
             'ServerSideEncryption': 'aws:kms',
             'SSEKMSKeyId': self.kms_key_id
             }
@@ -316,10 +316,10 @@ class PostPatchRepo(object):
                                 line = line.replace('LICENSEID', self.sentieon_server)
                             write_.write(line)
                 # upload to s3
-                extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
                 if self.kms_key_id:
-                    extra_args.update(update_)
-                s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_, ExtraArgs=extra_args)
+                    s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_, ExtraArgs=auth_keys_)
+                else: # no kms_key_id, ExtraArgs not needed
+                    s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_)
                 logger.info('> Posted %s' % s3_file_)
                 # delete file to allow tmp folder to be deleted at the end
                 os.remove(upload_file_)

@@ -61,7 +61,11 @@ workflows:
     # gatk-HC output
     output:
       HC_vcf:
-        file_type: hc-vcf
+        description: hc-vcf
+        data_category:
+          - Sequencing Reads
+        data_type:
+          - Unaligned Reads
     # gatk-HC config
     config:
       ebs_size: 2x

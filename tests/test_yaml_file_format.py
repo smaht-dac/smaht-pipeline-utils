@@ -27,7 +27,6 @@ def test_file_format():
                 "accession": 'GAPFIXRDPDK1',
                 "aliases": ["cgap-core:FileFormat-bam_bai"],
                 "description": "index for bam format",
-                "extra_file_formats": [],
                 "identifier": "bam_bai",
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
