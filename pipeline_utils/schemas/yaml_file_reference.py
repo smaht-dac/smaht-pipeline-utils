@@ -34,6 +34,13 @@ yaml_file_reference_schema = {
                 schema.TYPE: schema.STRING
             }
         },
+        'variant_type': {
+            schema.DESCRIPTION: 'Types of variants in FileReference',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
+            }
+        },
         'version': {
             schema.DESCRIPTION: 'Version of the FileReference',
             schema.TYPE: schema.STRING

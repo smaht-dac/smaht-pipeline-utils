@@ -119,6 +119,8 @@ class YAMLTemplate(object):
     FILEFORMAT_TYPE_SCHEMA = 'FileFormat'
     FILEREFERENCE_TYPE_SCHEMA = 'FileReference'
     SOFTWARE_TYPE_SCHEMA = 'Software'
+    VARIANT_TYPE_SCHEMA = "variant_type"
+    VARIANT_TYPES_SCHEMA = "variant_types"
 
     def __init__(self, data, schema):
         """Constructor method.
@@ -602,6 +604,9 @@ class YAMLFileReference(YAMLTemplate):
                                                            #    - set to uploading if post
         ref_json[self.DATA_CATEGORY_SCHEMA] = self.category
         ref_json[self.DATA_TYPE_SCHEMA] = self.type
+        # variant_type
+        if getattr(self, self.VARIANT_TYPE_SCHEMA, None):
+            ref_json[self.VARIANT_TYPES_SCHEMA] = self.variant_type
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):

@@ -121,15 +121,15 @@ Template
 
           # File output
           <file_output_name>:
-            file_type: <file_type>
+            data_category:
+              - <string>
+            data_type:
+              - <string>
             # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             description: <string>
-            linkto_location:
-              - <location>                    # Sample, SampleProcessing
-            higlass_file: <boolean>
-            variant_type: <variant_type>      # SNV, SV, CNV
-            vcf_to_ingest: <boolean>
+            variant_types:
+              - <string>
             s3_lifecycle_category: <string>   # short_term_access_long_term_archive,
                                               # short_term_access, short_term_archive,
                                               # long_term_access_long_term_archive,

@@ -168,15 +168,6 @@ yaml_metaworkflow_schema = {
                 'description': {
                     schema.TYPE: schema.STRING
                 },
-                # 'linkto_location': {
-                #     schema.TYPE: schema.ARRAY,
-                #     schema.ITEMS: {
-                #         schema.TYPE: schema.STRING
-                #     }
-                # },
-                # 'file_type': {
-                #     schema.TYPE: schema.STRING
-                # },
                 'data_category': {
                     schema.TYPE: schema.ARRAY,
                     schema.ITEMS: {
@@ -189,15 +180,12 @@ yaml_metaworkflow_schema = {
                         schema.TYPE: schema.STRING
                     }
                 },
-                # 'higlass_file': {
-                #     schema.TYPE: schema.BOOLEAN
-                # },
-                # 'variant_type': {
-                #     schema.TYPE: schema.STRING
-                # },
-                # 'vcf_to_ingest': {
-                #     schema.TYPE: schema.BOOLEAN
-                # },
+                'variant_types': {
+                    schema.TYPE: schema.ARRAY,
+                    schema.ITEMS: {
+                        schema.TYPE: schema.STRING
+                    }
+                },
                 's3_lifecycle_category': {
                     schema.TYPE: schema.STRING,
                     schema.PATTERN: 'short_term_access_long_term_archive|short_term_access|short_term_archive|long_term_access_long_term_archive|long_term_access|long_term_archive|no_storage|ignore'

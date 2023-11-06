@@ -23,7 +23,8 @@ def test_file_reference():
                 "status": "uploading",
                 "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe7",
                 "data_category": ["Sequencing Reads"],
-                "data_type": ["Unaligned Reads"]
+                "data_type": ["Unaligned Reads"],
+                "variant_types": ["SNV"]
             },
             {
                 "aliases": ["cgap-core:FileReference-reference_genome_hg38"],

@@ -16,6 +16,8 @@ category:
   - Sequencing Reads
 type:
   - Unaligned Reads
+variant_type:
+  - SNV
 
 ---
 
