@@ -45,7 +45,7 @@ Template
 
       # Parameter argument
       <parameter_argument_name>:
-        argument_type: parameter.<type>   # string, integer, float, json, boolean
+        argument_type: parameter.<type>   # string, integer, float, array, boolean, object
 
     ## Output information #######################################
     #     Output files and quality controls
@@ -135,7 +135,7 @@ Definition of the type of the argument.
 For a **file** argument, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
 ``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
 
-For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
+For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, array, boolean, object].
 
 
 .. _output_a:

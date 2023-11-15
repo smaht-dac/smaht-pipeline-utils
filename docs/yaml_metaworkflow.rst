@@ -37,7 +37,7 @@ Template
 
       # Parameter argument
       <parameter_argument_name>:
-        argument_type: parameter.<type>     # string, integer, float, json, boolean
+        argument_type: parameter.<type>     # string, integer, float, array, object, boolean
         # All the following fields are optional and provided as example,
         #   can be expanded to anything accepted by the schema
         value: <...>
@@ -234,7 +234,7 @@ Definition of the type of the argument.
 For a **file** argument, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
 ``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
 
-For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
+For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, array, boolean, object].
 
 files
 ^^^^^
@@ -248,24 +248,21 @@ value
 ^^^^^
 This field can be used to assign a specific value to a **parameter** argument.
 
-*Note*: As of now, the value needs to be always encoded as ``<string>``.
-We are working to improve this and enable usage of real types.
-
 Example
 
 .. code-block:: yaml
 
   a_float:
   argument_type: parameter.float
-  value: "0.8"
+  value: 0.8
 
   an_integer:
   argument_type: parameter.integer
-  value: "1"
+  value: 1
 
   a_string_array:
-  argument_type: parameter.json
-  value: "[\"DEL\", \"DUP\"]"
+  argument_type: parameter.array
+  value: ["DEL", "DUP"]
 
 Linking Fields
 ^^^^^^^^^^^^^^
