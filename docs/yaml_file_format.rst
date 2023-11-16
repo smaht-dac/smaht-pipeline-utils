@@ -25,8 +25,6 @@ Template
     #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
     secondary_formats:
       - <format>              # bam, fastq, bwt, ...
-    file_types:
-      - <filetype>            # FileReference, FileProcessed, FileSubmitted
     status: <status>          # shared
 
 
@@ -57,9 +55,3 @@ secondary_formats
 -----------------
 List of secondary ``<format>`` available for the file format.
 Each ``<format>`` needs to match a file format that has been previously defined.
-
-file_types
-----------
-File types that can use the file format.
-List of ``<filetype>``. The possible values are ``FileReference``, ``FileProcessed`` and ``FileSubmitted``.
-Default value if not specified is ``FileReference`` and ``FileProcessed``.

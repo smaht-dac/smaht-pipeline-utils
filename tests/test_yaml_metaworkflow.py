@@ -26,7 +26,7 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"file": "cgap-core:FileReference-reference_genome_hg38"}]
+              "files": [{"file": "cgap-core:ReferenceFile-reference_genome_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -129,8 +129,8 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"dimension": "0", "file": "cgap-core_cgap-test:FileReference-reference_genome_hg38"},
-                        {"dimension": "1", "file": "cgap-core_cgap-test:FileReference-reference_bam_hg38"}]
+              "files": [{"dimension": "0", "file": "cgap-core_cgap-test:ReferenceFile-reference_genome_hg38"},
+                        {"dimension": "1", "file": "cgap-core_cgap-test:ReferenceFile-reference_bam_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -214,8 +214,8 @@ def test_qc_ruleset():
         {
           "argument_name": "reference",
           "argument_type": "file",
-          "files": [{"dimension": "0", "file": "cgap-core_cgap-test:FileReference-reference_genome_hg38"},
-                    {"dimension": "1", "file": "cgap-core_cgap-test:FileReference-reference_bam_hg38"}]
+          "files": [{"dimension": "0", "file": "cgap-core_cgap-test:ReferenceFile-reference_genome_hg38"},
+                    {"dimension": "1", "file": "cgap-core_cgap-test:ReferenceFile-reference_bam_hg38"}]
         },
         {
           "argument_name": "samples",

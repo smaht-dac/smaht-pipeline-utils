@@ -21,7 +21,7 @@ from jsonschema import Draft202012Validator
 from pipeline_utils.schemas.yaml_workflow import yaml_workflow_schema
 from pipeline_utils.schemas.yaml_metaworkflow import yaml_metaworkflow_schema
 from pipeline_utils.schemas.yaml_software import yaml_software_schema
-from pipeline_utils.schemas.yaml_file_reference import yaml_file_reference_schema
+from pipeline_utils.schemas.yaml_reference_file import yaml_reference_file_schema
 from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
 
 
@@ -117,7 +117,7 @@ class YAMLTemplate(object):
     WORKFLOW_TYPE_SCHEMA = 'Workflow'
     METAWORKFLOW_TYPE_SCHEMA = 'MetaWorkflow'
     FILEFORMAT_TYPE_SCHEMA = 'FileFormat'
-    FILEREFERENCE_TYPE_SCHEMA = 'FileReference'
+    REFERENCEFILE_TYPE_SCHEMA = 'ReferenceFile'
     SOFTWARE_TYPE_SCHEMA = 'Software'
     VARIANT_TYPE_SCHEMA = "variant_type"
 
@@ -378,17 +378,17 @@ class YAMLMetaWorkflow(YAMLTemplate):
                     #        - bar@v3
                     #   need to convert to:
                     #    files: [
-                    #        {file: '<consortia>:FileReference-foo_v1'}
+                    #        {file: '<consortia>:ReferenceFile-foo_v1'}
                     #       ]
                     #   ----- or -------
                     #    files: [
-                    #        {file: '<consortia>:FileReference-foo_v1', dimension: '0'},
-                    #        {file: '<consortia>:FileReference-bar_v3', dimension: '1'}
+                    #        {file: '<consortia>:ReferenceFile-foo_v1', dimension: '0'},
+                    #        {file: '<consortia>:ReferenceFile-bar_v3', dimension: '1'}
                     #       ]
                     if k == self.FILES_SCHEMA:
                         v_ = []
                         for i, name_ in enumerate(v):
-                            v_.append({self.FILE_SCHEMA: f'{self._string_consortia(consortia)}:{self.FILEREFERENCE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
+                            v_.append({self.FILE_SCHEMA: f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
                                        self.DIMENSION_SCHEMA: str(i)})
                         # remove DIMENSION_SCHEMA field if only one file
                         if len(v_) == 1:
@@ -556,10 +556,10 @@ class YAMLSoftware(YAMLTemplate):
 
 
 ###############################################################
-#   YAMLFileReference, YAML FileReference
+#   YAMLReferenceFile, YAML ReferenceFile
 ###############################################################
-class YAMLFileReference(YAMLTemplate):
-    """Class to work with YAML documents representing FileReference objects.
+class YAMLReferenceFile(YAMLTemplate):
+    """Class to work with YAML documents representing ReferenceFile objects.
     """
 
     # schema constants
@@ -570,7 +570,7 @@ class YAMLFileReference(YAMLTemplate):
     def __init__(self, data):
         """Constructor method.
         """
-        super().__init__(data, yaml_file_reference_schema)
+        super().__init__(data, yaml_reference_file_schema)
         # validate data with schema
         self._validate()
         # load attributes
@@ -593,7 +593,7 @@ class YAMLFileReference(YAMLTemplate):
         ref_json[self.CONSORTIA_SCHEMA] = consortia
         ref_json[self.DESCRIPTION_SCHEMA] = self.description
         ref_json[self.FILE_FORMAT_SCHEMA] = self.format
-        ref_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.FILEREFERENCE_TYPE_SCHEMA}-{self.name}_{self.version}']
+        ref_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{self.name}_{self.version}']
         # check for secondary files
         if getattr(self, self.SECONDARY_FILES_SCHEMA, None):
             ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA)
@@ -662,7 +662,7 @@ class YAMLFileFormat(YAMLTemplate):
         frmt_json[self.CONSORTIA_SCHEMA] = consortia
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json[self.STANDARD_FILE_EXTENSION_SCHEMA] = self.extension
-        # frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['FileReference', 'FileProcessed'])
+        # frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['ReferenceFile', 'FileProcessed'])
         # check for secondary formats
         if getattr(self, self.SECONDARY_FORMATS_SCHEMA, None):
             frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA)

@@ -21,7 +21,7 @@ def test_file_format():
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam",
                 "status": "shared"
-                # "valid_item_types": ["FileReference", "FileProcessed"]
+                # "valid_item_types": ["ReferenceFile", "FileProcessed"]
             },
             {
                 "accession": 'GAPFIXRDPDK1',
@@ -32,7 +32,7 @@ def test_file_format():
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam.bai",
                 "status": "shared",
-                # "valid_item_types": ["FileReference", "FileProcessed"],
+                # "valid_item_types": ["ReferenceFile", "FileProcessed"],
                 "uuid": '1936f246-22e1-45dc-bb5c-9cfd55537fe9'
             }
         ]

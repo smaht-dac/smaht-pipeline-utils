@@ -57,7 +57,7 @@ def main(args=None):
 
     pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')
     pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='POST|PATCH FileFormat objects')
-    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='POST|PATCH FileReference objects')
+    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='POST|PATCH ReferenceFile objects')
     pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='POST|PATCH Workflow objects')
     pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='POST|PATCH MetaWorkflow objects')
     pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='Upload Workflow Description files (.cwl, .wdl)')
