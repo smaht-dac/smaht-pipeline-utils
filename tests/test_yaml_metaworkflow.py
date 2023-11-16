@@ -89,7 +89,7 @@ def test_metaworkflow():
                 "GT_vcf": {
                   "description": "output from gatk-GT",
                   "higlass_file": True,
-                  "variant_type": "SNV",
+                  "variant_type": ["SNV"],
                   "data_category": ["Sequencing Reads"],
                   "data_type": ["Unaligned Reads"]
                 }

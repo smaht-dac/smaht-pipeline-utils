@@ -84,7 +84,8 @@ workflows:
         data_type:
           - Unaligned Reads
         higlass_file: True
-        variant_type: SNV
+        variant_type:
+          - SNV
     # gatk-GT config
     config:
       ebs_size: 3x
