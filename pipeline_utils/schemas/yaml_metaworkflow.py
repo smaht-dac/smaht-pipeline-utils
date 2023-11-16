@@ -180,7 +180,7 @@ yaml_metaworkflow_schema = {
                         schema.TYPE: schema.STRING
                     }
                 },
-                'variant_types': {
+                'variant_type': {
                     schema.TYPE: schema.ARRAY,
                     schema.ITEMS: {
                         schema.TYPE: schema.STRING
