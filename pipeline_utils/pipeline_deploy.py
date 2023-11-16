@@ -154,14 +154,15 @@ class PostPatchRepo(object):
                         data_json['status'] = 'uploading'
 
                 # extra_files status
-                extra_files_ = []
-                for ext in data_json['extra_files']:
-                    ext_ = {
-                        'file_format': ext,
-                        'status': data_json.get('status', 'uploaded')
-                    }
-                    extra_files_.append(ext_)
-                data_json['extra_files'] = extra_files_
+                if data_json.get('extra_files'):
+                    extra_files_ = []
+                    for ext in data_json['extra_files']:
+                        ext_ = {
+                            'file_format': ext,
+                            'status': data_json.get('status', 'uploaded')
+                        }
+                        extra_files_.append(ext_)
+                    data_json['extra_files'] = extra_files_
             ###########################################################
 
             if is_patch:
