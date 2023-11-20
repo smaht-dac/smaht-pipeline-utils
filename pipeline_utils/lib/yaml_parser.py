@@ -390,9 +390,6 @@ class YAMLMetaWorkflow(YAMLTemplate):
                         for i, name_ in enumerate(v):
                             v_.append({self.FILE_SCHEMA: f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
                                        self.DIMENSION_SCHEMA: str(i)})
-                        # remove DIMENSION_SCHEMA field if only one file
-                        if len(v_) == 1:
-                            del v_[0][self.DIMENSION_SCHEMA]
                         argument_.setdefault(k, v_)
                     elif k == self.QC_THRESHOLDS_SCHEMA:
                         v_ = {
