@@ -663,7 +663,7 @@ class YAMLFileFormat(YAMLTemplate):
         # check for secondary formats
         if getattr(self, self.SECONDARY_FORMATS_SCHEMA, None):
             frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA)
-        frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'shared')
+        frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'released')
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):

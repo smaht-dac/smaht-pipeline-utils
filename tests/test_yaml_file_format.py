@@ -20,7 +20,7 @@ def test_file_format():
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam",
-                "status": "shared"
+                "status": "obsolete"
                 # "valid_item_types": ["ReferenceFile", "FileProcessed"]
             },
             {
@@ -31,7 +31,7 @@ def test_file_format():
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam.bai",
-                "status": "shared",
+                "status": "released",
                 # "valid_item_types": ["ReferenceFile", "FileProcessed"],
                 "uuid": '1936f246-22e1-45dc-bb5c-9cfd55537fe9'
             }
