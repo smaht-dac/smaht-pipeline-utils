@@ -165,10 +165,16 @@ class PostPatchRepo(object):
                     data_json['extra_files'] = extra_files_
             ###########################################################
 
-            if is_patch:
-                ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
-            else:
-                ff_utils.post_metadata(data_json, type, key=self.ff_key)
+            try:
+                if is_patch:
+                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                else:
+                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
+            except Exception as E:
+                # this will skip and report errors during patching and posting
+                logger.info('> FAILED PORTAL VALIDATION')
+                logger.info(E)
+                pass
 
             logger.info('> Posted %s' % data_json['aliases'][0])
 
