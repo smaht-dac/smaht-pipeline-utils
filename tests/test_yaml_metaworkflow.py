@@ -26,7 +26,7 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"file": "cgap-core:ReferenceFile-reference_genome_hg38", "dimension": "0"}]
+              "files": [{"file": "cgap-core:ReferenceFile-reference_genome_hg38"}]
             },
             {
               "argument_name": "samples",
