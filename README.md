@@ -1,6 +1,6 @@
-# Portal Pipeline Utilities
+# SMaHT Portal Pipeline Utilities
 
-Utilities for deploying pipelines and interfacing with portal infrastructure.
+Utilities for deploying pipelines and interfacing with SMaHT portal infrastructure.
 
 For more information on available commands and how to contribute and deploy pipelines within the infrastructure check the extended [*documentation*](https://smaht-pipeline-utils.readthedocs.io/en/latest/ "smaht-pipeline-utils documentation").
 
