@@ -21,9 +21,14 @@ Template
     format: <format>              # bam, fastq, bwt, ...
     version: <string>
 
+    category:
+      - <string>                  # Reference Genome, ...
+    type:
+      - <string>                  # Reference Sequence, ...
+
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
+    #   https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas
     secondary_files:
       - <format>                  # bam, fastq, bwt, ...
     status: <status>              # uploading, uploaded
@@ -60,7 +65,7 @@ Version of the reference file.
 
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 secondary_files
 ---------------
@@ -78,3 +83,11 @@ Most likely you don't want to set this field and just use the default logic auto
 license
 -------
 License information.
+
+category
+--------
+Categories for the reference file, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
+type
+----
+Types for the reference file, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.

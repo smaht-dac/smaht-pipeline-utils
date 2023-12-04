@@ -20,8 +20,8 @@ from pipeline_utils import pipeline_deploy
 
 # Variables
 PIPELINE_DEPLOY = 'pipeline_deploy'
-CGAP_ALIAS = 'cgap-core'
-DBMI_ALIAS = 'hms-dbmi'
+CONSORTIA_ALIAS = ['smaht']
+SUBMISSION_CENTERS_ALIAS = ['smaht_dac']
 KEYS_ALIAS = '~/.cgap-keys.json'
 MAIN_ALIAS = 'main'
 BUILDER_ALIAS = '<ff-env>-pipeline-builder'
@@ -32,7 +32,7 @@ def main(args=None):
     '''Command line wrapper around available commands.
     '''
     # Adding parser and subparsers
-    parser = argparse.ArgumentParser(prog='pipeline_utils', description='Collection of utilities for deploying pipelines and interfacing with portal infrastructure')
+    parser = argparse.ArgumentParser(prog='smaht_pipeline_utils', description='Collection of utilities for deploying pipelines and interfacing with portal infrastructure')
     subparsers = parser.add_subparsers(dest='func', metavar="<command>")
 
     # Add pipeline_deploy to subparsers
@@ -50,14 +50,14 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--wfl-bucket', required=False, help='Bucket to use for upload of Workflow Description files')
     pipeline_deploy_parser.add_argument('--account', required=False, help='AWS account to use for deployment')
     pipeline_deploy_parser.add_argument('--region', required=False, help='AWS account region to use for deployment')
-    pipeline_deploy_parser.add_argument('--project', required=False, help=f'Project to use for deployment [{CGAP_ALIAS}]',
-                                                          default=CGAP_ALIAS)
-    pipeline_deploy_parser.add_argument('--institution', required=False, help=f'Institution to use for deployment [{DBMI_ALIAS}]',
-                                                              default=DBMI_ALIAS)
+    pipeline_deploy_parser.add_argument('--consortia', required=False, nargs='+', help='List of consortia to use for deployment',
+                                                       default=CONSORTIA_ALIAS)
+    pipeline_deploy_parser.add_argument('--submission-centers', required=False, nargs='+', help='List of centers to use for deployment',
+                                                                default=SUBMISSION_CENTERS_ALIAS)
 
     pipeline_deploy_parser.add_argument('--post-software', action='store_true', help='POST|PATCH Software objects')
     pipeline_deploy_parser.add_argument('--post-file-format', action='store_true', help='POST|PATCH FileFormat objects')
-    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='POST|PATCH FileReference objects')
+    pipeline_deploy_parser.add_argument('--post-file-reference', action='store_true', help='POST|PATCH ReferenceFile objects')
     pipeline_deploy_parser.add_argument('--post-workflow', action='store_true', help='POST|PATCH Workflow objects')
     pipeline_deploy_parser.add_argument('--post-metaworkflow', action='store_true', help='POST|PATCH MetaWorkflow objects')
     pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='Upload Workflow Description files (.cwl, .wdl)')

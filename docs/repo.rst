@@ -56,4 +56,4 @@ Example ``foo_bar`` pipeline:
     ├── PIPELINE
     └── VERSION
 
-Real examples can be found linked as submodules in our pipelines repository for CGAP project here: https://github.com/dbmi-bgm/cgap-pipeline-main.
+Real examples can be found linked as submodules in our pipelines repository for SMaHT project here: https://github.com/smaht-dac/main-pipelines.

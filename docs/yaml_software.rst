@@ -22,10 +22,12 @@ Template
     version: <string>
     commit: <string>
 
+    category:
+      - <string>                      # Quality Control
+
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    title: <string>
+    #   https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas
     source_url: <string>
     description: <string>
     license: <string>                 # MIT, GPLv3, ...
@@ -51,13 +53,13 @@ commit
 ------
 Commit of the software.
 
+category
+--------
+Categories for the software, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
-
-title
------
-Title for the software.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 source_url
 ----------

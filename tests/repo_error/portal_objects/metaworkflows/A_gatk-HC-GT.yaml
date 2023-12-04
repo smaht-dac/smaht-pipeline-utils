@@ -19,6 +19,10 @@ input:
     argument_type: parameter.json
     value: ['SAMPLENAME']
 
+category:
+  - Alignment
+  - Format Conversion
+
 workflows:
   ##########################################
   # gatk-HC
@@ -44,7 +48,10 @@ workflows:
     output:
       HC_vcf:
         description: output from gatk-HC
-        file_type: hc-vcf
+        data_category:
+          - Sequencing Reads
+        data_type:
+          - Unaligned Reads
         linkto_location:
           - SampleProcessing
     # gatk-HC config

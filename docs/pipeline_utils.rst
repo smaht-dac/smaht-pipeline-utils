@@ -1,6 +1,6 @@
-==============
-pipeline_utils
-==============
+====================
+smaht_pipeline_utils
+====================
 
 This is the entry point for a collection of utilities available as commands:
 
@@ -10,7 +10,7 @@ Usage:
 
 .. code-block:: bash
 
-    pipeline_utils [COMMAND] [ARGS]
+    smaht_pipeline_utils [COMMAND] [ARGS]
 
 .. _pipeline_deploy:
 
@@ -24,7 +24,7 @@ Usage:
 
 .. code-block:: bash
 
-    pipeline_utils pipeline_deploy --ff-env FF_ENV --repos REPO [REPO ...] [OPTIONAL ARGS]
+    smaht_pipeline_utils pipeline_deploy --ff-env FF_ENV --repos REPO [REPO ...] [OPTIONAL ARGS]
 
 **Arguments:**
 
@@ -61,10 +61,10 @@ Usage:
     - AWS account to use for deployment
   * - *-\-region*
     - AWS account region to use for deployment
-  * - *-\-project*
-    - Project to use for deployment [cgap-core]
-  * - *-\-institution*
-    - Institution to use for deployment [hms-dbmi]
+  * - *-\-consortia*
+    - List of consortia to use for deployment [smaht]
+  * - *-\-submission-centers*
+    - List of centers to use for deployment [smaht_dac]
   * - *-\-post-software*
     - DEPLOY | UPDATE Software objects (.yaml or .yml)
   * - *-\-post-file-format*

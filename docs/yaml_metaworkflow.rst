@@ -20,10 +20,8 @@ Template
     name: <string>
     description: <string>
 
-    # All the following fields are optional and provided as example,
-    #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    proband_only: <boolean>
+    category:
+      - <string>                            # Alignment, ...
 
     ## General arguments ########################################
     #     Pipeline input, reference files, and general arguments
@@ -42,7 +40,7 @@ Template
 
       # Parameter argument
       <parameter_argument_name>:
-        argument_type: parameter.<type>     # string, integer, float, json, boolean
+        argument_type: parameter.<type>     # string, integer, float, array, object, boolean
         # All the following fields are optional and provided as example,
         #   can be expanded to anything accepted by the schema
         value: <...>
@@ -66,7 +64,7 @@ Template
         #   Allows to force a fixed shards structure ignoring
         #     the input structure, scatter and gather dimensions
         ####################################
-        shards: [[<string>], ..]               # e.g., [['0'], ['1'], ['2']]
+        shards: [[<string>], ..]             # e.g., [['0'], ['1'], ['2']]
 
         ## Lock version ####################
         #   Specific version to use
@@ -86,7 +84,7 @@ Template
 
           # File argument
           <file_argument_name>:
-            argument_type: file.<format>      # bam, fastq, bwt ...
+            argument_type: file.<format>     # bam, fastq, bwt ...
             # Linking fields
             #   These are optional fields
             #   Check https://magma-suite.readthedocs.io/en/latest/meta-workflow.html
@@ -126,15 +124,15 @@ Template
 
           # File output
           <file_output_name>:
-            file_type: <file_type>
+            data_category:
+              - <string>
+            data_type:
+              - <string>
             # All the following fields are optional and provided as example,
             #   can be expanded to anything accepted by the schema
             description: <string>
-            linkto_location:
-              - <location>                    # Sample, SampleProcessing
-            higlass_file: <boolean>
-            variant_type: <variant_type>      # SNV, SV, CNV
-            vcf_to_ingest: <boolean>
+            variant_types:
+              - <string>
             s3_lifecycle_category: <string>   # short_term_access_long_term_archive,
                                               # short_term_access, short_term_archive,
                                               # long_term_access_long_term_archive,
@@ -162,6 +160,10 @@ description
 -----------
 Description of the pipeline.
 
+category
+--------
+Categories for the pipeline, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
 input
 -----
 Description of general input files and parameters for the pipeline. See :ref:`Input Definition <input>`.
@@ -172,11 +174,7 @@ Description of workflows that are steps of the pipeline. See :ref:`Workflows Def
 
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
-
-title
------
-Title of the pipeline.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 
 .. _workflows:
@@ -215,7 +213,7 @@ output
 Description of expected output files for the workflow.
 
 Each output is defined by its name. Additional subfields can be specified.
-See `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+See `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 Each output name needs to match an output name that has been previously defined in the corresponding workflow, see :ref:`Workflow <workflow>`.
 
@@ -239,7 +237,7 @@ Definition of the type of the argument.
 For a **file** argument, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
 ``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
 
-For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
+For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, array, boolean, object].
 
 files
 ^^^^^
@@ -253,24 +251,21 @@ value
 ^^^^^
 This field can be used to assign a specific value to a **parameter** argument.
 
-*Note*: As of now, the value needs to be always encoded as ``<string>``.
-We are working to improve this and enable usage of real types.
-
 Example
 
 .. code-block:: yaml
 
   a_float:
   argument_type: parameter.float
-  value: "0.8"
+  value: 0.8
 
   an_integer:
   argument_type: parameter.integer
-  value: "1"
+  value: 1
 
   a_string_array:
-  argument_type: parameter.json
-  value: "[\"DEL\", \"DUP\"]"
+  argument_type: parameter.array
+  value: ["DEL", "DUP"]
 
 Linking Fields
 ^^^^^^^^^^^^^^

@@ -34,14 +34,14 @@ yaml_workflow_schema = {
                 'main': {
                     schema.DESCRIPTION: 'Main description file',
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '.+\.cwl|.+\.wdl'
+                    schema.PATTERN: '.+\\.cwl|.+\\.wdl'
                 },
                 'child': {
                     schema.DESCRIPTION: 'Supplementary description files used by main',
                     schema.TYPE: schema.ARRAY,
                     schema.ITEMS: {
                         schema.TYPE: schema.STRING,
-                        schema.PATTERN: '.+\.cwl|.+\.wdl'
+                        schema.PATTERN: '.+\\.cwl|.+\\.wdl'
                     }
                 }
             },
@@ -52,7 +52,14 @@ yaml_workflow_schema = {
             schema.TYPE: schema.ARRAY,
             schema.ITEMS: {
                 schema.TYPE: schema.STRING,
-                schema.PATTERN: '.+\@.+' # check for <name>@<version>
+                schema.PATTERN: '.+\\@.+' # check for <name>@<version>
+            }
+        },
+        'category': {
+            schema.DESCRIPTION: 'Categories of the Workflow',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
             }
         },
 
@@ -74,7 +81,7 @@ yaml_workflow_schema = {
             }
         }
     },
-    schema.REQUIRED: ['name', 'description', 'runner', 'input', 'output'],
+    schema.REQUIRED: ['name', 'description', 'runner', 'category', 'input', 'output'],
 
     ## Sub-schemas ####################
     schema.DEFS: {
@@ -85,7 +92,7 @@ yaml_workflow_schema = {
             schema.PROPERTIES: {
                 'argument_type': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^file\..+|^parameter\..+|^qc\..+|^report\..+'
+                    schema.PATTERN: '^file\\..+|^parameter\\..+|^qc$|^report$'
                 },
                 'secondary_files': {
                     schema.TYPE: schema.ARRAY,
@@ -101,7 +108,7 @@ yaml_workflow_schema = {
                 schema.TYPE: schema.OBJECT,
                 schema.PROPERTIES: {
                     'argument_type': {
-                        schema.PATTERN: '^qc\..+'
+                        schema.PATTERN: '^qc\\..+'
                     }
                 },
             },
@@ -113,23 +120,8 @@ yaml_workflow_schema = {
                     'zipped': {
                         schema.TYPE: schema.BOOLEAN
                     },
-                    'html': {
-                        schema.TYPE: schema.BOOLEAN
-                    },
                     'json': {
                         schema.TYPE: schema.BOOLEAN
-                    },
-                    'table': {
-                        schema.TYPE: schema.BOOLEAN
-                    },
-                    'html_in_zipped': {
-                        schema.TYPE: schema.STRING
-                    },
-                    'tables_in_zipped': {
-                        schema.TYPE: schema.ARRAY,
-                        schema.ITEMS: {
-                            schema.TYPE: schema.STRING
-                        }
                     }
                 },
                 schema.REQUIRED: ['argument_to_be_attached_to']

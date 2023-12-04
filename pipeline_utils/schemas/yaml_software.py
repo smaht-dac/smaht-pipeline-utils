@@ -20,7 +20,7 @@ yaml_software_schema = {
             schema.DESCRIPTION: 'Source url of the Software',
             schema.TYPE: schema.STRING,
             schema.FORMAT: 'uri',
-            schema.PATTERN: '^https?\:.+'
+            schema.PATTERN: '^https?\\:.+'
         },
         'description': {
             schema.DESCRIPTION: 'Description of the Software',
@@ -37,9 +37,16 @@ yaml_software_schema = {
         'license': {
             schema.DESCRIPTION: 'License of the Software',
             schema.TYPE: schema.STRING
+        },
+        'category': {
+            schema.DESCRIPTION: 'Categories of the Software',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING
+            }
         }
     },
-    schema.REQUIRED: ['name'],
+    schema.REQUIRED: ['name', 'category'],
     schema.ONEOF: [
         {schema.REQUIRED: ['version']},
         {schema.REQUIRED: ['commit']}

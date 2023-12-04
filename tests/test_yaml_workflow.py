@@ -15,8 +15,9 @@ def test_workflow():
     res = [
             {
                 "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
-                "app_name": "gatk-HaplotypeCaller",
-                "app_version": "v1.0.0",
+                "name": "gatk-HaplotypeCaller",
+                "version": "v1.0.0",
+                "category": ["Annotation"],
                 "arguments": [
                     {
                       "argument_format": "bam",
@@ -37,37 +38,35 @@ def test_workflow():
                     },
                     {
                       "argument_to_be_attached_to": "output_vcf",
-                      "argument_type": "Output QC file",
-                      "qc_html": False,
+                      "argument_type": "Generic QC file",
                       "qc_json": True,
-                      "qc_table": False,
-                      "qc_type": "quality_metric_vcfcheck",
                       "qc_zipped": False,
-                      "workflow_argument_name": "vcfcheck"
+                      "workflow_argument_name": "vcfcheck",
+                      "argument_format": "json"
                     }
                 ],
                 "description": "Run HaplotypeCaller from gatk package",
-                "institution": "/institutions/hms-dbmi/",
-                "name": "gatk-HaplotypeCaller_v1.0.0",
-                "project": "/projects/cgap-core/",
+                "submission_centers": ["hms-dbmi"],
+                "consortia": ["cgap-core"],
                 "software": [
                     "cgap-core:Software-gatk_4.2.1",
                     "cgap-core:Software-vcf-tools_5A63Aa1"
                 ],
                 "title": "HaplotypeCaller plus integity-check [v1.0.0]",
-                "wdl_child_filenames": [
+                "child_file_names": [
                     "gatk-HaplotypeCaller.wdl",
                     "integrity-check.wdl"
                 ],
-                "wdl_directory_url": "s3://BUCKETCWL/test_pipeline/v1.0.0",
-                "wdl_main_filename": "workflow_gatk-HaplotypeCaller-check.wdl",
-                "workflow_language": "wdl"
+                "directory_url": "s3://BUCKETCWL/test_pipeline/v1.0.0",
+                "main_file_name": "workflow_gatk-HaplotypeCaller-check.wdl",
+                "language": "WDL"
             },
             {
                 "accession": "GAPFIXRDPDK1",
+                "category": ["Feature Calling"],
                 "aliases": ["cgap-core:Workflow-gatk-HaplotypeCaller_v1.0.0"],
-                "app_name": "gatk-HaplotypeCaller",
-                "app_version": "v1.0.0",
+                "name": "gatk-HaplotypeCaller",
+                "version": "v1.0.0",
                 "arguments": [
                     {
                       "argument_format": "bam",
@@ -77,27 +76,24 @@ def test_workflow():
                     {
                       "argument_format": "vcf",
                       "argument_type": "Output processed file",
-                      "secondary_file_formats": [],
                       "workflow_argument_name": "output_vcf"
                     }
                 ],
                 "description": "Run HaplotypeCaller from gatk package",
-                "institution": "/institutions/hms-dbmi/",
-                "name": "gatk-HaplotypeCaller_v1.0.0",
-                "project": "/projects/cgap-core/",
-                "software": [],
+                "submission_centers": ["hms-dbmi"],
+                "consortia": ["cgap-core"],
                 "title": "gatk-HaplotypeCaller [v1.0.0]",
-                "cwl_child_filenames": [],
-                "cwl_directory_url_v1": "s3://BUCKETCWL/test_pipeline/v1.0.0",
-                "cwl_main_filename": "gatk-HaplotypeCaller-check.cwl",
-                "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9"
+                "directory_url": "s3://BUCKETCWL/test_pipeline/v1.0.0",
+                "main_file_name": "gatk-HaplotypeCaller-check.cwl",
+                "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9",
+                "language": "CWL"
             }
         ]
 
     for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/workflows/A_gatk-HC.yaml'):
         d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                            institution='hms-dbmi',
-                            project='cgap-core',
+                            submission_centers=["hms-dbmi"],
+                            consortia=["cgap-core"],
                             version='v1.0.0',
                             wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
                         )
@@ -106,8 +102,8 @@ def test_workflow():
 
     for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/workflows/B_minimal-gatk-HC.yaml'):
         d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                            institution='hms-dbmi',
-                            project='cgap-core',
+                            submission_centers=["hms-dbmi"],
+                            consortia=["cgap-core"],
                             version='v1.0.0',
                             wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
                         )
@@ -123,8 +119,8 @@ def test_workflow_error():
         for d in yaml_parser.load_yaml(fn):
             try:
                 d_ = yaml_parser.YAMLWorkflow(d).to_json(
-                                    institution='hms-dbmi',
-                                    project='cgap-core',
+                                    submission_centers=["hms-dbmi"],
+                                    consortia=["cgap-core"],
                                     version='v1.0.0',
                                     wflbucket_url='s3://BUCKETCWL/test_pipeline/v1.0.0'
                                 )

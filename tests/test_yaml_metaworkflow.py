@@ -16,6 +16,7 @@ def test_metaworkflow():
         {
           "aliases": ["cgap-core:MetaWorkflow-gatk-HC-GT-pipeline_v1.0.0"],
           "description": "Pipeline to run gatk-HC and gatk-GT to call and genotype variants",
+          "category": ["Alignment", "Format Conversion"],
           "input": [
             {
               "argument_name": "input_vcf",
@@ -25,7 +26,7 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"file": "cgap-core:FileReference-reference_genome_hg38"}]
+              "files": [{"file": "cgap-core:ReferenceFile-reference_genome_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -34,9 +35,9 @@ def test_metaworkflow():
               "value_type": "json"
             }
           ],
-          "institution": "/institutions/hms-dbmi/",
+          "submission_centers": ["hms-dbmi", "smaht-dbmi"],
           "name": "gatk-HC-GT-pipeline",
-          "project": "/projects/cgap-core/",
+          "consortia": ["cgap-core"],
           "title": "gatk-HC and gatk-GT pipeline [v1.0.0]",
           "version": "v1.0.0",
           "workflows": [
@@ -48,10 +49,11 @@ def test_metaworkflow():
               "custom_pf_fields": {
                 "HC_vcf": {
                   "description": "output from gatk-HC",
-                  "file_type": "hc-vcf",
                   "linkto_location": [
                     "SampleProcessing"
-                  ]
+                  ],
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -86,9 +88,10 @@ def test_metaworkflow():
               "custom_pf_fields": {
                 "GT_vcf": {
                   "description": "output from gatk-GT",
-                  "file_type": "GT-vcf",
                   "higlass_file": True,
-                  "variant_type": "SNV"
+                  "variant_type": ["SNV"],
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -115,7 +118,8 @@ def test_metaworkflow():
         },
         {
           "accession": "GAPFIXRDPDK1",
-          "aliases": ["cgap-core:MetaWorkflow-gatk-HC-pipeline_v1.0.0"],
+          "category": ["Variant Calling"],
+          "aliases": ["cgap-core_cgap-test:MetaWorkflow-gatk-HC-pipeline_v1.0.0"],
           "description": "Pipeline to run gatk-HC to call variants",
           "input": [
             {
@@ -125,8 +129,8 @@ def test_metaworkflow():
             {
               "argument_name": "reference",
               "argument_type": "file",
-              "files": [{"dimension": "0", "file": "cgap-core:FileReference-reference_genome_hg38"},
-                        {"dimension": "1", "file": "cgap-core:FileReference-reference_bam_hg38"}]
+              "files": [{"dimension": "0", "file": "cgap-core_cgap-test:ReferenceFile-reference_genome_hg38"},
+                        {"dimension": "1", "file": "cgap-core_cgap-test:ReferenceFile-reference_bam_hg38"}]
             },
             {
               "argument_name": "samples",
@@ -134,9 +138,9 @@ def test_metaworkflow():
               "value_type": "json"
             }
           ],
-          "institution": "/institutions/hms-dbmi/",
+          "submission_centers": ["hms-dbmi"],
           "name": "gatk-HC-pipeline",
-          "project": "/projects/cgap-core/",
+          "consortia": ["cgap-test", "cgap-core"],
           "title": "gatk-HC-pipeline [v1.0.0]",
           "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9",
           "version": "v1.0.0",
@@ -148,7 +152,9 @@ def test_metaworkflow():
               },
               "custom_pf_fields": {
                 "HC_vcf": {
-                  "file_type": "hc-vcf"
+                  "description": "hc-vcf",
+                  "data_category": ["Sequencing Reads"],
+                  "data_type": ["Unaligned Reads"]
                 }
               },
               "input": [
@@ -168,7 +174,7 @@ def test_metaworkflow():
                 }
               ],
               "name": "gatk-HC",
-              "workflow": "cgap-core:Workflow-gatk-HC_v1.0.0"
+              "workflow": "cgap-core_cgap-test:Workflow-gatk-HC_v1.0.0"
             }
           ]
         }
@@ -176,8 +182,8 @@ def test_metaworkflow():
 
     for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/metaworkflows/A_gatk-HC-GT.yaml'):
         d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
-                            institution='hms-dbmi',
-                            project='cgap-core',
+                            submission_centers=["hms-dbmi", "smaht-dbmi"],
+                            consortia=["cgap-core"],
                             version='v1.0.0'
                         )
         # check
@@ -185,13 +191,133 @@ def test_metaworkflow():
 
     for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/metaworkflows/B_minimal-gatk-HC-GT.yaml'):
         d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
-                            institution='hms-dbmi',
-                            project='cgap-core',
+                            submission_centers=["hms-dbmi"],
+                            consortia=["cgap-test", "cgap-core"],
                             version='v1.0.0'
                         )
         # check
         assert d_ == res[1]
 
+def test_qc_ruleset():
+    """
+    """
+    res = {
+      "accession": "GAPFIXRDPDK1",
+      "category": ["Variant Calling"],
+      "aliases": ["cgap-core_cgap-test:MetaWorkflow-gatk-HC-pipeline_v1.0.0"],
+      "description": "Pipeline to run gatk-HC to call variants",
+      "input": [
+        {
+          "argument_name": "input_vcf",
+          "argument_type": "file"
+        },
+        {
+          "argument_name": "reference",
+          "argument_type": "file",
+          "files": [{"dimension": "0", "file": "cgap-core_cgap-test:ReferenceFile-reference_genome_hg38"},
+                    {"dimension": "1", "file": "cgap-core_cgap-test:ReferenceFile-reference_bam_hg38"}]
+        },
+        {
+          "argument_name": "samples",
+          "argument_type": "parameter",
+          "value_type": "json"
+        },
+        {
+          "argument_name": "qc_ruleset_name_1",
+          "argument_type": "parameter",
+          "value_type": "qc_ruleset",
+          "value": {
+                  "qc_thresholds": [
+                      {
+                          "id": "c1",
+                          "metric": "coverage",
+                          "operator": ">=",
+                          "pass_target": 100.0,
+                          "warn_target": 80.0,
+                          "use_as_qc_flag": True
+                      },
+                      {
+                          "id": "c2",
+                          "metric": "coverage",
+                          "operator": "<=",
+                          "pass_target": 200.0,
+                          "warn_target": 180.0,
+                      },
+                      {
+                          "id": "c3",
+                          "metric": "coverage",
+                          "operator": ">",
+                          "pass_target": 80.0,
+                          "warn_target": 3.3
+                      },
+                      {
+                          "id": "rl",
+                          "metric": "read_length",
+                          "operator": "==",
+                          "pass_target": "PASS",
+                          "warn_target": "NOT PASS",
+                          "use_as_qc_flag": True
+                      }
+                  ],
+                  "overall_quality_status_rule": "( {c1} and {c2} ) or not ( {c3} and {rl} )"
+              }
+        }
+      ],
+      "submission_centers": ["hms-dbmi"],
+      "name": "gatk-HC-pipeline",
+      "consortia": ["cgap-test", "cgap-core"],
+      "title": "gatk-HC-pipeline [v1.0.0]",
+      "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe9",
+      "version": "v1.0.0",
+      "workflows": [
+        {
+          "config": {
+            "ebs_size": "2x",
+            "ec2_type": "m.5xlarge"
+          },
+          "custom_pf_fields": {
+            "HC_vcf": {
+              "description": "hc-vcf",
+              "data_category": ["Sequencing Reads"],
+              "data_type": ["Unaligned Reads"]
+            }
+          },
+          "input": [
+            {
+              "argument_name": "vcf",
+              "argument_type": "file",
+              "source_argument_name": "input_vcf"
+            },
+            {
+              "argument_name": "reference",
+              "argument_type": "file"
+            },
+            {
+              "argument_name": "samples",
+              "argument_type": "parameter",
+              "value_type": "json"
+            },
+            {
+              'argument_name': 'qc_ruleset',
+              'argument_type': 'parameter',
+              'value_type': 'qc_ruleset',
+              'source_argument_name': 'qc_ruleset_name_1'
+            }
+          ],
+          "name": "gatk-HC",
+          "workflow": "cgap-core_cgap-test:Workflow-gatk-HC_v1.0.0"
+        }
+      ]
+    }
+
+    for d in yaml_parser.load_yaml('tests/repo_correct/portal_objects/metaworkflows/QC_test.yaml'):
+        d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
+                            submission_centers=["hms-dbmi"],
+                            consortia=["cgap-test", "cgap-core"],
+                            version='v1.0.0'
+                        )
+        # check
+        assert d_ == res
 
 def test_metaworkflow_error():
     """
@@ -201,8 +327,8 @@ def test_metaworkflow_error():
         for d in yaml_parser.load_yaml(fn):
             try:
                 d_ = yaml_parser.YAMLMetaWorkflow(d).to_json(
-                                    institution='hms-dbmi',
-                                    project='cgap-core',
+                                    submission_centers=["hms-dbmi"],
+                                    consortia=["cgap-core"],
                                     version='v1.0.0'
                                 )
             except yaml_parser.ValidationError as e:
