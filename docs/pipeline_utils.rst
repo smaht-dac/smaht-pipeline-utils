@@ -61,10 +61,10 @@ Usage:
     - AWS account to use for deployment
   * - *-\-region*
     - AWS account region to use for deployment
-  * - *-\-project*
-    - Project to use for deployment [cgap-core]
-  * - *-\-institution*
-    - Institution to use for deployment [hms-dbmi]
+  * - *-\-consortia*
+    - List of consortia to use for deployment [smaht]
+  * - *-\-submission-centers*
+    - List of centers to use for deployment [smaht_dac]
   * - *-\-post-software*
     - DEPLOY | UPDATE Software objects (.yaml or .yml)
   * - *-\-post-file-format*

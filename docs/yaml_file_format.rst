@@ -22,10 +22,9 @@ Template
 
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
+    #   https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas
     secondary_formats:
       - <format>              # bam, fastq, bwt, ...
-    status: <status>          # shared
 
 
 Fields Definition
@@ -49,7 +48,7 @@ Description of the file format.
 
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 secondary_formats
 -----------------

@@ -26,11 +26,12 @@ Template
       child:
         - <file>                          # .cwl or .wdl file
 
+    category:
+      - <category>                        # Annotation
+
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    title: <string>
-
+    #   https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas
     software:
       - <software>@<version|commit>
 
@@ -99,6 +100,10 @@ Several subfields need to be specified:
 
 At the moment we support two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL).
 
+category
+--------
+Categories for the workflow, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
 input
 -----
 Description of input files and parameters for the workflow. See :ref:`Input Definition <input_a>`.
@@ -109,11 +114,7 @@ Description of expected outputs for the workflow. See :ref:`Output Definition <o
 
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
-
-title
------
-Title of the workflow.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 software
 --------

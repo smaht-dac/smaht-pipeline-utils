@@ -142,7 +142,7 @@ Example of a key-pair entry:
     }
   }
 
-``<namespace>`` is the namespace for the environment and can be found in the portal health page (e.g., cgap-wolf).
+``<namespace>`` is the namespace for the environment and can be found in the portal health page (e.g., smaht-wolf).
 
 .. _account_vars:
 
@@ -154,21 +154,21 @@ Finally we need to setup the information to identify the target environment to u
 .. code-block:: bash
 
   # Set the namespace of the target environment
-  #   e.g., cgap-wolf
+  #   e.g., smaht-wolf
   export ENV_NAME=
 
   # Set the bucket used to store the worklow description files
-  #   e.g., cgap-biotest-main-application-tibanna-cwls
+  #   e.g., smaht-wolf-application-tibanna-cwls
   export WFL_BUCKET=
 
   # Set the path to the keypair file with the portal credential
   export KEYDICTS_JSON=~/.cgap-keys.json
 
-  # Set up project and institution
-  #   Project and institution need to correspond to metadata present on the portal
-  #   e.g., cgap-core and hms-dbmi
-  export PROJECT=
-  export INSTITUTION=
+  # Set up consortia and submission centers
+  #   consortia and submission_centers need to correspond to metadata present on the portal
+  #   e.g., ['smaht'] and ['smaht_dac']
+  export CONSORTIA=
+  export SUBMISSION_CENTERS=
 
   # If running sentieon code,
   #   specify the address for the server that validate the software license
@@ -194,8 +194,8 @@ by the ``--repos`` argument.
     --wfl-bucket ${WFL_BUCKET} \
     --account ${AWS_ACCOUNT_NUMBER} \
     --region ${TIBANNA_AWS_REGION} \
-    --project ${PROJECT} \
-    --institution ${INSTITUTION} \
+    --consortia ${CONSORTIA} \
+    --submission-centers ${SUBMISSION_CENTERS} \
     --sentieon-server ${SENTIEON_LICENSE} \
     --post-software \
     --post-file-format \

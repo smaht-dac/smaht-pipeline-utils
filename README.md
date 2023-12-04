@@ -21,6 +21,6 @@ To install from source:
     make update
     make build
 
-To check that the software is correctly installed, try to run `pipeline_utils`. If installed from source, this command may fail with a bash “command not found” error, try `poetry run pipeline_utils` instead.
+To check that the software is correctly installed, try to run `smaht_pipeline_utils`. If installed from source, this command may fail with a bash “command not found” error, try `poetry run smaht_pipeline_utils` instead.
 
 See `make info` for details on make targets.
