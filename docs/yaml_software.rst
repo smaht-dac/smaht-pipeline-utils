@@ -23,7 +23,7 @@ Template
     commit: <string>
 
     category:
-      - <category>                    # Quality Control
+      - <string>                      # Quality Control
 
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema

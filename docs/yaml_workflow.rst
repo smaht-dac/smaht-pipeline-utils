@@ -27,7 +27,7 @@ Template
         - <file>                          # .cwl or .wdl file
 
     category:
-      - <category>                        # Annotation
+      - <string>                          # Annotation
 
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema

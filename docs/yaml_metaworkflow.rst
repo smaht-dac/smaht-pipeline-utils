@@ -21,7 +21,7 @@ Template
     description: <string>
 
     category:
-      - <category>                          # Alignment, ...
+      - <string>                            # Alignment, ...
 
     ## General arguments ########################################
     #     Pipeline input, reference files, and general arguments
