@@ -21,7 +21,7 @@ from jsonschema import Draft202012Validator
 from pipeline_utils.schemas.yaml_workflow import yaml_workflow_schema
 from pipeline_utils.schemas.yaml_metaworkflow import yaml_metaworkflow_schema
 from pipeline_utils.schemas.yaml_software import yaml_software_schema
-from pipeline_utils.schemas.yaml_file_reference import yaml_file_reference_schema
+from pipeline_utils.schemas.yaml_reference_file import yaml_reference_file_schema
 from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
 
 
@@ -91,9 +91,10 @@ class YAMLTemplate(object):
     NAME_SCHEMA = 'name'
     TITLE_SCHEMA = 'title'
     DESCRIPTION_SCHEMA = 'description'
+    CATEGORY_SCHEMA = 'category'
     ALIASES_SCHEMA = 'aliases'
-    PROJECT_SCHEMA = 'project'
-    INSTITUTION_SCHEMA = 'institution'
+    CONSORTIA_SCHEMA = 'consortia'
+    SUBMISSION_CENTERS_SCHEMA = 'submission_centers'
     VERSION_SCHEMA = 'version'
     ACCESSION_SCHEMA = 'accession'
     UUID_SCHEMA = 'uuid'
@@ -101,6 +102,7 @@ class YAMLTemplate(object):
     ARGUMENT_FORMAT_SCHEMA = 'argument_format'
     ARGUMENT_NAME_SCHEMA = 'argument_name'
     VALUE_TYPE_SCHEMA = 'value_type'
+    VALUE_SCHEMA = 'value'
     WORKFLOW_ARGUMENT_NAME_SCHEMA = 'workflow_argument_name'
     INPUT_SCHEMA = 'input'
     STATUS_SCHEMA = 'status'
@@ -108,8 +110,6 @@ class YAMLTemplate(object):
     SECONDARY_FORMATS_SCHEMA = 'secondary_formats'
     FILE_FORMAT_SCHEMA = 'file_format'
     SECONDARY_FILE_FORMATS_SCHEMA = 'secondary_file_formats'
-    INSTITUTIONS_SCHEMA = 'institutions'
-    PROJECTS_SCHEMA = 'projects'
     FILE_SCHEMA = 'file'
     FILES_SCHEMA = 'files'
     PARAMETER_SCHEMA = 'parameter'
@@ -117,8 +117,9 @@ class YAMLTemplate(object):
     WORKFLOW_TYPE_SCHEMA = 'Workflow'
     METAWORKFLOW_TYPE_SCHEMA = 'MetaWorkflow'
     FILEFORMAT_TYPE_SCHEMA = 'FileFormat'
-    FILEREFERENCE_TYPE_SCHEMA = 'FileReference'
+    REFERENCEFILE_TYPE_SCHEMA = 'ReferenceFile'
     SOFTWARE_TYPE_SCHEMA = 'Software'
+    VARIANT_TYPE_SCHEMA = "variant_type"
 
     def __init__(self, data, schema):
         """Constructor method.
@@ -156,16 +157,10 @@ class YAMLTemplate(object):
         else:
             return f'{name.replace("_", " ")} [{version}]'
 
-    def _link_institution(self, institution):
-        """Helper to create an "institution" field.
+    def _string_consortia(self, consortia):
+        """Helper to create a string from "consortia" field.
         """
-        return f'/{self.INSTITUTIONS_SCHEMA}/{institution}/'
-
-    def _link_project(self, project):
-        """Helper to create a "project" field.
-        """
-        return f'/{self.PROJECTS_SCHEMA}/{project}/'
-
+        return '_'.join(sorted(consortia))
 
 ###############################################################
 #   YAMLWorkflow, YAML Workflow
@@ -177,7 +172,6 @@ class YAMLWorkflow(YAMLTemplate):
     # schema constants
     INPUT_FILE_SCHEMA = 'Input file'
     OUTPUT_PROCESSED_FILE_SCHEMA = 'Output processed file'
-    OUTPUT_QC_FILE_SCHEMA = 'Output QC file'
     GENERIC_QC_FILE_SCHEMA = 'Generic QC file'
     OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
     QC_SCHEMA = 'qc'
@@ -185,24 +179,11 @@ class YAMLWorkflow(YAMLTemplate):
     REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
     ZIPPED_SCHEMA = 'zipped'
-    HTML_SCHEMA = 'html'
     JSON_SCHEMA = 'json'
-    TABLE_SCHEMA = 'table'
-    APP_NAME_SCHEMA = 'app_name'
-    APP_VERSION_SCHEMA = 'app_version'
     SOFTWARE_SCHEMA = 'software'
     ARGUMENTS_SCHEMA = 'arguments'
-    QC_TYPE_SCHEMA = 'qc_type'
     QC_ZIPPED_SCHEMA = 'qc_zipped'
-    QC_HTML_SCHEMA = 'qc_html'
     QC_JSON_SCHEMA = 'qc_json'
-    QC_TABLE_SCHEMA = 'qc_table'
-    QC_ZIPPED_HTML_SCHEMA = 'qc_zipped_html'
-    QC_ZIPPED_TABLES_SCHEMA = 'qc_zipped_tables'
-    HTML_IN_ZIPPED_SCHEMA = 'html_in_zipped'
-    TABLES_IN_ZIPPED_SCHEMA = 'tables_in_zipped'
-    QC_ACL = 'qc_acl'
-    QC_UNZIP_FROM_EC2 = 'qc_unzip_from_ec2'
 
     def __init__(self, data):
         """Constructor method.
@@ -212,7 +193,7 @@ class YAMLWorkflow(YAMLTemplate):
         self._validate()
         # load attributes
         for key, val in data.items():
-            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+            if key in [self.DESCRIPTION_SCHEMA]:
                 val = self._clean_newline(val)
             setattr(self, key, val)
 
@@ -245,51 +226,42 @@ class YAMLWorkflow(YAMLTemplate):
         """
         arguments = []
         for name, values in self.output.items():
-            type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
+            # check if it is a file or qc or report argument
+            #   if it is file it has a type and a format
+            #       argument_type: file.<format>
+            #   if it is qc or report only has type
+            #       argument_type: qc | report
+            try:
+                type, format = values[self.ARGUMENT_TYPE_SCHEMA].split('.')
+            except ValueError:
+                type = values[self.ARGUMENT_TYPE_SCHEMA]
+            # create right argument schema according to type
             if type == self.FILE_SCHEMA:
                 argument_type = self.OUTPUT_PROCESSED_FILE_SCHEMA
                 argument_ = {
                     self.ARGUMENT_FORMAT_SCHEMA: format,
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
-                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
-                    self.SECONDARY_FILE_FORMATS_SCHEMA: values.get(self.SECONDARY_FILES_SCHEMA, [])
+                    self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
                 }
+                # check for secondary files
+                if values.get(self.SECONDARY_FILES_SCHEMA):
+                    argument_[self.SECONDARY_FILE_FORMATS_SCHEMA] = values.get(self.SECONDARY_FILES_SCHEMA)
             elif type == self.QC_SCHEMA:
-                # handle generic vs specific QC schema
-                if format == self.QUALITY_METRIC_GENERIC_SCHEMA:
-                    argument_type = self.GENERIC_QC_FILE_SCHEMA
-                else:
-                    argument_type = self.OUTPUT_QC_FILE_SCHEMA
+                argument_type = self.GENERIC_QC_FILE_SCHEMA
                 # create base QC argument
                 argument_ = {
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
                     self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name,
                     self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA: values[self.ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA],
                     self.QC_ZIPPED_SCHEMA: values.get(self.ZIPPED_SCHEMA, False),
-                    self.QC_HTML_SCHEMA: values.get(self.HTML_SCHEMA, False),
                     self.QC_JSON_SCHEMA: values.get(self.JSON_SCHEMA, False),
-                    self.QC_TABLE_SCHEMA: values.get(self.TABLE_SCHEMA, False)
                 }
-                # handle edge case for missing or generic QC type
-                if format not in ['none', self.QUALITY_METRIC_GENERIC_SCHEMA]:
-                    argument_[self.QC_TYPE_SCHEMA] = format
-                # create argument format for generic QCs (JSON or ZIP)
-                elif format == self.QUALITY_METRIC_GENERIC_SCHEMA:
-                    if argument_[self.QC_JSON_SCHEMA]:
-                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'json'
-                    else:
-                        argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'zip'
-                # quality controls, TODO
-                #   these fields are bad, need to rework how QCs work
-                if values.get(self.HTML_IN_ZIPPED_SCHEMA):
-                    argument_[self.QC_ZIPPED_HTML_SCHEMA] = values[self.HTML_IN_ZIPPED_SCHEMA]
-                if values.get(self.TABLES_IN_ZIPPED_SCHEMA):
-                    argument_[self.QC_ZIPPED_TABLES_SCHEMA] = values[self.TABLES_IN_ZIPPED_SCHEMA]
-                if values.get(self.QC_ACL):
-                    argument_[self.QC_ACL] = values[self.QC_ACL]
-                if values.get(self.QC_UNZIP_FROM_EC2):
-                    argument_[self.QC_UNZIP_FROM_EC2] = values[self.QC_UNZIP_FROM_EC2]
-            elif type == self.REPORT_SCHEMA and format == self.FILE_SCHEMA:
+                # check if it is json or zip
+                if argument_[self.QC_JSON_SCHEMA]:
+                    argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'json'
+                else:
+                    argument_[self.ARGUMENT_FORMAT_SCHEMA] = 'zip'
+            elif type == self.REPORT_SCHEMA:
                 argument_type = self.OUTPUT_REPORT_FILE_SCHEMA
                 argument_ = {
                     self.ARGUMENT_TYPE_SCHEMA: argument_type,
@@ -302,8 +274,8 @@ class YAMLWorkflow(YAMLTemplate):
     def to_json(
                self,
                version,
-               institution, # alias
-               project, # alias
+               submission_centers, # alias list
+               consortia, # alias list
                wflbucket_url
                ):
         """Function to build the corresponding object in JSON format.
@@ -311,29 +283,26 @@ class YAMLWorkflow(YAMLTemplate):
         wfl_json = {}
 
         # common metadata
-        wfl_json[self.APP_NAME_SCHEMA] = self.name # name
-        wfl_json[self.APP_VERSION_SCHEMA] = version # version
-        wfl_json[self.NAME_SCHEMA] = f'{self.name}_{version}'
+        wfl_json[self.VERSION_SCHEMA] = version # version
+        wfl_json[self.NAME_SCHEMA] = self.name
         wfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        wfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{wfl_json[self.NAME_SCHEMA]}']
-        wfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
-        wfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
+        wfl_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.WORKFLOW_TYPE_SCHEMA}-{self.name}_{version}']
+        wfl_json[self.CATEGORY_SCHEMA] = self.category
+        wfl_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        wfl_json[self.CONSORTIA_SCHEMA] = consortia
         wfl_json[self.DESCRIPTION_SCHEMA] = self.description
-        wfl_json[self.SOFTWARE_SCHEMA] = [f'{project}:{self.SOFTWARE_TYPE_SCHEMA}-{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA, [])]
+        # check if software
+        if getattr(self, self.SOFTWARE_SCHEMA, None):
+            wfl_json[self.SOFTWARE_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.SOFTWARE_TYPE_SCHEMA}-{s.replace("@", "_")}' for s in getattr(self, self.SOFTWARE_SCHEMA)]
         wfl_json[self.ARGUMENTS_SCHEMA] = self._arguments_input() + self._arguments_output()
 
-        # workflow language (TODO)
-        #   we need to improve tibanna to have a unique general key for this
-        language = self.runner.get('language')
-        if not language or language.lower() == 'cwl':
-            wfl_json['cwl_directory_url_v1'] = wflbucket_url
-            wfl_json['cwl_main_filename'] = self.runner['main']
-            wfl_json['cwl_child_filenames'] = self.runner.get('child', [])
-        elif language.lower() == 'wdl':
-            wfl_json['wdl_directory_url'] = wflbucket_url
-            wfl_json['wdl_main_filename'] = self.runner['main']
-            wfl_json['wdl_child_filenames'] = self.runner.get('child', [])
-            wfl_json['workflow_language'] = 'wdl'
+        # workflow language and description files
+        wfl_json['language'] = self.runner['language'].upper()
+        wfl_json['directory_url'] = wflbucket_url
+        wfl_json['main_file_name'] = self.runner['main']
+        # check if child description files
+        if self.runner.get('child'):
+            wfl_json['child_file_names'] = self.runner.get('child')
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -360,7 +329,17 @@ class YAMLMetaWorkflow(YAMLTemplate):
     CONFIG_SCHEMA = 'config'
     DEPENDENCIES_SCHEMA = 'dependencies'
     SHARDS_SCHEMA = 'shards'
-    PROBAND_ONLY_SCHEMA = 'proband_only'
+    QC_THRESHOLDS_SCHEMA = 'qc_thresholds'
+    OVERALL_QUALITY_STATUS_RULE_SCHEMA = 'overall_quality_status_rule'
+    ID_SCHEMA = 'id'
+    METRIC_SCHEMA = 'metric'
+    OPERATOR_SCHEMA = 'operator'
+    PASS_TARGET_SCHEMA = 'pass_target'
+    WARN_TARGET_SCHEMA = 'warn_target'
+    USE_AS_QC_FLAG_SCHEMA = 'use_as_qc_flag'
+    RULE_SCHEMA = 'rule'
+    FLAG_SCHEMA = 'flag'
+    QC_RULE_SCHEMA = 'qc_rule'
 
     def __init__(self, data):
         """Constructor method.
@@ -370,11 +349,11 @@ class YAMLMetaWorkflow(YAMLTemplate):
         self._validate()
         # load attributes
         for key, val in data.items():
-            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+            if key in [self.DESCRIPTION_SCHEMA]:
                 val = self._clean_newline(val)
             setattr(self, key, val)
 
-    def _arguments(self, input, project):
+    def _arguments(self, input, consortia):
         """Helper to parse arguments and map to expected JSON structure.
         """
         arguments = []
@@ -387,7 +366,7 @@ class YAMLMetaWorkflow(YAMLTemplate):
             if type == self.PARAMETER_SCHEMA:
                 argument_[self.VALUE_TYPE_SCHEMA] = format
             for k, v in values.items():
-                if k != self.ARGUMENT_TYPE_SCHEMA:
+                if k not in [self.ARGUMENT_TYPE_SCHEMA, self.QC_RULE_SCHEMA]:
                     # handle files specifications, TODO
                     #   this system could be improved in how the schema works and deals with types
                     #
@@ -399,29 +378,56 @@ class YAMLMetaWorkflow(YAMLTemplate):
                     #        - bar@v3
                     #   need to convert to:
                     #    files: [
-                    #        {file: '<project>:FileReference-foo_v1'}
+                    #        {file: '<consortia>:ReferenceFile-foo_v1'}
                     #       ]
                     #   ----- or -------
                     #    files: [
-                    #        {file: '<project>:FileReference-foo_v1', dimension: '0'},
-                    #        {file: '<project>:FileReference-bar_v3', dimension: '1'}
+                    #        {file: '<consortia>:ReferenceFile-foo_v1', dimension: '0'},
+                    #        {file: '<consortia>:ReferenceFile-bar_v3', dimension: '1'}
                     #       ]
                     if k == self.FILES_SCHEMA:
                         v_ = []
                         for i, name_ in enumerate(v):
-                            v_.append({self.FILE_SCHEMA: f'{project}:{self.FILEREFERENCE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
+                            v_.append({self.FILE_SCHEMA: f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{name_.replace("@", "_")}',
                                        self.DIMENSION_SCHEMA: str(i)})
                         # remove DIMENSION_SCHEMA field if only one file
+                        #   this is necessary so the file will be posted as a string and not a list
+                        #   having a list will break tibanna creating the correct input for cwltool
                         if len(v_) == 1:
                             del v_[0][self.DIMENSION_SCHEMA]
                         argument_.setdefault(k, v_)
+                    elif k == self.QC_THRESHOLDS_SCHEMA:
+                        v_ = {
+                            self.QC_THRESHOLDS_SCHEMA: [],
+                            self.OVERALL_QUALITY_STATUS_RULE_SCHEMA: values[self.QC_RULE_SCHEMA]
+                        }
+                        for id, rule in v.items():
+                            metric, operator, pass_target, warn_target = rule[self.RULE_SCHEMA].split('|')
+                            flag = rule.get(self.FLAG_SCHEMA)
+                            # convert to float if number
+                            try: pass_target = float(pass_target)
+                            except ValueError: pass
+                            try: warn_target = float(warn_target)
+                            except ValueError: pass
+                            # format rule
+                            rule_ = {
+                                self.ID_SCHEMA: id,
+                                self.METRIC_SCHEMA: metric,
+                                self.OPERATOR_SCHEMA: operator,
+                                self.PASS_TARGET_SCHEMA: pass_target,
+                                self.WARN_TARGET_SCHEMA: warn_target
+                            }
+                            if flag: # add use as flag if present
+                                rule_[self.USE_AS_QC_FLAG_SCHEMA] = flag
+                            v_[self.QC_THRESHOLDS_SCHEMA].append(rule_)
+                        argument_.setdefault(self.VALUE_SCHEMA, v_)
                     else:
                         argument_.setdefault(k, v)
             arguments.append(argument_)
 
         return arguments
 
-    def _workflows(self, version, project):
+    def _workflows(self, version, consortia):
         """Helper to parse workflow definitions and map to expected JSON structure.
         """
         workflows = []
@@ -435,9 +441,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
             # basic JSON workflow structure
             workflow_ = {
                 self.NAME_SCHEMA: name,
-                self.WORKFLOW_SCHEMA: f'{project}:{self.WORKFLOW_TYPE_SCHEMA}-{name.split("@")[0]}_{version_}',
+                self.WORKFLOW_SCHEMA: f'{self._string_consortia(consortia)}:{self.WORKFLOW_TYPE_SCHEMA}-{name.split("@")[0]}_{version_}',
                                       # remove unique tag after @ to create the right alias to link
-                self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], project),
+                self.INPUT_SCHEMA: self._arguments(values[self.INPUT_SCHEMA], consortia),
                 self.CONFIG_SCHEMA: values[self.CONFIG_SCHEMA]
             }
             # file output can be optional
@@ -457,8 +463,8 @@ class YAMLMetaWorkflow(YAMLTemplate):
     def to_json(
                self,
                version,
-               institution, # alias
-               project # alias
+               submission_centers, # alias list
+               consortia # alias list
                ):
         """Function to build the corresponding object in JSON format.
         """
@@ -468,16 +474,13 @@ class YAMLMetaWorkflow(YAMLTemplate):
         metawfl_json[self.NAME_SCHEMA] = self.name
         metawfl_json[self.VERSION_SCHEMA] = version # version
         metawfl_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        metawfl_json[self.ALIASES_SCHEMA] = [f'{project}:{self.METAWORKFLOW_TYPE_SCHEMA}-{self.name}_{version}']
-        metawfl_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
-        metawfl_json[self.PROJECT_SCHEMA] = self._link_project(project)
+        metawfl_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.METAWORKFLOW_TYPE_SCHEMA}-{self.name}_{version}']
+        metawfl_json[self.CATEGORY_SCHEMA] = self.category
+        metawfl_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        metawfl_json[self.CONSORTIA_SCHEMA] = consortia
         metawfl_json[self.DESCRIPTION_SCHEMA] = self.description
-        metawfl_json[self.INPUT_SCHEMA] = self._arguments(self.input, project)
-        metawfl_json[self.WORKFLOWS_SCHEMA] = self._workflows(version, project)
-
-        # proband_only field
-        if getattr(self, self.PROBAND_ONLY_SCHEMA, None):
-            metawfl_json[self.PROBAND_ONLY_SCHEMA] = self.proband_only
+        metawfl_json[self.INPUT_SCHEMA] = self._arguments(self.input, consortia)
+        metawfl_json[self.WORKFLOWS_SCHEMA] = self._workflows(version, consortia)
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -507,14 +510,14 @@ class YAMLSoftware(YAMLTemplate):
         self._validate()
         # load attributes
         for key, val in data.items():
-            if key in [self.DESCRIPTION_SCHEMA, self.TITLE_SCHEMA]:
+            if key in [self.DESCRIPTION_SCHEMA]:
                 val = self._clean_newline(val)
             setattr(self, key, val)
 
     def to_json(
                self,
-               institution, # alias
-               project # alias
+               submission_centers, # alias list
+               consortia # alias list
                ):
         """Function to build the corresponding object in JSON format.
         """
@@ -522,8 +525,9 @@ class YAMLSoftware(YAMLTemplate):
 
         # common metadata
         sftwr_json[self.NAME_SCHEMA] = self.name
-        sftwr_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
-        sftwr_json[self.PROJECT_SCHEMA] = self._link_project(project)
+        sftwr_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        sftwr_json[self.CONSORTIA_SCHEMA] = consortia
+        sftwr_json[self.CATEGORY_SCHEMA] = self.category
 
         if getattr(self, self.VERSION_SCHEMA, None):
             sftwr_json[self.VERSION_SCHEMA] = self.version
@@ -538,7 +542,7 @@ class YAMLSoftware(YAMLTemplate):
             sftwr_json[self.SOURCE_URL_SCHEMA] = self.source_url
 
         sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
-        sftwr_json[self.ALIASES_SCHEMA] = [f'{project}:{self.SOFTWARE_TYPE_SCHEMA}-{self.name}_{version}']
+        sftwr_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.SOFTWARE_TYPE_SCHEMA}-{self.name}_{version}']
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -554,19 +558,21 @@ class YAMLSoftware(YAMLTemplate):
 
 
 ###############################################################
-#   YAMLFileReference, YAML FileReference
+#   YAMLReferenceFile, YAML ReferenceFile
 ###############################################################
-class YAMLFileReference(YAMLTemplate):
-    """Class to work with YAML documents representing FileReference objects.
+class YAMLReferenceFile(YAMLTemplate):
+    """Class to work with YAML documents representing ReferenceFile objects.
     """
 
     # schema constants
     EXTRA_FILES_SCHEMA = 'extra_files'
+    DATA_CATEGORY_SCHEMA = 'data_category'
+    DATA_TYPE_SCHEMA = 'data_type'
 
     def __init__(self, data):
         """Constructor method.
         """
-        super().__init__(data, yaml_file_reference_schema)
+        super().__init__(data, yaml_reference_file_schema)
         # validate data with schema
         self._validate()
         # load attributes
@@ -577,24 +583,31 @@ class YAMLFileReference(YAMLTemplate):
 
     def to_json(
                self,
-               institution, # alias
-               project # alias
+               submission_centers, # alias list
+               consortia # alias list
                ):
         """Function to build the corresponding object in JSON format.
         """
         ref_json = {}
 
         # common metadata
-        ref_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
-        ref_json[self.PROJECT_SCHEMA] = self._link_project(project)
+        ref_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        ref_json[self.CONSORTIA_SCHEMA] = consortia
         ref_json[self.DESCRIPTION_SCHEMA] = self.description
         ref_json[self.FILE_FORMAT_SCHEMA] = self.format
-        ref_json[self.ALIASES_SCHEMA] = [f'{project}:{self.FILEREFERENCE_TYPE_SCHEMA}-{self.name}_{self.version}']
-        ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA, [])
+        ref_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{self.name}_{self.version}']
+        # check for secondary files
+        if getattr(self, self.SECONDARY_FILES_SCHEMA, None):
+            ref_json[self.EXTRA_FILES_SCHEMA] = getattr(self, self.SECONDARY_FILES_SCHEMA)
         ref_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, None) # this will be used during post/patch,
                                                            # if None:
                                                            #    - leave it as is if patch
                                                            #    - set to uploading if post
+        ref_json[self.DATA_CATEGORY_SCHEMA] = self.category
+        ref_json[self.DATA_TYPE_SCHEMA] = self.type
+        # variant_type
+        if getattr(self, self.VARIANT_TYPE_SCHEMA, None):
+            ref_json[self.VARIANT_TYPE_SCHEMA] = self.variant_type
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):
@@ -617,10 +630,11 @@ class YAMLFileFormat(YAMLTemplate):
     """
 
     # schema constants
+    IDENTIFIER_SCHEMA = 'identifier'
     STANDARD_FILE_EXTENSION_SCHEMA = 'standard_file_extension'
-    VALID_ITEM_TYPES_SCHEMA = 'valid_item_types'
-    EXTRAFILE_FORMATS_SCHEMA = 'extrafile_formats'
-    FILE_TYPES_SCHEMA = 'file_types'
+    # VALID_ITEM_TYPES_SCHEMA = 'valid_item_types'
+    EXTRA_FILE_FORMATS_SCHEMA = 'extra_file_formats'
+    # FILE_TYPES_SCHEMA = 'file_types'
 
     def __init__(self, data):
         """Constructor method.
@@ -636,23 +650,25 @@ class YAMLFileFormat(YAMLTemplate):
 
     def to_json(
                self,
-               institution, # alias
-               project # alias
+               submission_centers, # alias list
+               consortia # alias list
                ):
         """Function to build the corresponding object in JSON format.
         """
         frmt_json = {}
 
         # common metadata
-        frmt_json[self.FILE_FORMAT_SCHEMA] = self.name
-        frmt_json[self.ALIASES_SCHEMA] = [f'{project}:{self.FILEFORMAT_TYPE_SCHEMA}-{self.name}']
-        frmt_json[self.INSTITUTION_SCHEMA] = self._link_institution(institution)
-        frmt_json[self.PROJECT_SCHEMA] = self._link_project(project)
+        frmt_json[self.IDENTIFIER_SCHEMA] = self.name
+        frmt_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.FILEFORMAT_TYPE_SCHEMA}-{self.name}']
+        frmt_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        frmt_json[self.CONSORTIA_SCHEMA] = consortia
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json[self.STANDARD_FILE_EXTENSION_SCHEMA] = self.extension
-        frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['FileReference', 'FileProcessed'])
-        frmt_json[self.EXTRAFILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA, [])
-        frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'shared')
+        # frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['ReferenceFile', 'FileProcessed'])
+        # check for secondary formats
+        if getattr(self, self.SECONDARY_FORMATS_SCHEMA, None):
+            frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA)
+        frmt_json[self.STATUS_SCHEMA] = getattr(self, self.STATUS_SCHEMA, 'released')
 
         # uuid, accession if specified
         if getattr(self, self.UUID_SCHEMA, None):

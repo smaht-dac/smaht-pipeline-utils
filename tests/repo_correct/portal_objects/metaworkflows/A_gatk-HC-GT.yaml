@@ -18,6 +18,10 @@ input:
     argument_type: parameter.json
     value: ['SAMPLENAME']
 
+category:
+  - Alignment
+  - Format Conversion
+
 workflows:
   ##########################################
   # gatk-HC
@@ -43,7 +47,10 @@ workflows:
     output:
       HC_vcf:
         description: output from gatk-HC
-        file_type: hc-vcf
+        data_category:
+          - Sequencing Reads
+        data_type:
+          - Unaligned Reads
         linkto_location:
           - SampleProcessing
     # gatk-HC config
@@ -72,9 +79,13 @@ workflows:
     output:
       GT_vcf:
         description: output from gatk-GT
-        file_type: GT-vcf
+        data_category:
+          - Sequencing Reads
+        data_type:
+          - Unaligned Reads
         higlass_file: True
-        variant_type: SNV
+        variant_type:
+          - SNV
     # gatk-GT config
     config:
       ebs_size: 3x

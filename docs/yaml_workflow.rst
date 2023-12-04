@@ -26,11 +26,12 @@ Template
       child:
         - <file>                          # .cwl or .wdl file
 
+    category:
+      - <string>                          # Annotation
+
     # All the following fields are optional and provided as example,
     #   can be expanded to anything accepted by the schema
-    #   https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas
-    title: <string>
-
+    #   https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas
     software:
       - <software>@<version|commit>
 
@@ -45,7 +46,7 @@ Template
 
       # Parameter argument
       <parameter_argument_name>:
-        argument_type: parameter.<type>   # string, integer, float, json, boolean
+        argument_type: parameter.<type>   # string, integer, float, array, boolean, object
 
     ## Output information #######################################
     #     Output files and quality controls
@@ -60,31 +61,16 @@ Template
 
       # QC output
       <qc_output_name>:
-        argument_type: qc.<type>          # qc_type, e.g. quality_metric_vcfcheck
-                                          # none can be used as <type>
-                                          #   if a qc_type is not defined
-                                          # quality_metric_generic can be used as <type>
-                                          #   to use the general qc_type instead of a custom one
+        argument_type: qc
         argument_to_be_attached_to: <file_output_name>
-        # All the following fields are optional and provided as example,
-        #   can be expanded to anything accepted by the schema
-        html: <boolean>
+        # Fields to specify the output type
+        #   either json or zipped folder
         json: <boolean>
-        table: <boolean>
         zipped: <boolean>
-        # If the output is a zipped folder with multiple QC files,
-        #   fields to define the target files inside the folder
-        html_in_zipped: <file>
-        tables_in_zipped:
-          - <file>
-        # Fields still used by tibanna that needs refactoring
-        #   listing them as they are
-        qc_acl: <string>                  # e.g. private
-        qc_unzip_from_ec2: <boolean>
 
       # Report output
       <report_output_name>:
-        argument_type: report.<type>      # report_type, e.g. file
+        argument_type: report
 
 
 General Fields Definition
@@ -114,6 +100,10 @@ Several subfields need to be specified:
 
 At the moment we support two standards, `Common Workflow Language <https://www.commonwl.org>`__ (CWL) and `Workflow Description Language <https://openwdl.org>`__ (WDL).
 
+category
+--------
+Categories for the workflow, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
 input
 -----
 Description of input files and parameters for the workflow. See :ref:`Input Definition <input_a>`.
@@ -124,11 +114,7 @@ Description of expected outputs for the workflow. See :ref:`Output Definition <o
 
 Optional
 ^^^^^^^^
-All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
-
-title
------
-Title of the workflow.
+All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 software
 --------
@@ -150,7 +136,7 @@ Definition of the type of the argument.
 For a **file** argument, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
 ``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
 
-For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, json, boolean].
+For a **parameter** argument, the argument type is defined as ``parameter.<type>``, where ``<type>`` is the type of the value expected for the argument [string, integer, float, array, boolean, object].
 
 
 .. _output_a:
@@ -166,20 +152,18 @@ Definition of the type of the output.
 For a **file** output, the argument type is defined as ``file.<format>``, where ``<format>`` is the format used by the file.
 ``<format>`` needs to match a file format that has been previously defined, see :ref:`File Format <file_format>`.
 
-For a **report** output, the argument type is defined as ``report.<type>``, where ``<type>`` is the type of the report (e.g., file).
+For a **report** output, the argument type is defined as ``report``.
 
-For a **QC** (Quality Control) output, the argument type is defined as ``qc.<type>``, where ``<type>`` is a ``qc_type`` defined in the schema, see `schemas <https://github.com/dbmi-bgm/cgap-portal/tree/master/src/encoded/schemas>`__.
-While custom ``qc_type`` schemas are still supported for compatibility, we introduced a new generic type ``quality_metric_generic``.
-We recommend to use this new type to implement QCs.
+For a **QC** (Quality Control) output, the argument type is defined as ``qc``.
 
-When using ``quality_metric_generic`` as a ``qc_type``, it is possible to generate two different types of output: a key-value pairs JSON file and a compressed file.
+For a QC, it is possible to generate two different types of output: a key-value pairs JSON file and a compressed file.
 The JSON file can be used to create a summary report of the quality metrics generated by the QC process.
 The compressed file can be used to store the original output for the QC, including additional data or graphs.
-Both the JSON file and compressed file will be attached to the file specified as target by ``argument_to_be_attached_to`` with a ``QualityMetricGeneric`` object.
+Both the JSON file and compressed file will be attached to the file specified as target by ``argument_to_be_attached_to`` with a ``QualityMetric`` object.
 The content of the JSON file will be patched directly on the object, while the compressed file will be made available for download via a link.
 The output type can be specified by setting ``json: True`` or ``zipped: True`` in the the QC output definition.
 
-Template for ``quality_metric_generic``:
+Template for key-value pairs JSON:
 
 .. code-block:: python
 

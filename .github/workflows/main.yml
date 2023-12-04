@@ -1,4 +1,4 @@
-# portal-pipeline-utils GA Workflow
+# smaht-pipeline-utils GA Workflow
 
 name: CI
 
@@ -17,7 +17,7 @@ on:
 jobs:
   # This workflow contains a single job called "test"
   test:
-    name: Test portal-pipeline-utils with Python ${{ matrix.python_version }}
+    name: Test smaht-pipeline-utils with Python ${{ matrix.python_version }}
 
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: ${{ matrix.python_version }}
 
-      - name: Test portal-pipeline-utils
+      - name: Test smaht-pipeline-utils
         run: |
           make configure
           make build

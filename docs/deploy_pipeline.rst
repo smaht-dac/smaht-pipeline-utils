@@ -55,37 +55,37 @@ by running a test command:
 More information on how to setup Docker can be found in the
 `AWS Documentation <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html>`_.
 
-We now need to install the ``pipeline_utils`` software to deploy the pipeline components.
+We now need to install the ``smaht_pipeline_utils`` software to deploy the pipeline components.
 
-Install pipeline_utils
-======================
+Install smaht_pipeline_utils
+============================
 
 The software is Python-based.
 To install the software and the required packages, we recommend
 using a fresh virtual environment.
-Please refer to `pyproject.toml <https://github.com/dbmi-bgm/portal-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
+Please refer to `pyproject.toml <https://github.com/smaht-dac/smaht-pipeline-utils/blob/main/pyproject.toml>`_ for the supported Python version.
 
 We recommend using pyenv to manage virtual environments.
 Instructions for installing and using
 pyenv can be found `here <https://realpython.com/intro-to-pyenv/>`_.
 
-Once the virtual environment is set up and activated, we can proceed to :ref:`install <install>` portal-pipeline-utils software.
+Once the virtual environment is set up and activated, we can proceed to :ref:`install <install>` smaht-pipeline-utils software.
 
 .. code-block:: bash
 
   # Install from source
-  git clone https://github.com/dbmi-bgm/portal-pipeline-utils.git
-  cd portal-pipeline-utils
+  git clone https://github.com/smaht-dac/smaht-pipeline-utils.git
+  cd smaht-pipeline-utils
   make configure
   make update
   make build
   cd ..
 
   # Install from pypi
-  pip install portal-pipeline-utils
+  pip install smaht-pipeline-utils
 
-To check that the software is correctly installed, try to run ``pipeline_utils``.
-If installed from source, this command may fail with a bash "command not found" error, try ``poetry run pipeline_utils`` instead.
+To check that the software is correctly installed, try to run ``smaht_pipeline_utils``.
+If installed from source, this command may fail with a bash "command not found" error, try ``poetry run smaht_pipeline_utils`` instead.
 
 Set Up Credentials and Environmental Variables
 ==============================================
@@ -142,7 +142,7 @@ Example of a key-pair entry:
     }
   }
 
-``<namespace>`` is the namespace for the environment and can be found in the portal health page (e.g., cgap-wolf).
+``<namespace>`` is the namespace for the environment and can be found in the portal health page (e.g., smaht-wolf).
 
 .. _account_vars:
 
@@ -154,21 +154,21 @@ Finally we need to setup the information to identify the target environment to u
 .. code-block:: bash
 
   # Set the namespace of the target environment
-  #   e.g., cgap-wolf
+  #   e.g., smaht-wolf
   export ENV_NAME=
 
   # Set the bucket used to store the worklow description files
-  #   e.g., cgap-biotest-main-application-tibanna-cwls
+  #   e.g., smaht-wolf-application-tibanna-cwls
   export WFL_BUCKET=
 
   # Set the path to the keypair file with the portal credential
   export KEYDICTS_JSON=~/.cgap-keys.json
 
-  # Set up project and institution
-  #   Project and institution need to correspond to metadata present on the portal
-  #   e.g., cgap-core and hms-dbmi
-  export PROJECT=
-  export INSTITUTION=
+  # Set up consortia and submission centers
+  #   consortia and submission_centers need to correspond to metadata present on the portal
+  #   e.g., ['smaht'] and ['smaht_dac']
+  export CONSORTIA=
+  export SUBMISSION_CENTERS=
 
   # If running sentieon code,
   #   specify the address for the server that validate the software license
@@ -188,14 +188,14 @@ by the ``--repos`` argument.
 
 .. code-block:: bash
 
-  pipeline_utils pipeline_deploy \
+  smaht_pipeline_utils pipeline_deploy \
     --ff-env ${ENV_NAME} \
     --keydicts-json ${KEYDICTS_JSON} \
     --wfl-bucket ${WFL_BUCKET} \
     --account ${AWS_ACCOUNT_NUMBER} \
     --region ${TIBANNA_AWS_REGION} \
-    --project ${PROJECT} \
-    --institution ${INSTITUTION} \
+    --consortia ${CONSORTIA} \
+    --submission-centers ${SUBMISSION_CENTERS} \
     --sentieon-server ${SENTIEON_LICENSE} \
     --post-software \
     --post-file-format \
@@ -214,10 +214,10 @@ The default is set to the ``main`` branch. The ``--local-build`` flag will preve
 
 *Note: we are working to enable more builders with a command line argument for which builder to use to deploy modules from different repositories through AWS CodeBuild.*
 
-Deploying CGAP Pipelines
+Deploying SMaHT Pipelines
 ========================
 
-CGAP pipelines are released as a complete package with a customized set up for automated deployment to the desired environment.
+SMaHT pipelines are released as a complete package with a customized set up for automated deployment to the desired environment.
 To deploy the pipelines run the following steps:
 
 1. Clone the main pipeline repository.
@@ -225,7 +225,7 @@ The submodules will be empty and set to the current commits saved for the main b
 
 .. code-block:: bash
 
-  git clone https://github.com/dbmi-bgm/cgap-pipeline-main.git
+  git clone https://github.com/smaht-dac/main-pipelines.git
 
 2. Check out the desired version.
 This will set the submodules to the commits saved for that pipeline release.
@@ -241,7 +241,7 @@ The submodules will be set in detached state on their current commit.
 
   make pull
 
-4. Build pipeline_utils (optional).
+4. Build smaht_pipeline_utils (optional).
 This will build from source the latest version linked for the current release.
 
 .. code-block:: bash

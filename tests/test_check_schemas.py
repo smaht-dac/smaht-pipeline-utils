@@ -11,7 +11,7 @@ from jsonschema import Draft202012Validator
 from pipeline_utils.schemas.yaml_workflow import yaml_workflow_schema
 from pipeline_utils.schemas.yaml_metaworkflow import yaml_metaworkflow_schema
 from pipeline_utils.schemas.yaml_software import yaml_software_schema
-from pipeline_utils.schemas.yaml_file_reference import yaml_file_reference_schema
+from pipeline_utils.schemas.yaml_reference_file import yaml_reference_file_schema
 from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
 
 ###############################################################
@@ -30,10 +30,10 @@ def test_yaml_file_format_schema():
     """
     Draft202012Validator.check_schema(yaml_file_format_schema)
 
-def test_yaml_file_reference_schema():
+def test_yaml_reference_file_schema():
     """
     """
-    Draft202012Validator.check_schema(yaml_file_reference_schema)
+    Draft202012Validator.check_schema(yaml_reference_file_schema)
 
 def test_yaml_software_schema():
     """

@@ -4,8 +4,6 @@ Change Log
 ==========
 
 
-3.0.0
+0.0.1
 =====
-* 2023-10-10
-* Added this CHANGELOG.rst file.
-* Upgrade to Python 3.11.
+* Initial release

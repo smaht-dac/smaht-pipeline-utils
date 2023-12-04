@@ -75,7 +75,7 @@ class PostPatchRepo(object):
         self.object_ = {
             'Software': yaml_parser.YAMLSoftware,
             'FileFormat': yaml_parser.YAMLFileFormat,
-            'FileReference': yaml_parser.YAMLFileReference,
+            'ReferenceFile': yaml_parser.YAMLReferenceFile,
             'Workflow': yaml_parser.YAMLWorkflow,
             'MetaWorkflow': yaml_parser.YAMLMetaWorkflow
         }
@@ -83,11 +83,11 @@ class PostPatchRepo(object):
             # .yaml files
             'Software': 'portal_objects/software.yaml',
             'FileFormat': 'portal_objects/file_format.yaml',
-            'FileReference': 'portal_objects/file_reference.yaml',
+            'ReferenceFile': 'portal_objects/file_reference.yaml',
             # .yml files
             'Software_yml': 'portal_objects/software.yml',
             'FileFormat_yml': 'portal_objects/file_format.yml',
-            'FileReference_yml': 'portal_objects/file_reference.yml',
+            'ReferenceFile_yml': 'portal_objects/file_reference.yml',
             # folders
             'Workflow': 'portal_objects/workflows',
             'MetaWorkflow': 'portal_objects/metaworkflows',
@@ -141,11 +141,11 @@ class PostPatchRepo(object):
             except Exception:
                 is_patch = False
 
-            # Exception for uploading of FileReference objects
+            # Exception for uploading of ReferenceFile objects
             #   status -> uploading, uploaded
             #   default is None -> the status will not be updated during patch,
             #     and set to uploading if post for the first time
-            if type == 'FileReference':
+            if type == 'ReferenceFile':
                 # main status
                 if data_json['status'] is None:
                     if is_patch:
@@ -154,20 +154,27 @@ class PostPatchRepo(object):
                         data_json['status'] = 'uploading'
 
                 # extra_files status
-                extra_files_ = []
-                for ext in data_json['extra_files']:
-                    ext_ = {
-                        'file_format': ext,
-                        'status': data_json.get('status', 'uploaded')
-                    }
-                    extra_files_.append(ext_)
-                data_json['extra_files'] = extra_files_
+                if data_json.get('extra_files'):
+                    extra_files_ = []
+                    for ext in data_json['extra_files']:
+                        ext_ = {
+                            'file_format': ext,
+                            'status': data_json.get('status', 'uploaded')
+                        }
+                        extra_files_.append(ext_)
+                    data_json['extra_files'] = extra_files_
             ###########################################################
 
-            if is_patch:
-                ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
-            else:
-                ff_utils.post_metadata(data_json, type, key=self.ff_key)
+            try:
+                if is_patch:
+                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                else:
+                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
+            except Exception as E:
+                # this will skip and report errors during patching and posting
+                logger.info('> FAILED PORTAL VALIDATION')
+                logger.info(E)
+                pass
 
             logger.info('> Posted %s' % data_json['aliases'][0])
 
@@ -199,7 +206,7 @@ class PostPatchRepo(object):
 
     def _post_patch_file(self, type):
         """
-            'Software', 'FileFormat', 'FileReference'
+            'Software', 'FileFormat', 'ReferenceFile'
         """
         logger.info(f'@ {type}...')
 
@@ -221,8 +228,8 @@ class PostPatchRepo(object):
             # creating JSON object
             d_ = self._yaml_to_json(
                         d, self.object_[type],
-                        institution=self.institution,
-                        project=self.project
+                        submission_centers=self.submission_centers,
+                        consortia=self.consortia
                         )
             # post/patch object
             if d_: self._post_patch_json(d_, type)
@@ -250,8 +257,8 @@ class PostPatchRepo(object):
                 # creating _yaml_to_json **kwargs
                 kwargs_ = {
                     'version': self.version,
-                    'institution': self.institution,
-                    'project': self.project
+                    'submission_centers': self.submission_centers,
+                    'consortia': self.consortia
                 }
                 if type == 'Workflow':
                     kwargs_.setdefault(
@@ -275,7 +282,7 @@ class PostPatchRepo(object):
         filepath_ = f'{self.repo}/{self.filepath[type]}'
         upload_ = f'{filepath_}/upload'
         account_ = f'{self.account}.dkr.ecr.{self.region}.amazonaws.com'
-        update_ = {
+        auth_keys_ = {
             'ServerSideEncryption': 'aws:kms',
             'SSEKMSKeyId': self.kms_key_id
             }
@@ -316,10 +323,10 @@ class PostPatchRepo(object):
                                 line = line.replace('LICENSEID', self.sentieon_server)
                             write_.write(line)
                 # upload to s3
-                extra_args = {'ACL': 'public-read'}  # note that this is no longer public if using encryption!
                 if self.kms_key_id:
-                    extra_args.update(update_)
-                s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_, ExtraArgs=extra_args)
+                    s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_, ExtraArgs=auth_keys_)
+                else: # no kms_key_id, ExtraArgs not needed
+                    s3.meta.client.upload_file(upload_file_, self.wfl_bucket, s3_file_)
                 logger.info('> Posted %s' % s3_file_)
                 # delete file to allow tmp folder to be deleted at the end
                 os.remove(upload_file_)
@@ -403,9 +410,9 @@ class PostPatchRepo(object):
         if self.post_file_format:
             self._post_patch_file('FileFormat')
 
-        # FileReference
+        # ReferenceFile
         if self.post_file_reference:
-            self._post_patch_file('FileReference')
+            self._post_patch_file('ReferenceFile')
 
         # Workflow
         if self.post_workflow:
@@ -432,7 +439,7 @@ def main(args):
 
     For each repository a PostPatchRepo object is created to:
         - Create and POST|PATCH to database objects in JSON format for
-          Workflow, MetaWorkflow, FileReference, FileFormat, and Software components
+          Workflow, MetaWorkflow, ReferenceFile, FileFormat, and Software components
         - PUSH workflow descriptions to target S3 bucket
         - BUILD Docker images and PUSH to target ECR folder
     """

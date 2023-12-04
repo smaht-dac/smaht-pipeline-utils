@@ -17,12 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'portal-pipeline-utils'
-copyright = '2021, HMS DBMI'
-author = 'Michele Berselli, CGAP & SMaHT Team'
+project = 'smaht-pipeline-utils'
+copyright = '2023, HMS DBMI'
+author = 'Michele Berselli, SMaHT Team'
 
 # The full version, including alpha/beta/rc tags
-release = '2.1.0'
+release = '0.0.1'
 
 
 # -- General configuration ---------------------------------------------------
