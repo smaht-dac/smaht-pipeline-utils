@@ -175,7 +175,6 @@ class YAMLWorkflow(YAMLTemplate):
     GENERIC_QC_FILE_SCHEMA = 'Generic QC file'
     OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
     QC_SCHEMA = 'qc'
-    QUALITY_METRIC_GENERIC_SCHEMA = 'quality_metric_generic'
     REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
     ZIPPED_SCHEMA = 'zipped'
