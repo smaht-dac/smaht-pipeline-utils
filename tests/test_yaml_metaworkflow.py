@@ -225,7 +225,7 @@ def test_qc_ruleset():
         {
           "argument_name": "qc_ruleset_name_1",
           "argument_type": "parameter",
-          "value_type": "qc_ruleset",
+          "value_type": "object",
           "value": {
                   "qc_thresholds": [
                       {
@@ -300,7 +300,7 @@ def test_qc_ruleset():
             {
               'argument_name': 'qc_ruleset',
               'argument_type': 'parameter',
-              'value_type': 'qc_ruleset',
+              'value_type': 'object',
               'source_argument_name': 'qc_ruleset_name_1'
             }
           ],

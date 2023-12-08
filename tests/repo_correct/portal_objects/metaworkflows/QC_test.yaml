@@ -24,7 +24,7 @@ input:
     argument_type: parameter.json
 
   qc_ruleset_name_1:
-    argument_type: parameter.qc_ruleset
+    argument_type: parameter.object
     qc_thresholds:
       c1:
         rule: coverage|>=|100|80
@@ -56,7 +56,7 @@ workflows:
         argument_type: parameter.json
 
       qc_ruleset:
-        argument_type: parameter.qc_ruleset
+        argument_type: parameter.object
         source_argument_name: qc_ruleset_name_1
     # gatk-HC output
     output:
