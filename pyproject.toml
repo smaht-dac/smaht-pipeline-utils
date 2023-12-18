@@ -26,7 +26,7 @@ dcicutils = "^8.0.0"
 boto3 = "^1.28.62"
 awscli = "^1.29.62"
 jsonschema = "^4.7.2"
-magma-suite = "^2.0.0"
+magma-suite = ">=3.0.0"
 
 
 [tool.poetry.dev-dependencies]
