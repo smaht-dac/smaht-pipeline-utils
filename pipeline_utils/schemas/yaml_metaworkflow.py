@@ -94,7 +94,7 @@ yaml_metaworkflow_schema = {
             schema.PROPERTIES: {
                 'argument_type': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^file\\..+|^parameter\\..+'
+                    schema.PATTERN: '^file\\..+|^parameter\\..+|^qc_ruleset\\..+'
                 },
                 'dimensionality': {
                     schema.TYPE: schema.NUMBER

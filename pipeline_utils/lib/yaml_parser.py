@@ -339,6 +339,8 @@ class YAMLMetaWorkflow(YAMLTemplate):
     RULE_SCHEMA = 'rule'
     FLAG_SCHEMA = 'flag'
     QC_RULE_SCHEMA = 'qc_rule'
+    QC_RULESET_SCHEMA = 'qc_ruleset'
+    QC_RULESET_PORTAL_SCHEMA = 'QC ruleset'
 
     def __init__(self, data):
         """Constructor method.
@@ -362,6 +364,9 @@ class YAMLMetaWorkflow(YAMLTemplate):
                 self.ARGUMENT_NAME_SCHEMA: name,
                 self.ARGUMENT_TYPE_SCHEMA: type
             }
+            if type == self.QC_RULESET_SCHEMA: # replacing qc_ruleset
+                                               # with portal correspoding key
+                argument_[self.ARGUMENT_TYPE_SCHEMA] = self.QC_RULESET_PORTAL_SCHEMA
             if type == self.PARAMETER_SCHEMA:
                 argument_[self.VALUE_TYPE_SCHEMA] = format
             for k, v in values.items():
