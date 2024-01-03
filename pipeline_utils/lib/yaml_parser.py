@@ -174,6 +174,8 @@ class YAMLWorkflow(YAMLTemplate):
     OUTPUT_PROCESSED_FILE_SCHEMA = 'Output processed file'
     GENERIC_QC_FILE_SCHEMA = 'Generic QC file'
     OUTPUT_REPORT_FILE_SCHEMA = 'Output report file'
+    QC_RULESET_SCHEMA = 'qc_ruleset'
+    QC_RULESET_PORTAL_SCHEMA = 'QC ruleset'
     QC_SCHEMA = 'qc'
     REPORT_SCHEMA = 'report'
     ARGUMENT_TO_BE_ATTACHED_TO_SCHEMA = 'argument_to_be_attached_to'
@@ -206,6 +208,8 @@ class YAMLWorkflow(YAMLTemplate):
                 argument_type = self.INPUT_FILE_SCHEMA
             elif type == self.PARAMETER_SCHEMA:
                 argument_type = self.PARAMETER_SCHEMA
+            elif type == self.QC_RULESET_SCHEMA:
+                argument_type = self.QC_RULESET_PORTAL_SCHEMA
             argument_ = {
                 self.ARGUMENT_TYPE_SCHEMA: argument_type,
                 self.WORKFLOW_ARGUMENT_NAME_SCHEMA: name
