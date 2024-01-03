@@ -92,7 +92,7 @@ yaml_workflow_schema = {
             schema.PROPERTIES: {
                 'argument_type': {
                     schema.TYPE: schema.STRING,
-                    schema.PATTERN: '^file\\..+|^parameter\\..+|^qc$|^report$'
+                    schema.PATTERN: '^file\\..+|^parameter\\..+|^qc_ruleset\\..+|^qc$|^report$'
                 },
                 'secondary_files': {
                     schema.TYPE: schema.ARRAY,
