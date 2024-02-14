@@ -21,7 +21,8 @@ def test_software():
                 "source_url": "http:/broad",
                 "title": "gatk 4.1.2",
                 "version": "4.1.2",
-                "category": ["Aligner"]
+                "category": ["Aligner"],
+                "code": "pippo"
             },
             {
                 "accession": "GAPMKF1LL29K",
@@ -30,10 +31,23 @@ def test_software():
                 "submission_centers": ["hms-dbmi"],
                 "name": "picard",
                 "consortia": ["cgap-core"],
-                "title": "picard [324ePT]",
+                "title": "picard",
                 "uuid": "efdac7ec-7da3-4f23-9056-7a04abbc5e8b",
                 "category": ["Variant Caller"]
+            },
+            {
+                "aliases": ["cgap-core:Software-Sentieon_BWA-MEM_202308.01"],
+                "version": "202308.01",
+                "submission_centers": ["hms-dbmi"],
+                "name": "Sentieon_BWA-MEM",
+                "consortia": ["cgap-core"],
+                "title": "Sentieon BWA-MEM",
+                "uuid": "b42e44e5-a829-4687-aeff-65cd040b1528",
+                "category": ["Alignment"],
+                "code": "sentieon_bwamem",
+                "source_url": "https://www.sentieon.com",
             }
+
         ]
 
     for i, d in enumerate(yaml_parser.load_yaml('tests/repo_correct/portal_objects/software.yaml')):

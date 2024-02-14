@@ -20,14 +20,14 @@ yaml_file_format_schema = {
             schema.DESCRIPTION: 'Extension of the FileFormat',
             schema.TYPE: schema.STRING
         },
-        # 'file_types': {
-        #     schema.DESCRIPTION: 'File types that can use the FileFormat',
-        #     schema.TYPE: schema.ARRAY,
-        #     schema.ITEMS: {
-        #         schema.TYPE: schema.STRING,
-        #         schema.PATTERN: 'ReferenceFile|FileProcessed|FileSubmitted|FileFastq'
-        #     }
-        # },
+        'file_types': {
+            schema.DESCRIPTION: 'File types that can use the FileFormat',
+            schema.TYPE: schema.ARRAY,
+            schema.ITEMS: {
+                schema.TYPE: schema.STRING,
+                schema.PATTERN: 'ReferenceFile|FileProcessed|FileSubmitted|FileFastq'
+            }
+        },
         'status': {
             schema.TYPE: schema.STRING
         },

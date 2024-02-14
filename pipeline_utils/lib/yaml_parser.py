@@ -23,6 +23,7 @@ from pipeline_utils.schemas.yaml_metaworkflow import yaml_metaworkflow_schema
 from pipeline_utils.schemas.yaml_software import yaml_software_schema
 from pipeline_utils.schemas.yaml_reference_file import yaml_reference_file_schema
 from pipeline_utils.schemas.yaml_file_format import yaml_file_format_schema
+from pipeline_utils.schemas.yaml_reference_genome import yaml_reference_genome_schema
 
 
 ###############################################################
@@ -118,8 +119,11 @@ class YAMLTemplate(object):
     METAWORKFLOW_TYPE_SCHEMA = 'MetaWorkflow'
     FILEFORMAT_TYPE_SCHEMA = 'FileFormat'
     REFERENCEFILE_TYPE_SCHEMA = 'ReferenceFile'
+    REFERENCEGENOME_TYPE_SCHEMA = 'ReferenceGenome'
     SOFTWARE_TYPE_SCHEMA = 'Software'
     VARIANT_TYPE_SCHEMA = "variant_type"
+    CODE_SCHEMA = 'code'
+    IDENTIFIER_SCHEMA = 'identifier'
 
     def __init__(self, data, schema):
         """Constructor method.
@@ -145,17 +149,23 @@ class YAMLTemplate(object):
             line = line.replace('|', '')
         return line
 
-    def _link_title(self, name, version):
+    def _link_title(self, name, version=None):
         """Helper to create a "title" field.
         """
         title = getattr(self, self.TITLE_SCHEMA, None)
         if title:
-            if version in title:
-                return title
+            if version:
+                if version in title:
+                    return title
+                else:
+                    return f'{title} [{version}]'
             else:
-                return f'{title} [{version}]'
+                return title
         else:
-            return f'{name.replace("_", " ")} [{version}]'
+            if version:
+                return f'{name.replace("_", " ")} [{version}]'
+            else:
+                return f'{name.replace("_", " ")}'
 
     def _string_consortia(self, consortia):
         """Helper to create a string from "consortia" field.
@@ -549,7 +559,7 @@ class YAMLSoftware(YAMLTemplate):
         if getattr(self, self.SOURCE_URL_SCHEMA, None):
             sftwr_json[self.SOURCE_URL_SCHEMA] = self.source_url
 
-        sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name, version)
+        sftwr_json[self.TITLE_SCHEMA] = self._link_title(self.name)
         sftwr_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.SOFTWARE_TYPE_SCHEMA}-{self.name}_{version}']
 
         # uuid, accession if specified
@@ -561,6 +571,10 @@ class YAMLSoftware(YAMLTemplate):
         # license
         if getattr(self, self.LICENSE_SCHEMA, None):
             sftwr_json[self.LICENSE_SCHEMA] = self.license
+
+        # code
+        if getattr(self, self.CODE_SCHEMA, None):
+            sftwr_json[self.CODE_SCHEMA] = self.code
 
         return sftwr_json
 
@@ -638,11 +652,10 @@ class YAMLFileFormat(YAMLTemplate):
     """
 
     # schema constants
-    IDENTIFIER_SCHEMA = 'identifier'
     STANDARD_FILE_EXTENSION_SCHEMA = 'standard_file_extension'
-    # VALID_ITEM_TYPES_SCHEMA = 'valid_item_types'
+    VALID_ITEM_TYPES_SCHEMA = 'valid_item_types'
     EXTRA_FILE_FORMATS_SCHEMA = 'extra_file_formats'
-    # FILE_TYPES_SCHEMA = 'file_types'
+    FILE_TYPES_SCHEMA = 'file_types'
 
     def __init__(self, data):
         """Constructor method.
@@ -672,7 +685,7 @@ class YAMLFileFormat(YAMLTemplate):
         frmt_json[self.CONSORTIA_SCHEMA] = consortia
         frmt_json[self.DESCRIPTION_SCHEMA] = self.description
         frmt_json[self.STANDARD_FILE_EXTENSION_SCHEMA] = self.extension
-        # frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['ReferenceFile', 'FileProcessed'])
+        frmt_json[self.VALID_ITEM_TYPES_SCHEMA] = getattr(self, self.FILE_TYPES_SCHEMA, ['ReferenceFile', 'OutputFile'])
         # check for secondary formats
         if getattr(self, self.SECONDARY_FORMATS_SCHEMA, None):
             frmt_json[self.EXTRA_FILE_FORMATS_SCHEMA] = getattr(self, self.SECONDARY_FORMATS_SCHEMA)
@@ -685,3 +698,52 @@ class YAMLFileFormat(YAMLTemplate):
             frmt_json[self.ACCESSION_SCHEMA] = self.accession
 
         return frmt_json
+
+###############################################################
+#   YAMLReferenceGenome, YAML ReferenceGenome
+###############################################################
+class YAMLReferenceGenome(YAMLTemplate):
+    """Class to work with YAML documents representing ReferenceGenome objects.
+    """
+
+    def __init__(self, data):
+        """Constructor method.
+        """
+        super().__init__(data, yaml_reference_genome_schema)
+        # validate data with schema
+        self._validate()
+        # load attributes
+        for key, val in data.items():
+            setattr(self, key, val)
+
+    def to_json(
+               self,
+               submission_centers, # alias list
+               consortia # alias list
+               ):
+        """Function to build the corresponding object in JSON format.
+        """
+        gen_json = {}
+
+        # common metadata
+        gen_json[self.IDENTIFIER_SCHEMA] = self.name.lower()
+        gen_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.REFERENCEGENOME_TYPE_SCHEMA}-{self.name}_{self.version}']
+        gen_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
+        gen_json[self.CONSORTIA_SCHEMA] = consortia
+        gen_json[self.TITLE_SCHEMA] = self._link_title(self.name, self.version)
+        gen_json[self.CODE_SCHEMA] = self.code
+
+        # uuid, accession if specified
+        if getattr(self, self.UUID_SCHEMA, None):
+            gen_json[self.UUID_SCHEMA] = self.uuid
+        if getattr(self, self.ACCESSION_SCHEMA, None):
+            gen_json[self.ACCESSION_SCHEMA] = self.accession
+
+        # check linked files
+        if getattr(self, self.FILES_SCHEMA, None):
+            gen_json[self.FILES_SCHEMA] = []
+            for file in self.files:
+                gen_json[self.FILES_SCHEMA].append(
+                    f'{self._string_consortia(consortia)}:{self.REFERENCEFILE_TYPE_SCHEMA}-{file.replace("@", "_")}')
+
+        return gen_json
