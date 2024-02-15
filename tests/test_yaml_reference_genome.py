@@ -15,7 +15,7 @@ def test_software():
         {"code": "GRCh38",
          "title": "GRCh38 [GCA_000001405.15]",
          "consortia": ["cgap-core"],
-         "identifier": "grch38",
+         "identifier": "GRCh38",
          "submission_centers": ["hms-dbmi"],
          "uuid": "e89937e6-80d3-4605-8dea-4a74c7981a9f",
          "files": [

@@ -726,7 +726,7 @@ class YAMLReferenceGenome(YAMLTemplate):
         gen_json = {}
 
         # common metadata
-        gen_json[self.IDENTIFIER_SCHEMA] = self.name.lower()
+        gen_json[self.IDENTIFIER_SCHEMA] = self.name
         gen_json[self.ALIASES_SCHEMA] = [f'{self._string_consortia(consortia)}:{self.REFERENCEGENOME_TYPE_SCHEMA}-{self.name}_{self.version}']
         gen_json[self.SUBMISSION_CENTERS_SCHEMA] = submission_centers
         gen_json[self.CONSORTIA_SCHEMA] = consortia
