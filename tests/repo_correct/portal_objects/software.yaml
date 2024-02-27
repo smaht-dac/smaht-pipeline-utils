@@ -7,6 +7,7 @@ source_url: 'http:/broad'
 description: gatk software package
 category:
   - Aligner
+code: pippo
 
 ---
 
@@ -19,3 +20,14 @@ category:
 commit: 324ePT
 uuid: efdac7ec-7da3-4f23-9056-7a04abbc5e8b
 accession: GAPMKF1LL29K
+
+---
+
+# Sentieon
+name: Sentieon_BWA-MEM
+code: sentieon_bwamem
+version: '202308.01'
+source_url: https://www.sentieon.com
+category:
+  - Alignment
+uuid: b42e44e5-a829-4687-aeff-65cd040b1528

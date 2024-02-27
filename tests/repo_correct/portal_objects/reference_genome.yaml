@@ -1,0 +1,12 @@
+################################################################
+# GRCh38 Genome Reference
+################################################################
+name: GRCh38
+version: GCA_000001405.15
+files:
+  - complete-reference-fasta-no-alt@GCA_000001405.15_GRCh38_no_decoy
+  - complete-reference-bwt-no-alt@GCA_000001405.15_GRCh38_no_decoy
+# Required for displaying in the file name
+code: GRCh38
+# This is required to sync with a previously generated object
+uuid: e89937e6-80d3-4605-8dea-4a74c7981a9f

@@ -76,6 +76,7 @@ class PostPatchRepo(object):
             'Software': yaml_parser.YAMLSoftware,
             'FileFormat': yaml_parser.YAMLFileFormat,
             'ReferenceFile': yaml_parser.YAMLReferenceFile,
+            'ReferenceGenome': yaml_parser.YAMLReferenceGenome,
             'Workflow': yaml_parser.YAMLWorkflow,
             'MetaWorkflow': yaml_parser.YAMLMetaWorkflow
         }
@@ -84,10 +85,12 @@ class PostPatchRepo(object):
             'Software': 'portal_objects/software.yaml',
             'FileFormat': 'portal_objects/file_format.yaml',
             'ReferenceFile': 'portal_objects/file_reference.yaml',
+            'ReferenceGenome': 'portal_objects/reference_genome.yaml',
             # .yml files
             'Software_yml': 'portal_objects/software.yml',
             'FileFormat_yml': 'portal_objects/file_format.yml',
             'ReferenceFile_yml': 'portal_objects/file_reference.yml',
+            'ReferenceGenome_yml': 'portal_objects/reference_genome.yml',
             # folders
             'Workflow': 'portal_objects/workflows',
             'MetaWorkflow': 'portal_objects/metaworkflows',
@@ -206,7 +209,7 @@ class PostPatchRepo(object):
 
     def _post_patch_file(self, type):
         """
-            'Software', 'FileFormat', 'ReferenceFile'
+            'Software', 'FileFormat', 'ReferenceFile', 'ReferenceGenome'
         """
         logger.info(f'@ {type}...')
 
@@ -413,6 +416,10 @@ class PostPatchRepo(object):
         # ReferenceFile
         if self.post_file_reference:
             self._post_patch_file('ReferenceFile')
+
+        # ReferenceGenome
+        if self.post_reference_genome:
+            self._post_patch_file('ReferenceGenome')
 
         # Workflow
         if self.post_workflow:

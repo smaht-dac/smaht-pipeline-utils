@@ -20,8 +20,8 @@ def test_file_format():
                 "submission_centers": ["hms-dbmi"],
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam",
-                "status": "obsolete"
-                # "valid_item_types": ["ReferenceFile", "FileProcessed"]
+                "status": "obsolete",
+                "valid_item_types": ["ReferenceFile", "OutputFile"]
             },
             {
                 "accession": 'GAPFIXRDPDK1',
@@ -32,7 +32,7 @@ def test_file_format():
                 "consortia": ["cgap-core"],
                 "standard_file_extension": "bam.bai",
                 "status": "released",
-                # "valid_item_types": ["ReferenceFile", "FileProcessed"],
+                "valid_item_types": ["ReferenceFile", "OutputFile"],
                 "uuid": '1936f246-22e1-45dc-bb5c-9cfd55537fe9'
             }
         ]
