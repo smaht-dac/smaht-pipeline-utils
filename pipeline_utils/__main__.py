@@ -22,7 +22,7 @@ from pipeline_utils import pipeline_deploy
 PIPELINE_DEPLOY = 'pipeline_deploy'
 CONSORTIA_ALIAS = ['smaht']
 SUBMISSION_CENTERS_ALIAS = ['smaht_dac']
-KEYS_ALIAS = '~/.cgap-keys.json'
+KEYS_ALIAS = '~/.smaht-keys.json'
 MAIN_ALIAS = 'main'
 BUILDER_ALIAS = '<ff-env>-pipeline-builder'
 
@@ -65,6 +65,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='Build Docker container images and push to AWS ECR. By default will use AWS CodeBuild unless --local-build flag is set')
 
     pipeline_deploy_parser.add_argument('--debug', action='store_true', help='Turn off POST|PATCH action')
+    pipeline_deploy_parser.add_argument('--force-patch', action='store_true', default=False, help='Disable diff computation in PATCH action if you have changed links in a pipeline')
     pipeline_deploy_parser.add_argument('--verbose', action='store_true', help='Print the JSON structure created for the objects')
 
     pipeline_deploy_parser.add_argument('--validate', action='store_true', help='Validate YAML objects against schemas. Turn off POST|PATCH action and ignore --verbose and --debug flags')

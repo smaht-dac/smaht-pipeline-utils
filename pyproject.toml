@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "smaht-pipeline-utils"
-version = "0.0.1"
+version = "0.0.2"
 description = "Utilities for deploying pipelines and interfacing with SMaHT portal infrastructure."
 authors = [
         "Michele Berselli <berselli.michele@gmail.com>",

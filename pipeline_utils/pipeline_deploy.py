@@ -14,8 +14,10 @@ import json
 import glob
 import boto3
 import structlog
-from dcicutils import ff_utils, s3_utils
+from dcicutils import ff_utils, s3_utils  # noQA
 from dcicutils.codebuild_utils import CodeBuildUtils
+from dcicutils.diff_utils import DiffManager
+from dcicutils.command_utils import yes_or_no
 from pipeline_utils.lib import yaml_parser
 
 
@@ -47,6 +49,21 @@ from pipeline_utils.lib import yaml_parser
 #   Logger
 ###############################################################
 logger = structlog.getLogger(__name__)
+
+
+# Error class
+class PostPatchRepoError(Exception):
+    pass
+
+
+# We assume the server has these set correctly, or force_patch is
+# used to fix any links
+FIELDS_TO_IGNORE_IN_DIFF = [
+    'consortia',
+    'submission_centers',
+    'format',  # detect all types of format "changes"
+    'software'
+]
 
 
 ###############################################################
@@ -117,18 +134,30 @@ class PostPatchRepo(object):
         """Get auth credentials.
         """
         # Get portal credentials
-        if os.path.exists(self.keydicts_json):
-            with open(os.path.expanduser(self.keydicts_json)) as keyfile:
+        key_path = os.path.expanduser(self.keydicts_json)
+        if os.path.exists(key_path):
+            with open(key_path) as keyfile:
                 keys = json.load(keyfile)
             self.ff_key = keys.get(self.ff_env)
-        elif os.environ.get('GLOBAL_ENV_BUCKET') and os.environ.get('S3_ENCRYPT_KEY'):
-            s3 = s3_utils.s3Utils(env=self.ff_env)
-            self.ff_key = s3.get_access_keys('access_key_admin')
+            if not self.ff_key:
+                raise PostPatchRepoError(f'No entry for env {self.ff_env} in {key_path}! Exiting.')
+        # XXX: Please do not use this - use the credentials file - Will 6 June 2024
+        # elif os.environ.get('GLOBAL_ENV_BUCKET') and os.environ.get('S3_ENCRYPT_KEY'):
+        #     s3 = s3_utils.s3Utils(env=self.ff_env)
+        #     self.ff_key = s3.get_access_keys('access_key_admin')
         else:
-            raise Exception('Required deployment vars GLOBAL_ENV_BUCKET and/or S3_ENCRYPT_KEY not set, and no entry for specified enivornment exists in keydicts file.')
+            raise PostPatchRepoError(f'Required deployment vars GLOBAL_ENV_BUCKET and/or S3_ENCRYPT_KEY not set, '
+                                     f'and no entry for specified environment exists in keydicts file.')
 
         # Get encryption key
-        self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID', None)
+        self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID')
+        if not self.kms_key_id:
+            raise PostPatchRepoError(f'No S3_ENCRYPT_KEY_ID specified, required for SMaHT')
+
+    @staticmethod
+    def _filter_diff(diff):
+        """ Filters a list for keys that look like those set in FIELDS_TO_IGNORE_IN_DIFF """
+        return list(filter(lambda x: not any(field in x for field in FIELDS_TO_IGNORE_IN_DIFF), diff))
 
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
@@ -140,8 +169,10 @@ class PostPatchRepo(object):
         if not self.debug:
             is_patch = True
             try:
-                ff_utils.get_metadata(uuid, key=self.ff_key)
-            except Exception:
+                server_json = ff_utils.get_metadata(uuid, key=self.ff_key, add_on='frame=raw&datastore=database')
+            except Exception as e:
+                if 'HTTPUnauthorized' in str(e):
+                    raise PostPatchRepoError(f'Failed authorization check - check for valid access keys!')
                 is_patch = False
 
             # Exception for uploading of ReferenceFile objects
@@ -153,7 +184,7 @@ class PostPatchRepo(object):
                 if data_json['status'] is None:
                     if is_patch:
                         del data_json['status']
-                    else: # is first time post
+                    else:  # is first time post
                         data_json['status'] = 'uploading'
 
                 # extra_files status
@@ -170,16 +201,24 @@ class PostPatchRepo(object):
 
             try:
                 if is_patch:
-                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                    diff = DiffManager().diffs(server_json, data_json)
+                    delta = self._filter_diff(diff.get('changed'))
+                    if delta or self.force_patch:
+                        ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                        logger.info(f'Patched {uuid} due to detected diff {delta} or force_patch {self.force_patch}')
+                    else:
+                        logger.info(f'Skipping PATCH of {uuid} since there is no diff')
+                    return
                 else:
                     ff_utils.post_metadata(data_json, type, key=self.ff_key)
-            except Exception as E:
+            except Exception as e:
                 # this will skip and report errors during patching and posting
-                logger.info('> FAILED PORTAL VALIDATION')
-                logger.info(E)
-                pass
+                logger.info(f'> FAILED PORTAL VALIDATION on object {uuid}, exiting')
+                logger.info(e)
+                exit(1)  # we should exit if a validation error is encountered, no?
 
-            logger.info('> Posted %s' % data_json['aliases'][0])
+            else:  # should at least have an else so the logging is not confusing
+                logger.info('> Posted %s' % data_json['aliases'][0])
 
         if self.verbose:
             logger.info(json.dumps(data_json, sort_keys=True, indent=2))
@@ -465,6 +504,13 @@ def main(args):
         if args.post_workflow or args.post_wfl or args.post_ecr:
             error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument.\n'
             sys.exit(error)
+
+    if args.force_patch:
+        logger.error(f'WARNING: you are forcing the patch of items, bypassing diff computation! This may result in a lot '
+                     f'of indexing')
+        cont = yes_or_no('Do you want to proceed?')
+        if not cont:
+            sys.exit('Exiting')
 
     # Run
     for repo in args.repos:
