@@ -25,7 +25,7 @@ yaml_file_format_schema = {
             schema.TYPE: schema.ARRAY,
             schema.ITEMS: {
                 schema.TYPE: schema.STRING,
-                schema.PATTERN: 'ReferenceFile|OutputFile|AlignedReads|UnalignedReads|VariantCalls'
+                schema.PATTERN: 'ReferenceFile|OutputFile|AlignedReads|UnalignedReads|VariantCalls|SupplementaryFile'
             }
         },
         'status': {
