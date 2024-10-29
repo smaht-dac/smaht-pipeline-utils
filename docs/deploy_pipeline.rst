@@ -14,7 +14,7 @@ This step may be skipped if you have an EC2 already set up.
 
 We recommend using the following configuration:
 
-  * AMI: Use a linux distribution (64-bit, x86)
+  * AMI: Use a Linux distribution (64-bit, x86)
   * Instance Type: t3.large or higher
   * Storage: 50+GB in main volume
 
@@ -87,7 +87,7 @@ Once the virtual environment is set up and activated, we can proceed to :ref:`in
 To check that the software is correctly installed, try to run ``smaht_pipeline_utils``.
 If installed from source, this command may fail with a bash "command not found" error, try ``poetry run smaht_pipeline_utils`` instead.
 
-Set Up Credentials and Environmental Variables
+Set Up Credentials and Environment Variables
 ==============================================
 
 .. _auth_vars:
@@ -96,7 +96,7 @@ AWS Auth Credentials
 --------------------
 
 To deploy pipelines components in a specific AWS account,
-we need to setup the following environmental variables to authenticate to the account.
+we need to setup the following environment variables to authenticate to the account.
 
 .. code-block:: bash
 

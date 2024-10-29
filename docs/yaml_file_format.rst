@@ -26,6 +26,8 @@ Template
     secondary_formats:
       - <format>              # bam, fastq, bwt, ...
 
+    file_types:
+      - <string>              # ReferenceFile, OutputFile, ...
 
 Fields Definition
 +++++++++++++++++
@@ -54,3 +56,7 @@ secondary_formats
 -----------------
 List of secondary ``<format>`` available for the file format.
 Each ``<format>`` needs to match a file format that has been previously defined.
+
+file_types
+----------
+List of file types that can be associated with the file format, see schemas for available options.

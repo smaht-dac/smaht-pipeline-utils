@@ -17,7 +17,7 @@ Usage:
 pipeline_deploy
 +++++++++++++++
 
-Utility to automatically deploy pipeline's components from a target repository.
+Utility to automatically deploy a pipeline's components from a target repository.
 It is possible to specify multiple target repositories to deploy multiple pipelines at the same time.
 
 Usage:
@@ -88,5 +88,7 @@ Usage:
     - Validate YAML objects against schemas. Turn off DEPLOY | UPDATE action
   * - *-\-sentieon-server*
     - Address for Sentieon license server
+  * - *-\-version-file*
+    - Path to VERSION file to use. This will override the version for all the repositories
   * -
     -

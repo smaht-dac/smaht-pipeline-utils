@@ -64,6 +64,7 @@ def main(args=None):
     pipeline_deploy_parser.add_argument('--post-wfl', action='store_true', help='Upload Workflow Description files (.cwl, .wdl)')
     pipeline_deploy_parser.add_argument('--post-ecr', action='store_true', help='Build Docker container images and push to AWS ECR. By default will use AWS CodeBuild unless --local-build flag is set')
 
+    pipeline_deploy_parser.add_argument('--version-file', required=False, help='Path to version file to use. This will override the version for all the repositories')
     pipeline_deploy_parser.add_argument('--debug', action='store_true', help='Turn off POST|PATCH action')
     pipeline_deploy_parser.add_argument('--verbose', action='store_true', help='Print the JSON structure created for the objects')
 

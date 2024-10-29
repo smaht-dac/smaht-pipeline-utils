@@ -4,7 +4,7 @@
 Pipeline's Repository Structure
 ===============================
 
-To be picked up correctly by some of the commands, a repository needs to be set up as follow:
+To be picked up correctly by some of the commands, a repository needs to be set up as follows:
 
 - A **descriptions** folder to store workflow description files (CWL and WDL).
 - A **dockerfiles** folder to store Docker images.

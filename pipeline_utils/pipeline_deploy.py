@@ -56,17 +56,19 @@ class PostPatchRepo(object):
     """Class to handle deployment of pipeline components.
     """
 
-    def __init__(self, args, repo, version='VERSION', pipeline='PIPELINE'):
+    def __init__(self, args, repo, version_file='VERSION', pipeline_file='PIPELINE', version=None):
         """Constructor method.
 
             :param args: Command line arguments
             :type args: object returned by ArgumentParser.parse_args() method
             :param repo: Name of the repository
             :type repo: str
-            :param version: Name of the file storing pipeline version information
+            :param version_file: Name of the file storing pipeline version information
+            :type version_file: str
+            :param pipeline_file: Name of the file storing pipeline name information
+            :type pipeline_file: str
+            :param version: Pipeline version to use
             :type version: str
-            :param pipeline: Name of the file storing pipeline name information
-            :type pipeline: str
         """
         # Init attributes
         self.ff_key = None
@@ -103,10 +105,13 @@ class PostPatchRepo(object):
             setattr(self, key, val)
 
         # Get pipeline version
-        with open(f'{self.repo}/{version}') as f:
-            self.version = f.readlines()[0].strip()
+        if not version:
+            with open(f'{self.repo}/{version_file}') as f:
+                self.version = f.readlines()[0].strip()
+        else:
+            self.version = version
         # Get pipeline name
-        with open(f'{self.repo}/{pipeline}') as f:
+        with open(f'{self.repo}/{pipeline_file}') as f:
             self.pipeline = f.readlines()[0].strip()
 
         # Load credentials
@@ -466,7 +471,12 @@ def main(args):
             error = 'MISSING ARGUMENT, --post-wfl | --post-workflow | --post-ecr requires --region argument.\n'
             sys.exit(error)
 
+    # Get override version if flag is set
+    if args.version_file:
+        with open(args.version_file) as f:
+            version = f.readlines()[0].strip()
+    else: version = None
     # Run
     for repo in args.repos:
-        pprepo = PostPatchRepo(args, repo)
+        pprepo = PostPatchRepo(args, repo, version=version)
         pprepo.run_post_patch()

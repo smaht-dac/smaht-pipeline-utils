@@ -63,6 +63,14 @@ version
 -------
 Version of the reference file.
 
+category
+--------
+Categories for the pipeline, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
+type
+----
+Types for the pipeline, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+
 Optional
 ^^^^^^^^
 All the following fields are optional and provided as example. Can be expanded to anything accepted by the schema, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.

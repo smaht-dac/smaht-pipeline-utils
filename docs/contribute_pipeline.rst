@@ -38,7 +38,7 @@ Each step codified as a workflow description file will execute on a single EC2 m
 
 *Note: the workflow description file must have a .wdl or .cwl extension to be recognized during the automated deployment.*
 
-The following example implement the steps ``foo`` and ``bar`` for the ``foo_bar`` pipeline.
+The following example implements the steps ``foo`` and ``bar`` for the ``foo_bar`` pipeline.
 Each step will execute independently on a single EC2 machine.
 
 ::
@@ -54,10 +54,10 @@ Typically, when creating a workflow description file, the code will make referen
 To store these containers, we use private ECR repositories that are specific to each AWS account.
 To ensure that the description file points to the appropriate image, we utilize two placeholders, **VERSION** and **ACCOUNT**,
 which will be automatically substituted in the file with the relevant account information during deployment.
-If the code runs Sentieon software and requires the *SENTIEON_LICENSE* environmental variable to be set,
+If the code runs Sentieon software and requires the *SENTIEON_LICENSE* environment variable to be set,
 the **LICENSEID** placeholder will be substituted by the code with the server address provided to the :ref:`deploy command <pipeline_deploy>`.
 
-Example of a CWL code with the placeholders
+Example of a CWL code with the placeholders:
 
 .. code-block:: yaml
 
