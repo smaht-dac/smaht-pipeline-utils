@@ -65,11 +65,11 @@ Version of the reference file.
 
 category
 --------
-Categories for the pipeline, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+Categories for the reference file, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 type
 ----
-Types for the pipeline, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
+Types for the reference file, see `schemas <https://github.com/smaht-dac/smaht-portal/tree/main/src/encoded/schemas>`__.
 
 Optional
 ^^^^^^^^
