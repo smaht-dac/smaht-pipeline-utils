@@ -60,6 +60,10 @@ yaml_reference_file_schema = {
         'license': {
             schema.DESCRIPTION: 'License of the ReferenceFile',
             schema.TYPE: schema.STRING
+        },
+        'code': {
+            schema.DESCRIPTION: 'Code for the ReferenceFile',
+            schema.TYPE: schema.STRING
         }
     },
     schema.REQUIRED: ['name', 'description', 'format', 'category', 'type', 'version']

@@ -641,6 +641,10 @@ class YAMLReferenceFile(YAMLTemplate):
         if getattr(self, self.LICENSE_SCHEMA, None):
             ref_json[self.LICENSE_SCHEMA] = self.license
 
+        # code
+        if getattr(self, self.CODE_SCHEMA, None):
+            ref_json[self.CODE_SCHEMA] = self.code
+
         return ref_json
 
 

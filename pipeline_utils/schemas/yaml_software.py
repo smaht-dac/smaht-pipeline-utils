@@ -44,6 +44,10 @@ yaml_software_schema = {
             schema.ITEMS: {
                 schema.TYPE: schema.STRING
             }
+        },
+        'code': {
+            schema.DESCRIPTION: 'Code for the Software',
+            schema.TYPE: schema.STRING
         }
     },
     schema.REQUIRED: ['name', 'category'],
