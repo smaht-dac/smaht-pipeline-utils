@@ -30,3 +30,4 @@ type:
 description: hg38 full reference genome plus decoy for CGAP, fasta format
 format: fa
 version: hg38
+title: "GENOME"

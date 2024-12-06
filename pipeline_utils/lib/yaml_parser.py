@@ -645,6 +645,12 @@ class YAMLReferenceFile(YAMLTemplate):
         if getattr(self, self.CODE_SCHEMA, None):
             ref_json[self.CODE_SCHEMA] = self.code
 
+        # title
+        ref_json[self.TITLE_SCHEMA] = self._link_title(self.name)
+
+        # version
+        ref_json[self.VERSION_SCHEMA] = self.version
+
         return ref_json
 
 

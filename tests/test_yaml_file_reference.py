@@ -24,7 +24,9 @@ def test_file_reference():
                 "uuid": "1936f246-22e1-45dc-bb5c-9cfd55537fe7",
                 "data_category": ["Sequencing Reads"],
                 "data_type": ["Unaligned Reads"],
-                "variant_type": ["SNV"]
+                "variant_type": ["SNV"],
+                "version": "hg38",
+                "title": "reference genome"
             },
             {
                 "aliases": ["cgap-core:ReferenceFile-reference_genome_hg38"],
@@ -34,7 +36,9 @@ def test_file_reference():
                 "consortia": ["cgap-core"],
                 "status": None,
                 "data_category": ["Sequencing Reads"],
-                "data_type": ["Aligned Reads"]
+                "data_type": ["Aligned Reads"],
+                "version": "hg38",
+                "title": "GENOME"
             }
         ]
 
