@@ -17,6 +17,7 @@ import structlog
 from dcicutils import ff_utils, s3_utils
 from dcicutils.codebuild_utils import CodeBuildUtils
 from pipeline_utils.lib import yaml_parser
+from functools import cache
 
 
 ###############################################################
@@ -118,6 +119,59 @@ class PostPatchRepo(object):
         self._get_credentials()
         self._codebuild = CodeBuildUtils()
 
+        # Create mapping of aliases and identifiers to UUIDs
+        #   to be used for patching objects
+        self.identifiers = self._map_identifiers()
+
+    @cache
+    def _map_identifiers(self):
+        """Helper to create a mapping of aliases and identifiers to UUIDs.
+        """
+        mapping = {}
+
+        metadata = ff_utils.search_metadata('/search/?type=Item&aliases!=No value&limit=10000', key=self.ff_key)
+        consortium_metadata = ff_utils.search_metadata('/search/?type=Consortium', key=self.ff_key)
+        submission_centers_metadata = ff_utils.search_metadata('/search/?type=SubmissionCenter', key=self.ff_key)
+
+        metadata.extend(consortium_metadata)
+        metadata.extend(submission_centers_metadata)
+
+        for item in metadata:
+            uuid = item.get('uuid', None)
+            aliases = item.get('aliases', [])
+            identifier = item.get('identifier', None)
+
+            for alias in aliases:
+                mapping[alias] = uuid
+            if identifier:
+                mapping[identifier] = uuid
+
+        return mapping
+
+    def _check_identity(self, data_json, metadata):
+        """Helper to check if object to post
+        is the same as current object on the portal.
+        """
+        for key, value in data_json.items():
+            if key in metadata:
+                # Check if the value is matching as is
+                if value == metadata[key]:
+                    continue
+                # Mapping value to identifiers
+                if isinstance(value, list):
+                    value_ = [self.identifiers.get(item, item) for item in value]
+                elif isinstance(value, dict):
+                    value_ = {k: self.identifiers.get(v, v) for k, v in value.items()}
+                else:
+                    value_ = self.identifiers.get(value, value)
+                # Check if the mapped value is matching
+                if value_ != metadata[key]:
+                    return False
+            else:
+                return False
+
+        return True
+
     def _get_credentials(self):
         """Get auth credentials.
         """
@@ -138,56 +192,67 @@ class PostPatchRepo(object):
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
         """
+        # Default is to patch the object
+        is_patch = True
+
         # Use uuid if available as unique identifier,
         #   else use the alias
         uuid = data_json.get('uuid', data_json['aliases'][0])
 
-        if not self.debug:
-            is_patch = True
-            try:
-                ff_utils.get_metadata(uuid, key=self.ff_key)
-            except Exception:
-                is_patch = False
-
-            # Exception for uploading of ReferenceFile objects
-            #   status -> uploading, uploaded
-            #   default is None -> the status will not be updated during patch,
-            #     and set to uploading if post for the first time
-            if type == 'ReferenceFile':
-                # main status
-                if data_json['status'] is None:
-                    if is_patch:
-                        del data_json['status']
-                    else: # is first time post
-                        data_json['status'] = 'uploading'
-
-                # extra_files status
-                if data_json.get('extra_files'):
-                    extra_files_ = []
-                    for ext in data_json['extra_files']:
-                        ext_ = {
-                            'file_format': ext,
-                            'status': data_json.get('status', 'uploaded')
-                        }
-                        extra_files_.append(ext_)
-                    data_json['extra_files'] = extra_files_
-            ###########################################################
-
-            try:
-                if is_patch:
-                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
-                else:
-                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
-            except Exception as E:
-                # this will exit and report errors during patching and posting
-                logger.info('> FAILED PORTAL VALIDATION')
-                logger.info(E)
-                sys.exit('\nExiting...')
-
-            logger.info('> Posted %s' % data_json['aliases'][0])
-
         if self.verbose:
             logger.info(json.dumps(data_json, sort_keys=True, indent=2))
+
+        # Get the current object if already present in the portal
+        try:
+            metadata_ = ff_utils.get_metadata(uuid, key=self.ff_key)
+            # Check if the object is up to date
+            #   if so, skip
+            if self._check_identity(data_json, metadata_):
+                logger.info('> Object %s already up to date, skipping...' % data_json['aliases'][0])
+                return
+        except Exception:
+            # Object is not present,
+            #   post the object
+            is_patch = False
+
+        # Exception for uploading of ReferenceFile objects
+        #   status -> uploading, uploaded
+        #   default is None -> the status will not be updated during patch,
+        #     and set to uploading if post for the first time
+        if type == 'ReferenceFile':
+            # main status
+            if data_json['status'] is None:
+                if is_patch:
+                    del data_json['status']
+                else: # is first time post
+                    data_json['status'] = 'uploading'
+
+            # extra_files status
+            if data_json.get('extra_files'):
+                extra_files_ = []
+                for ext in data_json['extra_files']:
+                    ext_ = {
+                        'file_format': ext,
+                        'status': data_json.get('status', 'uploaded')
+                    }
+                    extra_files_.append(ext_)
+                data_json['extra_files'] = extra_files_
+        ###########################################################
+
+        try:
+            if is_patch:
+                if not self.debug:
+                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                logger.info('> Patched %s' % data_json['aliases'][0])
+            else:
+                if not self.debug:
+                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
+                logger.info('> Posted %s' % data_json['aliases'][0])
+        except Exception as E:
+            # this will exit and report errors during patching and posting
+            logger.info('> FAILED PORTAL VALIDATION')
+            logger.info(E)
+            sys.exit('\nExiting...')
 
     def _yaml_to_json(self, data_yaml, YAMLClass, **kwargs):
         """Helper to validate YAML object and convert to JSON.
@@ -241,7 +306,6 @@ class PostPatchRepo(object):
                         )
             # post/patch object
             if d_: self._post_patch_json(d_, type)
-
 
     def _post_patch_folder(self, type):
         """
