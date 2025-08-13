@@ -204,7 +204,7 @@ class PostPatchRepo(object):
 
         # Get the current object if already present in the portal
         try:
-            metadata_ = ff_utils.get_metadata(uuid, key=self.ff_key)
+            metadata_ = ff_utils.get_metadata(uuid, add_on="frame=raw&datastore=database", key=self.ff_key)
             # Check if the object is up to date
             #   if so, skip
             if self._check_identity(data_json, metadata_):
@@ -474,6 +474,8 @@ class PostPatchRepo(object):
     def run_post_patch(self):
         """Main function to deploy specified components.
         """
+        logger.info('########## %s ####################' % self.repo)
+
         # Software
         if self.post_software:
             self._post_patch_file('Software')
