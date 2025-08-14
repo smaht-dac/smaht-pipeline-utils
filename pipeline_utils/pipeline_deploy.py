@@ -124,7 +124,7 @@ class PostPatchRepo(object):
         and match.
 
         If present, hash is stored in JSON object tags list 
-        as the string 'hash-<hash_value>'.
+        as the string 'DEPLOY_HASH-<hash_value>'.
         """
         # Get tags from JSON object
         tags = data_json.get('tags', [])
@@ -132,8 +132,8 @@ class PostPatchRepo(object):
         # Get hash from tags if present
         hash_, hash_idx = None, None
         for i, tag in enumerate(tags):
-            if tag.startswith('hash-'):
-                hash_ = tag.split('hash-')[-1]
+            if tag.startswith('DEPLOY_HASH-'):
+                hash_ = tag.split('DEPLOY_HASH-')[-1]
                 hash_idx = i
                 break
 
@@ -141,7 +141,7 @@ class PostPatchRepo(object):
         if hash_ is None:
             # object is not up to date
             # hash is not present, add hash
-            tags.append(f'hash-{hash}')
+            tags.append(f'DEPLOY_HASH-{hash}')
             return False, tags
         # hash is present
         if hash_ == hash:
@@ -151,7 +151,7 @@ class PostPatchRepo(object):
         else:
             # object is not up to date
             # hash is present but differs, update hash
-            tags[hash_idx] = f'hash-{hash}'
+            tags[hash_idx] = f'DEPLOY_HASH-{hash}'
             return False, tags
 
     def _get_credentials(self):
@@ -218,7 +218,7 @@ class PostPatchRepo(object):
         if not tags:
             # the object does not exist
             # add the hash to tags
-            tags = [f'hash-{hash}']
+            tags = [f'DEPLOY_HASH-{hash}']
         # Add or replace the updated tags to the object
         data_json['tags'] = tags
 
