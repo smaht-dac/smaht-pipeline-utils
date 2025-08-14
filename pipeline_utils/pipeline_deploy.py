@@ -14,6 +14,7 @@ import json
 import glob
 import boto3
 import structlog
+import hashlib
 from dcicutils import ff_utils, s3_utils
 from dcicutils.codebuild_utils import CodeBuildUtils
 from pipeline_utils.lib import yaml_parser
@@ -123,54 +124,40 @@ class PostPatchRepo(object):
         #   to be used for patching objects
         self.identifiers = self._map_identifiers()
 
-    @cache
-    def _map_identifiers(self):
-        """Helper to create a mapping of aliases and identifiers to UUIDs.
+    def _check_identity(self, hash, data_json):
+        """Helper to check if hash is present in JSON object
+        and match.
+
+        If present, hash is stored in JSON object tags list 
+        as the string 'hash:<hash_value>'.
         """
-        mapping = {}
+        # Get tags from JSON object
+        tags = data_json.get('tags', [])
 
-        metadata = ff_utils.search_metadata('/search/?type=Item&aliases!=No value&limit=10000', key=self.ff_key)
-        consortium_metadata = ff_utils.search_metadata('/search/?type=Consortium', key=self.ff_key)
-        submission_centers_metadata = ff_utils.search_metadata('/search/?type=SubmissionCenter', key=self.ff_key)
+        # Get hash from tags if present
+        hash_, hash_idx = None, None
+        for i, tag in enumerate(tags):
+            if tag.startswith('hash:'):
+                hash_ = tag.split('hash:')[-1]
+                hash_idx = i
+                break
 
-        metadata.extend(consortium_metadata)
-        metadata.extend(submission_centers_metadata)
-
-        for item in metadata:
-            uuid = item.get('uuid', None)
-            aliases = item.get('aliases', [])
-            identifier = item.get('identifier', None)
-
-            for alias in aliases:
-                mapping[alias] = uuid
-            if identifier:
-                mapping[identifier] = uuid
-
-        return mapping
-
-    def _check_identity(self, data_json, metadata):
-        """Helper to check if object to post
-        is the same as current object on the portal.
-        """
-        for key, value in data_json.items():
-            if key in metadata:
-                # Check if the value is matching as is
-                if value == metadata[key]:
-                    continue
-                # Mapping value to identifiers
-                if isinstance(value, list):
-                    value_ = [self.identifiers.get(item, item) for item in value]
-                elif isinstance(value, dict):
-                    value_ = {k: self.identifiers.get(v, v) for k, v in value.items()}
-                else:
-                    value_ = self.identifiers.get(value, value)
-                # Check if the mapped value is matching
-                if value_ != metadata[key]:
-                    return False
-            else:
-                return False
-
-        return True
+        # Compare hash values
+        if hash_ is None:
+            # object is not up to date
+            # hash is not present, add hash
+            tags.append(f'hash:{hash}')
+            return False, tags
+        # hash is present
+        if hash_ == hash:
+            # object is up to date
+            # hash is present and values match, nothing to do
+            return True, tags
+        else:
+            # object is not up to date
+            # hash is present but differs, update hash
+            tags[hash_idx] = f'hash:{hash}'
+            return False, tags
 
     def _get_credentials(self):
         """Get auth credentials.
@@ -189,11 +176,22 @@ class PostPatchRepo(object):
         # Get encryption key
         self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID', None)
 
+    def _hash_json(self, data_json):
+        """Helper to hash JSON object.
+        """
+        # Serialize JSON object into a consistent string
+        # sort_keys=True ensures consistent key order
+        # separators=(',', ':') removes unnecessary whitespace
+        json_string = json.dumps(data_json, sort_keys=True, separators=(',', ':'))
+
+        # Use a hash function to create a hash
+        return hashlib.sha256(json_string.encode('utf-8')).hexdigest()
+
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
         """
-        # Default is to patch the object
-        is_patch = True
+        # Calculate the hash of the JSON object
+        hash = self._hash_json(data_json)
 
         # Use uuid if available as unique identifier,
         #   else use the alias
@@ -202,19 +200,34 @@ class PostPatchRepo(object):
         if self.verbose:
             logger.info(json.dumps(data_json, sort_keys=True, indent=2))
 
-        # Get the current object if already present in the portal
+        # Check if object already exists on the portal
+        is_patch, current_json, tags = True, None, []
         try:
-            metadata_ = ff_utils.get_metadata(uuid, add_on="frame=raw&datastore=database", key=self.ff_key)
-            # Check if the object is up to date
-            #   if so, skip
-            if self._check_identity(data_json, metadata_):
-                logger.info('> Object %s already up to date, skipping...' % data_json['aliases'][0])
-                return
+            # try to get the object from the portal
+            current_json = ff_utils.get_metadata(uuid, add_on="frame=raw&datastore=database", key=self.ff_key)
         except Exception:
-            # Object is not present,
-            #   post the object
+            # object does not exist, need to POST
             is_patch = False
 
+        if is_patch:
+            # object exists
+            # check if object is already up to date
+            is_same, tags = self._check_identity(hash, current_json)
+            if is_same:
+                # object is the same, nothing to do
+                logger.exception('> Object %s already up to date, skipping...' % data_json['aliases'][0])
+                return
+
+        # Object does not exist or changed
+        #   adding or updating hash
+        if not tags:
+            # the object does not exist
+            # add the hash to tags
+            tags = [f'hash:{hash}']
+        # Add or replace the updated tags to the object
+        data_json['tags'] = tags
+
+        ###########################################################
         # Exception for uploading of ReferenceFile objects
         #   status -> uploading, uploaded
         #   default is None -> the status will not be updated during patch,
@@ -238,7 +251,7 @@ class PostPatchRepo(object):
                     extra_files_.append(ext_)
                 data_json['extra_files'] = extra_files_
         ###########################################################
-
+        # POST|PATCH the object
         try:
             if is_patch:
                 if not self.debug:
