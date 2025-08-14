@@ -210,7 +210,7 @@ class PostPatchRepo(object):
             is_same, tags = self._check_identity(hash, current_json)
             if is_same:
                 # object is the same, nothing to do
-                logger.exception('> Object %s already up to date, skipping...' % data_json['aliases'][0])
+                logger.info('> Object %s already up to date, skipping...' % data_json['aliases'][0])
                 return
 
         # Object does not exist or changed
@@ -482,7 +482,7 @@ class PostPatchRepo(object):
     def run_post_patch(self):
         """Main function to deploy specified components.
         """
-        logger.info('########## %s ####################' % self.repo)
+        logger.info('#- %s' % self.repo)
 
         # Software
         if self.post_software:
