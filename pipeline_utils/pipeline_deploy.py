@@ -18,8 +18,6 @@ import hashlib
 from dcicutils import ff_utils, s3_utils
 from dcicutils.codebuild_utils import CodeBuildUtils
 from pipeline_utils.lib import yaml_parser
-from functools import cache
-
 
 ###############################################################
 #   REPOSITORY
@@ -119,10 +117,6 @@ class PostPatchRepo(object):
         # Load credentials
         self._get_credentials()
         self._codebuild = CodeBuildUtils()
-
-        # Create mapping of aliases and identifiers to UUIDs
-        #   to be used for patching objects
-        self.identifiers = self._map_identifiers()
 
     def _check_identity(self, hash, data_json):
         """Helper to check if hash is present in JSON object
