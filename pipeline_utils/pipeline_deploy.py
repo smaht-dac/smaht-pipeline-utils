@@ -14,6 +14,7 @@ import json
 import glob
 import boto3
 import structlog
+import hashlib
 from dcicutils import ff_utils, s3_utils
 from dcicutils.codebuild_utils import CodeBuildUtils
 from pipeline_utils.lib import yaml_parser
@@ -118,6 +119,41 @@ class PostPatchRepo(object):
         self._get_credentials()
         self._codebuild = CodeBuildUtils()
 
+    def _check_identity(self, hash, data_json):
+        """Helper to check if hash is present in JSON object
+        and match.
+
+        If present, hash is stored in JSON object tags list 
+        as the string 'DEPLOY_HASH-<hash_value>'.
+        """
+        # Get tags from JSON object
+        tags = data_json.get('tags', [])
+
+        # Get hash from tags if present
+        hash_, hash_idx = None, None
+        for i, tag in enumerate(tags):
+            if tag.startswith('DEPLOY_HASH-'):
+                hash_ = tag.split('DEPLOY_HASH-')[-1]
+                hash_idx = i
+                break
+
+        # Compare hash values
+        if hash_ is None:
+            # object is not up to date
+            # hash is not present, add hash
+            tags.append(f'DEPLOY_HASH-{hash}')
+            return False, tags
+        # hash is present
+        if hash_ == hash:
+            # object is up to date
+            # hash is present and values match, nothing to do
+            return True, tags
+        else:
+            # object is not up to date
+            # hash is present but differs, update hash
+            tags[hash_idx] = f'DEPLOY_HASH-{hash}'
+            return False, tags
+
     def _get_credentials(self):
         """Get auth credentials.
         """
@@ -135,59 +171,96 @@ class PostPatchRepo(object):
         # Get encryption key
         self.kms_key_id = os.environ.get('S3_ENCRYPT_KEY_ID', None)
 
+    def _hash_json(self, data_json):
+        """Helper to hash JSON object.
+        """
+        # Serialize JSON object into a consistent string
+        # sort_keys=True ensures consistent key order
+        # separators=(',', ':') removes unnecessary whitespace
+        json_string = json.dumps(data_json, sort_keys=True, separators=(',', ':'))
+
+        # Use a hash function to create a hash
+        return hashlib.sha256(json_string.encode('utf-8')).hexdigest()
+
     def _post_patch_json(self, data_json, type):
         """Helper to POST|PATCH JSON object.
         """
+        # Calculate the hash of the JSON object
+        hash = self._hash_json(data_json)
+
         # Use uuid if available as unique identifier,
         #   else use the alias
         uuid = data_json.get('uuid', data_json['aliases'][0])
 
-        if not self.debug:
-            is_patch = True
-            try:
-                ff_utils.get_metadata(uuid, key=self.ff_key)
-            except Exception:
-                is_patch = False
-
-            # Exception for uploading of ReferenceFile objects
-            #   status -> uploading, uploaded
-            #   default is None -> the status will not be updated during patch,
-            #     and set to uploading if post for the first time
-            if type == 'ReferenceFile':
-                # main status
-                if data_json['status'] is None:
-                    if is_patch:
-                        del data_json['status']
-                    else: # is first time post
-                        data_json['status'] = 'uploading'
-
-                # extra_files status
-                if data_json.get('extra_files'):
-                    extra_files_ = []
-                    for ext in data_json['extra_files']:
-                        ext_ = {
-                            'file_format': ext,
-                            'status': data_json.get('status', 'uploaded')
-                        }
-                        extra_files_.append(ext_)
-                    data_json['extra_files'] = extra_files_
-            ###########################################################
-
-            try:
-                if is_patch:
-                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
-                else:
-                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
-            except Exception as E:
-                # this will exit and report errors during patching and posting
-                logger.info('> FAILED PORTAL VALIDATION')
-                logger.info(E)
-                sys.exit('\nExiting...')
-
-            logger.info('> Posted %s' % data_json['aliases'][0])
-
         if self.verbose:
             logger.info(json.dumps(data_json, sort_keys=True, indent=2))
+
+        # Check if object already exists on the portal
+        is_patch, current_json, tags = True, None, []
+        try:
+            # try to get the object from the portal
+            current_json = ff_utils.get_metadata(uuid, add_on="frame=raw&datastore=database", key=self.ff_key)
+        except Exception:
+            # object does not exist, need to POST
+            is_patch = False
+
+        if is_patch:
+            # object exists
+            # check if object is already up to date
+            is_same, tags = self._check_identity(hash, current_json)
+            if is_same:
+                # object is the same, nothing to do
+                logger.info('> Object %s already up to date, skipping...' % data_json['aliases'][0])
+                return
+
+        # Object does not exist or changed
+        #   adding or updating hash
+        if not tags:
+            # the object does not exist
+            # add the hash to tags
+            tags = [f'DEPLOY_HASH-{hash}']
+        # Add or replace the updated tags to the object
+        data_json['tags'] = tags
+
+        ###########################################################
+        # Exception for uploading of ReferenceFile objects
+        #   status -> uploading, uploaded
+        #   default is None -> the status will not be updated during patch,
+        #     and set to uploading if post for the first time
+        if type == 'ReferenceFile':
+            # main status
+            if data_json['status'] is None:
+                if is_patch:
+                    del data_json['status']
+                else: # is first time post
+                    data_json['status'] = 'uploading'
+
+            # extra_files status
+            if data_json.get('extra_files'):
+                extra_files_ = []
+                for ext in data_json['extra_files']:
+                    ext_ = {
+                        'file_format': ext,
+                        'status': data_json.get('status', 'uploaded')
+                    }
+                    extra_files_.append(ext_)
+                data_json['extra_files'] = extra_files_
+        ###########################################################
+        # POST|PATCH the object
+        try:
+            if is_patch:
+                if not self.debug:
+                    ff_utils.patch_metadata(data_json, uuid, key=self.ff_key)
+                logger.info('> Patched %s' % data_json['aliases'][0])
+            else:
+                if not self.debug:
+                    ff_utils.post_metadata(data_json, type, key=self.ff_key)
+                logger.info('> Posted %s' % data_json['aliases'][0])
+        except Exception as E:
+            # this will exit and report errors during patching and posting
+            logger.info('> FAILED PORTAL VALIDATION')
+            logger.info(E)
+            sys.exit('\nExiting...')
 
     def _yaml_to_json(self, data_yaml, YAMLClass, **kwargs):
         """Helper to validate YAML object and convert to JSON.
@@ -241,7 +314,6 @@ class PostPatchRepo(object):
                         )
             # post/patch object
             if d_: self._post_patch_json(d_, type)
-
 
     def _post_patch_folder(self, type):
         """
@@ -410,6 +482,8 @@ class PostPatchRepo(object):
     def run_post_patch(self):
         """Main function to deploy specified components.
         """
+        logger.info('#- %s' % self.repo)
+
         # Software
         if self.post_software:
             self._post_patch_file('Software')
